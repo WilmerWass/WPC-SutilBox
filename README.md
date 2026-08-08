@@ -127,8 +127,9 @@ La interfaz ha sido diseñada siguiendo principios modernos de UI/UX, utilizando
 ├─ ✅ Incluye .NET 8.0 Runtime integrado
 ├─ ✅ Sin dependencias externas
 ├─ ❌ Tamaño más grande (~150 MB)
-└─ 📥 Descargar: [WPC_SUTILBOX_Portable_SelfContained.zip](https://github.com/WilmerWass/WPC-SutilBox/releases/download/v1.1.8/WassControlSys_v1.1.8_SelfContained.zip)
 ```
+📥 Descargar: [WPC_SUTILBOX_Portable_SelfContained.zip](https://github.com/WilmerWass/WPC-SutilBox/releases/download/v1.1.8/WassControlSys_v1.1.8_SelfContained.zip)
+
 
 #### 💨 Opción Ligera: Versión Normal
 
@@ -137,8 +138,9 @@ La interfaz ha sido diseñada siguiendo principios modernos de UI/UX, utilizando
 ├─ ⚡ Más ligera en tamaño (~80 MB)
 ├─ 📋 Requiere .NET 8.0 Desktop Runtime
 ├─ 🚀 Mejor rendimiento en sistemas con .NET
-└─ 📥 Descargar: [WPC_SUTILBOX_Normal.zip](https://github.com/WilmerWass/WPC-SutilBox/releases/download/v1.1.8/WassControlSys_v1.1.8_Normal.zip)
 ```
+📥 Descargar: [WPC_SUTILBOX_Normal.zip](https://github.com/WilmerWass/WPC-SutilBox/releases/download/v1.1.8/WassControlSys_v1.1.8_Normal.zip)
+
 
 > **¿No tienes .NET 8.0?** [Descárgalo aquí →](https://dotnet.microsoft.com/download/dotnet/8.0)
 
