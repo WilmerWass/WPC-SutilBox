@@ -5,23 +5,23 @@
 <div align="center">
 
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Platform](https://img.shields.io/badge/platform-Windows_10%2F11-blue.svg)](https://github.com/WilmerWass/WassControlSys)
+[![Platform](https://img.shields.io/badge/platform-Windows_10%2F11-blue.svg)](https://github.com/WilmerWass/WPC-SutilBox)
 [![.NET](https://img.shields.io/badge/.NET-8.0-purple.svg)](https://dotnet.microsoft.com/)
-[![Status](https://img.shields.io/badge/status-v1.1.7_Stable-blue.svg)](CHANGELOG.md)
+[![Status](https://img.shields.io/badge/status-v1.2.0--beta.1-orange.svg)](CHANGELOG.md)
 
 **WPC SUTILBOX** es una suite de utilidades de nueva generación diseñada para devolverle el control total de su sistema operativo. Optimice el rendimiento, limpie archivos residuales, gestione procesos y mantenga su Windows en perfectas condiciones.
 
-[Descargar Última Versión](#-descarga-e-instalación) • [Características](#-características-principales) • [Documentación](#-documentación-técnica) • [Contribuir](CONTRIBUTING.md)
+[Descargar Última Versión](#-descarga-e-instalación) • [Características](#-características-principales) • [Documentación](#-documentación-técnica)
 
 </div>
 
 ---
 
-## ⚠️ Aviso de Reestructuración
+## ⚠️ Aviso de Reestructuración (v1.2.0-beta.1)
 
-Este proyecto se encuentra en un **proceso de transición técnica y cambio de identidad**. Hemos migrado de **WassControlSys** a la nueva marca **WPC SUTILBOX** para reflejar una evolución en nuestra visión y metodología. Durante este período, algunos componentes pueden experimentar cambios significativos en nomenclatura, estructura y funcionalidad. 
+Este proyecto se encuentra en un **proceso de transición técnica y cambio de identidad**. Hemos migrado oficialmente de **WassControlSys** a la nueva marca **WPC SUTILBOX** para reflejar una evolución en nuestra visión y metodología. Durante este período, la versión actual en desarrollo (**v1.2.0-beta.1**) contiene cambios estructurales importantes y puede presentar intermitencias en la interfaz. 
 
-Agradecemos su paciencia y confianza. El repositorio seguirá siendo funcional y mantenido, y esta transición culminará en una versión renovada que consolidará todas las mejoras planificadas.
+Se recomienda utilizar la versión estable anterior si buscas producción diaria, y abstenerse de usar la beta en entornos críticos hasta su estabilización.
 
 ---
 
@@ -85,22 +85,23 @@ _(Capturas de pantalla próximamente en la carpeta `docs/images`)_
 
 ### Versiones Disponibles
 
-Elija la versión que mejor se adapte a sus necesidades:
-
-- **WPC SUTILBOX v1.1.7 (Autocontenida)**
+Elija la versión que mejor se adapte a sus necesidades: 
+- **WPC SUTILBOX (Autocontenida)**
   - **Descripción:** Ideal para la mayoría de los usuarios. Incluye el .NET 8.0 Runtime integrado, por lo que **no necesita instalar .NET por separado**. Simplemente descargue, descomprima y ejecute.
-  - **Descarga Directa:** [WPC_SUTILBOX_v1.1.7_SelfContained.zip](https://github.com/WilmerWass/WassControlSys/releases/download/v1.1.7/WassControlSys_v1.1.7_SelfContained.zip)
+  - **Descarga Directa:** [Versión Portable Autocontenida](https://github.com/WilmerWass/WPC-SutilBox/releases/download/v1.1.8/WassControlSys_v1.1.8_SelfContained.zip)
 
-- **WPC SUTILBOX v1.1.7 (Requiere .NET)**
+- **WPC SUTILBOX (Requiere .NET)**
   - **Descripción:** Esta es la versión más ligera en tamaño de descarga. **Requiere que el .NET 8.0 Desktop Runtime esté instalado** previamente en su sistema.
-  - **Descarga Directa:** [WPC_SUTILBOX_v1.1.7_Normal.zip](https://github.com/WilmerWass/WassControlSys/releases/download/v1.1.7/WassControlSys_v1.1.7_Normal.zip)
   - **Descargar .NET 8.0 Desktop Runtime:** [Aquí](https://dotnet.microsoft.com/download/dotnet/8.0)
+  - **Descarga Directa (Versión Normal):** [Mejor Rendimiento](https://github.com/WilmerWass/WPC-SutilBox/releases/download/v1.1.8/WassControlSys_v1.1.8_Normal.zip)
+
+- Entre a [Lanzamientos Oficiales](https://github.com/WilmerWass/WPC-SutilBox/releases) y obtenga más detalles de cada versión.
 
 ### Instalación
 
-1.  Descargue el archivo `.zip` de la versión elegida.
-2.  Descomprima el archivo en una carpeta de su elección.
-3.  Ejecute `WassControlSys.exe` o `SUTILBOX.exe` (se recomienda "Ejecutar como administrador" para acceso completo a las funciones).
+1. Descargue el archivo `.zip` de la versión elegida.
+2. Descomprima el archivo en una carpeta de su elección.
+3. Ejecute `Wpc_SutilBox.exe` (se recomienda "Ejecutar como administrador" para acceso completo a las funciones).
 
 ---
 
@@ -110,8 +111,8 @@ Si desea compilar el proyecto desde el código fuente:
 
 ```bash
 # 1. Clonar el repositorio
-git clone https://github.com/WilmerWass/WassControlSys.git
-cd WassControlSys
+git clone [https://github.com/WilmerWass/WPC-SutilBox.git](https://github.com/WilmerWass/WPC-SutilBox.git)
+cd WPC-SutilBox
 
 # 2. Restaurar dependencias
 dotnet restore
@@ -121,18 +122,15 @@ dotnet build
 
 # 4. Ejecutar
 dotnet run
+
 ```
-
-Consulte el archivo [CONTRIBUTING.md](CONTRIBUTING.md) para guías detalladas sobre cómo colaborar.
-
----
 
 ## 📖 Documentación Técnica
 
 Para desarrolladores interesados en la estructura interna:
 
-- **[Arquitectura](docs/ARCHITECTURE.md)**: Visión general de MVVM, Inyección de Dependencias y organización del código.
-- **[Changelog](CHANGELOG.md)**: Historial de versiones y cambios.
+- **Arquitectura**: Visión general de MVVM, Inyección de Dependencias y organización del código.
+- **Changelog**: Historial de versiones y cambios.
 
 ---
 
@@ -144,12 +142,16 @@ Este software realiza modificaciones en el sistema operativo. Aunque ha sido pro
 
 ## 📄 Licencia
 
-Este proyecto está licenciado bajo la Licencia **MIT**. Consulte el archivo [LICENSE](LICENSE) para más detalles.
-Copyright © 2025 **WilmerWass**.
+Este proyecto está licenciado bajo la Licencia **MIT**. Consulte el archivo [LICENSE](LICENSE) para más detalles.  
+Copyright © 2026 **WilmerWass**.
 
 ---
 
-<div align="center">
-Hecho con ❤️ por <b>WilmerWass</b> usando .NET 8 y WPF<br>
-<b>WPC SUTILBOX</b> — Potencia Técnica con Sutileza Operacional
-</div>
+## 🤝 ¡Colabora con el Proyecto!
+
+Este es un proyecto de código abierto y toda ayuda es valiosa, especialmente durante esta etapa de transición y depuración de la versión beta.
+
+Puedes colaborar de las siguientes maneras:
+
+* **Reportando errores (Issues):** Si encuentras fallos en la interfaz o comportamientos extraños, abre un issue detallando el problema.
+* **Enviando mejoras (Pull Requests):** Si sabes C# / WPF y quieres proponer correcciones o nuevas características, haz un fork del repositorio y envía tu PR.
