@@ -1,4 +1,4 @@
-namespace WassControlSys.Models
+﻿namespace Wpc_SutilBox.Models
 {
     public class SystemUsage
     {
@@ -17,3 +17,4 @@ namespace WassControlSys.Models
         public List<DiskPerformanceInfo> DiskPerformanceInfos { get; set; } = new();
     }
 }
+

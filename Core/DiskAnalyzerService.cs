@@ -1,11 +1,11 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using WassControlSys.Models;
+using Wpc_SutilBox.Models;
 
-namespace WassControlSys.Core
+namespace Wpc_SutilBox.Core
 {
     public class DiskAnalyzerService : IDiskAnalyzerService
     {
@@ -73,7 +73,7 @@ namespace WassControlSys.Core
                 {
                     result.Add(new FolderSizeInfo
                     {
-                        Path = "[Archivos en la raíz]",
+                        Path = "[Archivos en la raÃ­z]",
                         SizeBytes = rootFilesSize,
                         FormattedSize = FormatSize(rootFilesSize)
                     });
@@ -178,11 +178,11 @@ namespace WassControlSys.Core
                 {
                     if (!Directory.Exists(path)) return result;
 
-                    // Usar el método robusto para enumerar archivos
+                    // Usar el mÃ©todo robusto para enumerar archivos
                     var files = EnumerateFilesAndHandleAccessDenied(path)
                                   .Where(f => f.Length >= minSizeInBytes)
                                   .OrderByDescending(f => f.Length)
-                                  .Take(50); // Limitar a los 50 más grandes para rendimiento
+                                  .Take(50); // Limitar a los 50 mÃ¡s grandes para rendimiento
 
                     foreach (var file in files)
                     {
@@ -215,3 +215,4 @@ namespace WassControlSys.Core
         }
     }
 }
+

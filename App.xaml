@@ -1,8 +1,8 @@
-<Application x:Class="WassControlSys.App"
+﻿<Application x:Class="Wpc_SutilBox.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:WassControlSys"
-             xmlns:core="clr-namespace:WassControlSys.Core"
+             xmlns:local="clr-namespace:Wpc_SutilBox"
+             xmlns:core="clr-namespace:Wpc_SutilBox.Core"
              xmlns:System="clr-namespace:System;assembly=System.Runtime">
 
     <Application.Resources>

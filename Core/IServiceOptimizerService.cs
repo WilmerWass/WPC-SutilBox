@@ -1,8 +1,8 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using WassControlSys.Models;
+using Wpc_SutilBox.Models;
 
-namespace WassControlSys.Core
+namespace Wpc_SutilBox.Core
 {
     public interface IServiceOptimizerService
     {
@@ -11,8 +11,9 @@ namespace WassControlSys.Core
         Task<bool> StopServiceAsync(string serviceName);
         Task<bool> SetServiceStartTypeAsync(string serviceName, ServiceStartType startType);
         
-        // Funcionalidad de perfiles (a implementar más tarde)
+        // Funcionalidad de perfiles (a implementar mÃ¡s tarde)
         // Task<IEnumerable<ServiceProfile>> GetAvailableProfilesAsync();
         // Task<bool> ApplyProfileAsync(ServiceProfile profile);
     }
 }
+

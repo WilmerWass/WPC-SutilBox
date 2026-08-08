@@ -1,8 +1,8 @@
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using WassControlSys.Models;
+using Wpc_SutilBox.Models;
 
-namespace WassControlSys.Core
+namespace Wpc_SutilBox.Core
 {
     public interface IWingetService
     {
@@ -11,3 +11,4 @@ namespace WassControlSys.Core
         Task<bool> UpdateAllAppsAsync(CancellationToken ct = default);
     }
 }
+

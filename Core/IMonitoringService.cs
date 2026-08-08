@@ -1,7 +1,7 @@
-using System;
-using WassControlSys.Models;
+﻿using System;
+using Wpc_SutilBox.Models;
 
-namespace WassControlSys.Core
+namespace Wpc_SutilBox.Core
 {
     public interface IMonitoringService : IDisposable
     {
@@ -9,3 +9,4 @@ namespace WassControlSys.Core
         TimeSpan GetIdleTime();
     }
 }
+

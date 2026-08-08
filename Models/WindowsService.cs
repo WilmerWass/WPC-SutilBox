@@ -1,4 +1,4 @@
-namespace WassControlSys.Models
+﻿namespace Wpc_SutilBox.Models
 {
     public class WindowsService
     {
@@ -9,7 +9,7 @@ namespace WassControlSys.Models
         public ServiceStartType StartType { get; set; }
         public bool CanBeStopped { get; set; }
         public bool CanBePaused { get; set; }
-        public string RecommendedAction { get; set; } = string.Empty; // por ejemplo, "Mantener Automático", "Establecer en Manual", "Deshabilitar"
+        public string RecommendedAction { get; set; } = string.Empty; // por ejemplo, "Mantener AutomÃ¡tico", "Establecer en Manual", "Deshabilitar"
         
         public bool IsRunning => Status == ServiceStatus.Running;
     }
@@ -37,3 +37,4 @@ namespace WassControlSys.Models
         Unknown
     }
 }
+

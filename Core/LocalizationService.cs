@@ -1,8 +1,8 @@
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace WassControlSys.Core
+namespace Wpc_SutilBox.Core
 {
     public class LocalizationService : ILocalizationService
     {
@@ -47,3 +47,4 @@ namespace WassControlSys.Core
         }
     }
 }
+

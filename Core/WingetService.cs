@@ -1,11 +1,11 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using WassControlSys.Models;
+using Wpc_SutilBox.Models;
 
-namespace WassControlSys.Core
+namespace Wpc_SutilBox.Core
 {
     public class WingetService : IWingetService
     {
@@ -244,3 +244,4 @@ namespace WassControlSys.Core
         }
     }
 }
+

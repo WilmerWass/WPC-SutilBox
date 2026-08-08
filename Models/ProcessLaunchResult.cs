@@ -1,6 +1,6 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
-namespace WassControlSys.Models
+namespace Wpc_SutilBox.Models
 {
     public class ProcessLaunchResult
     {
@@ -21,3 +21,4 @@ namespace WassControlSys.Models
         }
     }
 }
+

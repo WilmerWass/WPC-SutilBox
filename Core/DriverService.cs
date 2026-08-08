@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Management;
 
-namespace WassControlSys.Core
+namespace Wpc_SutilBox.Core
 {
     public class DriverService : IDriverService
     {
@@ -149,3 +149,4 @@ namespace WassControlSys.Core
         }
     }
 }
+

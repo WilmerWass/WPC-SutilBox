@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace WassControlSys.Core
+namespace Wpc_SutilBox.Core
 {
     public class StringToColorConverter : IValueConverter
     {
@@ -29,3 +29,4 @@ namespace WassControlSys.Core
         }
     }
 }
+

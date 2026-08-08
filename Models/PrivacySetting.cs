@@ -1,4 +1,4 @@
-namespace WassControlSys.Models
+﻿namespace Wpc_SutilBox.Models
 {
     public class PrivacySetting
     {
@@ -23,3 +23,4 @@ namespace WassControlSys.Models
         Other
     }
 }
+

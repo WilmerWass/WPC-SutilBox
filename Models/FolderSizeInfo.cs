@@ -1,8 +1,8 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace WassControlSys.Models
+namespace Wpc_SutilBox.Models
 {
     public class FolderSizeInfo : INotifyPropertyChanged
     {
@@ -25,3 +25,4 @@ namespace WassControlSys.Models
         }
     }
 }
+

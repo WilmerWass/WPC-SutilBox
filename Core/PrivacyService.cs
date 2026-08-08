@@ -1,10 +1,10 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Win32;
-using WassControlSys.Models;
+using Wpc_SutilBox.Models;
 
-namespace WassControlSys.Core
+namespace Wpc_SutilBox.Core
 {
     public class PrivacyService : IPrivacyService
     {
@@ -151,3 +151,4 @@ namespace WassControlSys.Core
         }
     }
 }
+

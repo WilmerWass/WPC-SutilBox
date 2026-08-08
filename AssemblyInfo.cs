@@ -1,4 +1,4 @@
-using System.Windows;
+﻿using System.Windows;
 
 [assembly:ThemeInfo(
     ResourceDictionaryLocation.None,            //donde se encuentran los diccionarios de recursos específicos del tema
@@ -8,3 +8,4 @@ using System.Windows;
                                                 //(utilizado si un recurso no se encuentra en la página,
                                                 // aplicación, o cualquier diccionario de recursos específicos del tema)
 )]
+

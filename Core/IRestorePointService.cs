@@ -1,6 +1,6 @@
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
-namespace WassControlSys.Core
+namespace Wpc_SutilBox.Core
 {
     public interface IRestorePointService
     {
@@ -8,3 +8,4 @@ namespace WassControlSys.Core
         Task<(string Name, DateTime? Date)> GetLastRestorePointAsync();
     }
 }
+

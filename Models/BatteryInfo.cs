@@ -1,4 +1,4 @@
-namespace WassControlSys.Models
+﻿namespace Wpc_SutilBox.Models
 {
     public class BatteryInfo
     {
@@ -10,3 +10,4 @@ namespace WassControlSys.Models
         public bool IsPresent { get; set; }
     }
 }
+

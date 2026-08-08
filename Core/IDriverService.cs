@@ -1,7 +1,7 @@
-using System;
+﻿using System;
 using System.Threading.Tasks;
 
-namespace WassControlSys.Core
+namespace Wpc_SutilBox.Core
 {
     public interface IDriverService
     {
@@ -17,3 +17,4 @@ namespace WassControlSys.Core
         public string ErrorDescription { get; set; } = "";
     }
 }
+

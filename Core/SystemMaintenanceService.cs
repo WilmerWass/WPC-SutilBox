@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -6,9 +6,9 @@ using System.Linq;
 using System.Security.Principal;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices; // Interopservices
-using WassControlSys.Models;
+using Wpc_SutilBox.Models;
 
-namespace WassControlSys.Core
+namespace Wpc_SutilBox.Core
 {
     public class SystemMaintenanceService : ISystemMaintenanceService
     {
@@ -458,3 +458,4 @@ namespace WassControlSys.Core
         }
     }
 }
+

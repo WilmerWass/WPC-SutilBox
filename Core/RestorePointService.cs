@@ -1,8 +1,8 @@
-using System;
+﻿using System;
 using System.Management;
 using System.Threading.Tasks;
 
-namespace WassControlSys.Core
+namespace Wpc_SutilBox.Core
 {
     public class RestorePointService : IRestorePointService
     {
@@ -119,3 +119,4 @@ namespace WassControlSys.Core
         }
     }
 }
+

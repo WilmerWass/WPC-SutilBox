@@ -1,8 +1,8 @@
-using System;
+﻿using System;
 using System.Globalization;
 using System.Windows.Data;
 
-namespace WassControlSys.Core
+namespace Wpc_SutilBox.Core
 {
     public class BooleanToStringConverter : IValueConverter
     {
@@ -25,3 +25,4 @@ namespace WassControlSys.Core
         }
     }
 }
+

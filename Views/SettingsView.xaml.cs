@@ -1,6 +1,6 @@
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 
-namespace WassControlSys.Views
+namespace Wpc_SutilBox.Views
 {
     public partial class SettingsView : UserControl
     {
@@ -10,3 +10,4 @@ namespace WassControlSys.Views
         }
     }
 }
+

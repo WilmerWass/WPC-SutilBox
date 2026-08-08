@@ -1,6 +1,6 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace WassControlSys.Models
+namespace Wpc_SutilBox.Models
 {
     public class ProfileConfig
     {
@@ -21,7 +21,7 @@ namespace WassControlSys.Models
         public bool OptimizeVisualEffects { get; set; } = false; // Ajustar para rendimiento
         public bool DisableNetworkThrottling { get; set; } = false; // Para gaming (Multimedia Class Scheduler)
         
-        // Energía
+        // EnergÃ­a
         public string PowerPlanGuid { get; set; } = "381b4222-f694-41f0-9685-ff5bb260df2e"; // Equilibrado
 
         // Auto-Boost (Nombres de ejecutables que activan este perfil)
@@ -67,3 +67,4 @@ namespace WassControlSys.Models
         };
     }
 }
+

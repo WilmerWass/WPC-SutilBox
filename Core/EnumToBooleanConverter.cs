@@ -1,11 +1,11 @@
-using System;
+﻿using System;
 using System.Globalization;
 using System.Windows.Data;
 using System.Windows;
 
 #nullable enable
 
-namespace WassControlSys.Core
+namespace Wpc_SutilBox.Core
 {
     public class EnumToBooleanConverter : IValueConverter
     {
@@ -40,3 +40,4 @@ namespace WassControlSys.Core
         }
     }
 }
+

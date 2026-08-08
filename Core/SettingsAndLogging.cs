@@ -1,10 +1,10 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
-using WassControlSys.Models;
+using Wpc_SutilBox.Models;
 
-namespace WassControlSys.Core
+namespace Wpc_SutilBox.Core
 {
     public interface ISettingsService
     {
@@ -25,7 +25,7 @@ namespace WassControlSys.Core
         public SettingsService(string? appFolderName = null)
         {
             string appData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            _dir = Path.Combine(appData, appFolderName ?? "WassControlSys");
+            _dir = Path.Combine(appData, appFolderName ?? "Wpc_SutilBox");
             _file = Path.Combine(_dir, "settings.json");
         }
 
@@ -77,7 +77,7 @@ namespace WassControlSys.Core
         public FileLogService(string? appFolderName = null)
         {
             string appData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            string dir = Path.Combine(appData, appFolderName ?? "WassControlSys", "logs");
+            string dir = Path.Combine(appData, appFolderName ?? "Wpc_SutilBox", "logs");
             Directory.CreateDirectory(dir);
             string stamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
             _logFile = Path.Combine(dir, $"session_{stamp}.log");
@@ -106,7 +106,7 @@ namespace WassControlSys.Core
     }
 }
 
-namespace WassControlSys.Models
+namespace Wpc_SutilBox.Models
 {
     public class SystemSnapshot
     {
@@ -165,3 +165,4 @@ namespace WassControlSys.Models
         }
     }
 }
+

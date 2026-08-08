@@ -1,4 +1,4 @@
-<UserControl x:Class="WassControlSys.Views.SettingsView"
+﻿<UserControl x:Class="Wpc_SutilBox.Views.SettingsView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -8,7 +8,7 @@
     <ScrollViewer Style="{StaticResource AnimatedViewStyle}">
         <StackPanel Margin="20">
             <TextBlock Text="Configuración del Sistema" Style="{StaticResource HeaderTextStyle}" Margin="0,0,0,10"/>
-            <TextBlock Text="Personaliza el comportamiento y la apariencia de WassControlSys" Style="{StaticResource SubHeaderTextStyle}" Margin="0,0,0,30"/>
+            <TextBlock Text="Personaliza el comportamiento y la apariencia de Wpc_SutilBox" Style="{StaticResource SubHeaderTextStyle}" Margin="0,0,0,30"/>
 
             <!-- Herramientas Avanzadas -->
             <Border Style="{StaticResource AnimatedCardStyle}" Margin="0,0,0,20">

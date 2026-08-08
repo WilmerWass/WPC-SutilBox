@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using System.Windows.Input;
 
 #nullable enable
 
-namespace WassControlSys.Core
+namespace Wpc_SutilBox.Core
 {
     public class RelayCommand : ICommand
     {
@@ -12,9 +12,12 @@ namespace WassControlSys.Core
 
         public event EventHandler? CanExecuteChanged
         {
-            add { CommandManager.RequerySuggested += value; }
-            remove { CommandManager.RequerySuggested -= value; }
+            add => CommandManager.RequerySuggested += value;
+            remove => CommandManager.RequerySuggested -= value;
         }
+
+        public RelayCommand(Action execute, Func<bool>? canExecute = null)
+            : this(_ => execute(), canExecute == null ? null : _ => canExecute()) { }
 
         public RelayCommand(Action<object?> execute, Func<object?, bool>? canExecute = null)
         {
@@ -22,15 +25,9 @@ namespace WassControlSys.Core
             _canExecute = canExecute;
         }
 
-        public bool CanExecute(object? parameter)
-        {
-            return _canExecute == null || _canExecute(parameter);
-        }
+        public bool CanExecute(object? parameter) => _canExecute == null || _canExecute(parameter);
 
-        public void Execute(object? parameter)
-        {
-            _execute(parameter);
-        }
+        public void Execute(object? parameter) => _execute(parameter);
     }
 
     public class RelayCommand<T> : ICommand
@@ -40,8 +37,8 @@ namespace WassControlSys.Core
 
         public event EventHandler? CanExecuteChanged
         {
-            add { CommandManager.RequerySuggested += value; }
-            remove { CommandManager.RequerySuggested -= value; }
+            add => CommandManager.RequerySuggested += value;
+            remove => CommandManager.RequerySuggested -= value;
         }
 
         public RelayCommand(Action<T> execute, Func<T, bool>? canExecute = null)
@@ -52,15 +49,11 @@ namespace WassControlSys.Core
 
         public bool CanExecute(object? parameter)
         {
-            // For a generic command, if the parameter is null, we check if T is a reference type or a nullable value type.
-            // A simple approach is to let the _canExecute handler decide.
             if (_canExecute == null) return true;
             if (parameter == null && typeof(T).IsValueType)
             {
-                // Can't execute with null on a non-nullable value type parameter
                 if (Nullable.GetUnderlyingType(typeof(T)) == null) return false;
             }
-            
             return parameter is T typedParam && _canExecute(typedParam);
         }
 
@@ -70,7 +63,6 @@ namespace WassControlSys.Core
             {
                 _execute(typedParameter);
             }
-            // If parameter is null and T is a reference type, we might want to execute
             else if (parameter == null && !typeof(T).IsValueType)
             {
                 _execute(default(T)!);
@@ -78,3 +70,4 @@ namespace WassControlSys.Core
         }
     }
 }
+

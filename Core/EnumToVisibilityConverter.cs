@@ -1,11 +1,11 @@
-using System;
+﻿using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
 #nullable enable
 
-namespace WassControlSys.Core
+namespace Wpc_SutilBox.Core
 {
     public class EnumToVisibilityConverter : IValueConverter
     {
@@ -44,3 +44,4 @@ namespace WassControlSys.Core
         }
     }
 }
+

@@ -1,13 +1,13 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
-using WassControlSys.Models;
+using Wpc_SutilBox.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace WassControlSys.Core
+namespace Wpc_SutilBox.Core
 {
     public class MonitoringService : IMonitoringService
     {
@@ -307,7 +307,7 @@ namespace WassControlSys.Core
         {
             try
             {
-                // Usar IPGlobalProperties es MUCHO más eficiente que netstat
+                // Usar IPGlobalProperties es MUCHO mÃ¡s eficiente que netstat
                 var properties = System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties();
                 var connections = properties.GetActiveTcpConnections();
                 return connections.Count(c => c.State == System.Net.NetworkInformation.TcpState.Established);
@@ -316,3 +316,4 @@ namespace WassControlSys.Core
         }
     }
 }
+

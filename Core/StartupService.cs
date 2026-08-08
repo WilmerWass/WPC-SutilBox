@@ -1,12 +1,12 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Win32; // Para acceso al Registro
-using WassControlSys.Models;
+using Wpc_SutilBox.Models;
 
-namespace WassControlSys.Core
+namespace Wpc_SutilBox.Core
 {
     public class StartupService : IStartupService
     {
@@ -84,7 +84,7 @@ namespace WassControlSys.Core
 
             foreach (var keyPath in runKeys)
             {
-                // HKLM (Máquina Local) requiere administrador, HKCU (Usuario Actual) no
+                // HKLM (MÃ¡quina Local) requiere administrador, HKCU (Usuario Actual) no
                 // Leyendo de HKLM
                 try
                 {
@@ -101,7 +101,7 @@ namespace WassControlSys.Core
                                     {
                                         Name = valueName,
                                         Path = path,
-                                        IsEnabled = true, // Si está en Run, se considera habilitado
+                                        IsEnabled = true, // Si estÃ¡ en Run, se considera habilitado
                                         Type = StartupItemType.RegistryRun,
                                         SourceKeyPath = keyPath,
                                         IsMachineWide = true,
@@ -133,7 +133,7 @@ namespace WassControlSys.Core
                                     {
                                         Name = valueName,
                                         Path = path,
-                                        IsEnabled = true, // Si está en Run, se considera habilitado
+                                        IsEnabled = true, // Si estÃ¡ en Run, se considera habilitado
                                         Type = StartupItemType.RegistryRun,
                                         SourceKeyPath = keyPath,
                                         IsMachineWide = false,
@@ -210,7 +210,7 @@ namespace WassControlSys.Core
                                 {
                                     Name = Path.GetFileNameWithoutExtension(file),
                                     Path = file,
-                                    IsEnabled = true, // Si está en la carpeta y es un tipo válido, está habilitado
+                                    IsEnabled = true, // Si estÃ¡ en la carpeta y es un tipo vÃ¡lido, estÃ¡ habilitado
                                     Type = StartupItemType.StartupFolder,
                                     SourceKeyPath = path,
                                     IsMachineWide = path.Equals(Environment.GetFolderPath(Environment.SpecialFolder.CommonStartup), StringComparison.OrdinalIgnoreCase),
@@ -281,3 +281,4 @@ namespace WassControlSys.Core
         }
     }
 }
+

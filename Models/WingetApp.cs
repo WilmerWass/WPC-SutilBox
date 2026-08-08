@@ -1,9 +1,9 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 #nullable enable
 
-namespace WassControlSys.Models
+namespace Wpc_SutilBox.Models
 {
     public class WingetApp : INotifyPropertyChanged
     {
@@ -42,3 +42,4 @@ namespace WassControlSys.Models
         }
     }
 }
+

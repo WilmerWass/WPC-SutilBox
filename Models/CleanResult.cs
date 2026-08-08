@@ -1,4 +1,4 @@
-namespace WassControlSys.Models
+﻿namespace Wpc_SutilBox.Models
 {
     public class CleanResult
     {
@@ -29,3 +29,4 @@ namespace WassControlSys.Models
         }
     }
 }
+

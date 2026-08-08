@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using System.Management;
 using Microsoft.Win32;
 using System.Threading.Tasks;
 
-namespace WassControlSys.Core
+namespace Wpc_SutilBox.Core
 {
     public class SecurityStatus
     {
@@ -155,3 +155,4 @@ namespace WassControlSys.Core
         }
     }
 }
+

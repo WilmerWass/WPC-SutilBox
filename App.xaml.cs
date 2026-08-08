@@ -1,17 +1,17 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using Microsoft.Extensions.DependencyInjection;
-using WassControlSys.Core;
-using WassControlSys.ViewModels;
-using System.Drawing; // Re-added
-using System.Windows.Forms; // Re-added
+using Wpc_SutilBox.Core;
+using Wpc_SutilBox.ViewModels;
+using System.Drawing;
+using System.Windows.Forms;
 using Color = System.Windows.Media.Color;
 using ColorConverter = System.Windows.Media.ColorConverter;
-using System.Runtime.InteropServices; // Agregado para P/Invoke
+using System.Runtime.InteropServices;
 
-namespace WassControlSys
+namespace Wpc_SutilBox  
 {
     public partial class App : Application
     {
@@ -23,7 +23,7 @@ namespace WassControlSys
         [DllImport("user32.dll")]
         static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
-        private const int SW_RESTORE = 9; // Restores a minimized window.
+        private const int SW_RESTORE = 9;
         private readonly ServiceProvider? _serviceProvider;
         private NotifyIcon? _notifyIcon;
         private System.Threading.Mutex? _instanceMutex;
@@ -31,23 +31,17 @@ namespace WassControlSys
 
         public App()
         {
-            // Verificar si ya existe una instancia
+            // Verificar instancia única
             bool createdNew;
-            _instanceMutex = new System.Threading.Mutex(true, "WassControlSys_SingleInstance_Mutex", out createdNew);
+            _instanceMutex = new System.Threading.Mutex(true, "Wpc_SutilBox_SingleInstance_Mutex", out createdNew);
             
             if (!createdNew)
             {
-                // Intentar activar la instancia existente antes de cerrar
                 ActivateExistingInstance();
-                
-                // Mostrar un mensaje breve opcional o simplemente salir si logramos activar la otra
-                // MessageBox.Show("WassControlSys ya está en ejecución.", "Instancia Activa", MessageBoxButton.OK, MessageBoxImage.Information);
-                
                 Current.Shutdown();
                 return;
             }
 
-            DispatcherUnhandledException += App_DispatcherUnhandledException;
             var serviceCollection = new ServiceCollection();
             ConfigureServices(serviceCollection);
             _serviceProvider = serviceCollection.BuildServiceProvider();
@@ -74,18 +68,8 @@ namespace WassControlSys
             catch { }
         }
 
-        private void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
-        {
-            var log = _serviceProvider?.GetService<ILogService>();
-            log?.Error("Excepción NO controlada en UI Dispatcher", e.Exception);
-            // Opcional: Mostrar mensaje al usuario
-            // MessageBox.Show($"Error crítico: {e.Exception.Message}", "Error Inesperado", MessageBoxButton.OK, MessageBoxImage.Error);
-            e.Handled = true; // Evitar cierre si es posible, aunque riesgoso
-        }
-
         private void ConfigureServices(IServiceCollection services)
         {
-            // Registrar servicios
             services.AddSingleton<IMonitoringService, MonitoringService>();
             services.AddSingleton<IPerformanceProfileService, PerformanceProfileService>();
             services.AddSingleton<IProcessManagerService, ProcessManagerService>();
@@ -108,63 +92,61 @@ namespace WassControlSys
             services.AddSingleton<IDriverService, DriverService>();
             services.AddSingleton<IDiskAnalyzerService, DiskAnalyzerService>();
 
-            // Registrar ViewModel
             services.AddSingleton<MainViewModel>();
-
-            // Registrar MainWindow
             services.AddTransient<MainWindow>(s => new MainWindow(s.GetRequiredService<ILogService>()));
-
         }
 
         protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
 
+            // Captura errores globales de UI vinculados a tu WriteLog
+            DispatcherUnhandledException += (s, args) =>
+            {
+                MainViewModel.WriteLog("FALLO CRÍTICO EN UI", args.Exception);
+                System.Windows.MessageBox.Show($"Ocurrió un error inesperado: {args.Exception.Message}", "Error Crítico", MessageBoxButton.OK, MessageBoxImage.Error);
+                args.Handled = true;
+            };
+
+            AppDomain.CurrentDomain.UnhandledException += (s, args) =>
+            {
+                if (args.ExceptionObject is Exception ex)
+                {
+                    MainViewModel.WriteLog("FALLO CRÍTICO NO CONTROLADO (Background)", ex);
+                }
+            };
+
             var settings = _serviceProvider!.GetService<ISettingsService>();
             var loc = _serviceProvider!.GetService<ILocalizationService>();
             var log = _serviceProvider!.GetService<ILogService>();
             
-            log?.Info("App starting - Stage: Initialization beginning");
-
             try
             {
                 if (settings != null)
                 {
-                    log?.Info("App starting - Loading settings...");
                     var s = await settings.LoadAsync();
                     if (s != null && loc != null)
                     {
-                        log?.Info($"App starting - Setting language: {s.Language}");
                         await loc.SetLanguageAsync(s.Language);
-                        log?.Info($"App starting - Applying theme and accent color: {s.AccentColor}");
                         ChangeAccentColor(s.AccentColor);
                         ChangeTheme(s.IsDarkMode);
                     }
                 }
-                ValidateContrast(log);
             }
             catch (Exception ex)
             {
-                log?.Error("Error during specific startup initialization", ex);
+                log?.Error("Error durante la inicialización de ajustes", ex);
             }
 
             try
             {
-                log?.Info("App starting - Creating MainWindow...");
                 var mainWindow = _serviceProvider!.GetRequiredService<MainWindow>();
                 mainWindow.DataContext = _serviceProvider!.GetRequiredService<MainViewModel>();
                 this.MainWindow = mainWindow;
 
-                log?.Info("App starting - Setting up Tray Icon...");
                 SetupTrayIcon();
-                
-                log?.Info("App starting - Showing MainWindow...");
                 mainWindow.Show();
-                
-                // Asegurar que esté al frente
                 ShowMainWindow();
-                
-                log?.Info("App starting - Startup sequence completed successfully.");
             }
             catch (Exception ex)
             {
@@ -179,14 +161,11 @@ namespace WassControlSys
             try
             {
                 _notifyIcon = new NotifyIcon();
-                
-                // Intentar extraer el icono del ejecutable
                 try
                 {
                     string assemblyLocation = System.Diagnostics.Process.GetCurrentProcess().MainModule?.FileName ?? "";
                     if (string.IsNullOrEmpty(assemblyLocation) || !System.IO.File.Exists(assemblyLocation))
                     {
-                        // Fallback a icono de aplicación del sistema
                         _notifyIcon.Icon = SystemIcons.Application;
                     }
                     else
@@ -199,14 +178,13 @@ namespace WassControlSys
                     _notifyIcon.Icon = SystemIcons.Application;
                 }
 
-                _notifyIcon.Text = "WassControlSys";
+                _notifyIcon.Text = "Wpc_SutilBox";
                 _notifyIcon.Visible = true;
-                
                 _notifyIcon.DoubleClick += (s, e) => ShowMainWindow();
 
                 var contextMenu = new ContextMenuStrip();
-                contextMenu.Items.Add("🚀 Optimizar PC", null, (s, e) => (MainWindow?.DataContext as MainViewModel)?.PcBoostCommand.Execute(null));
-                contextMenu.Items.Add("🧹 Limpiar RAM", null, (s, e) => (MainWindow?.DataContext as MainViewModel)?.OptimizeRamCommand.Execute(null));
+                contextMenu.Items.Add("🚀 Optimizar PC", null, (s, e) => (MainWindow?.DataContext as MainViewModel)?.PcBoostCommand?.Execute(null));
+                contextMenu.Items.Add("🧹 Limpiar RAM", null, (s, e) => (MainWindow?.DataContext as MainViewModel)?.OptimizeRamCommand?.Execute(null));
                 contextMenu.Items.Add("-");
                 
                 var navMenu = new ToolStripMenuItem("Navegar a...");
@@ -243,10 +221,8 @@ namespace WassControlSys
                 {
                     ShowWindow(new System.Windows.Interop.WindowInteropHelper(MainWindow).Handle, SW_RESTORE);
                 }
-                
                 MainWindow.Show();
                 SetForegroundWindow(new System.Windows.Interop.WindowInteropHelper(MainWindow).Handle);
-                // No llamar Activate() ni Focus() de WPF aquí
             }
         }
 
@@ -263,11 +239,8 @@ namespace WassControlSys
 
         protected override void OnExit(ExitEventArgs e)
         {
-            // Intento final de restauración rápida si no se hizo por ShutdownApp
             if (!IsShuttingDown && MainWindow?.DataContext is MainViewModel vm)
             {
-                // No podemos usar await aquí de forma sencilla sin bloquear el hilo, 
-                // pero si IsShuttingDown es falso, es que se cerró de otra forma (ej. Alt+F4 sin tray)
                 Task.Run(async () => await vm.PrepareForShutdownAsync()).Wait(3000);
             }
 
@@ -277,45 +250,6 @@ namespace WassControlSys
             base.OnExit(e);
         }
 
-        private void ValidateContrast(ILogService? log)
-        {
-            try
-            {
-                var res = Current.Resources;
-                var surface = (Color)res["SurfaceColor"];
-                var text = (Color)res["TextColor"];
-                var secondary = (Color)res["SecondaryTextColor"];
-                double r1 = ContrastRatio(surface, text);
-                double r2 = ContrastRatio(surface, secondary);
-                if (r1 < 4.5 || r2 < 4.5)
-                {
-                    log?.Warn($"Contraste inferior a WCAG AA. Surface/Text={r1:F2}, Surface/Secondary={r2:F2}");
-                }
-                else
-                {
-                    log?.Info($"Contraste verificado. Surface/Text={r1:F2}, Surface/Secondary={r2:F2}");
-                }
-            }
-            catch { }
-        }
-
-        private static double ContrastRatio(Color bg, Color fg)
-        {
-            static double L(Color c)
-            {
-                double srgb(double ch) => ch <= 0.03928 ? ch / 12.92 : Math.Pow((ch + 0.055) / 1.055, 2.4);
-                double r = srgb(c.R / 255.0);
-                double g = srgb(c.G / 255.0);
-                double b = srgb(c.B / 255.0);
-                return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-            }
-            double l1 = L(fg);
-            double l2 = L(bg);
-            double hi = Math.Max(l1, l2);
-            double lo = Math.Min(l1, l2);
-            return (hi + 0.05) / (lo + 0.05);
-        }
-
         public void ChangeAccentColor(string hexColor)
         {
             try
@@ -323,7 +257,6 @@ namespace WassControlSys
                 var color = (Color)ColorConverter.ConvertFromString(hexColor);
                 var solidBrush = new SolidColorBrush(color);
                 
-                // Cálculo simple para el efecto hover
                 byte r = (byte)Math.Min(255, color.R + 30);
                 byte g = (byte)Math.Min(255, color.G + 30);
                 byte b = (byte)Math.Min(255, color.B + 30);
@@ -335,8 +268,7 @@ namespace WassControlSys
                 Resources["PrimaryHoverColor"] = hoverColor;
                 Resources["PrimaryHoverBrush"] = hoverBrush;
                 
-                // Selección semitransparente basada en el color de acento
-                var selectionColor = Color.FromArgb(40, color.R, color.G, color.B); // alpha ~16%
+                var selectionColor = Color.FromArgb(40, color.R, color.G, color.B);
                 Resources["SelectionColor"] = selectionColor;
                 Resources["SelectionBrush"] = new SolidColorBrush(selectionColor);
             }
@@ -347,32 +279,28 @@ namespace WassControlSys
         {
             try
             {
-                // Preserve non-theme dictionaries (like language files)
                 var nonThemeDictionaries = Resources.MergedDictionaries
                     .Where(d => d.Source == null || !d.Source.OriginalString.Contains("Theme."))
                     .ToList();
 
                 Resources.MergedDictionaries.Clear();
 
-                // Re-add the non-theme dictionaries
                 foreach (var dict in nonThemeDictionaries)
                 {
                     Resources.MergedDictionaries.Add(dict);
                 }
 
-                // Add the new theme dictionary
                 var themeName = isDark ? "Theme.Dark.xaml" : "Theme.Light.xaml";
                 var uri = new Uri($"Resources/{themeName}", UriKind.Relative);
                 Resources.MergedDictionaries.Add(new ResourceDictionary { Source = uri });
 
-                // Ajustar colores dependientes del tema (hover de superficie)
                 if (isDark)
                 {
                     Resources["SurfaceHoverColor"] = (Color)ColorConverter.ConvertFromString("#2A2A2A");
                 }
                 else
                 {
-                    Resources["SurfaceHoverColor"] = (Color)ColorConverter.ConvertFromString("#E5E7EB"); // tailwind gray-200 aprox
+                    Resources["SurfaceHoverColor"] = (Color)ColorConverter.ConvertFromString("#E5E7EB");
                 }
                 Resources["SurfaceHoverBrush"] = new SolidColorBrush((Color)Resources["SurfaceHoverColor"]);
             }

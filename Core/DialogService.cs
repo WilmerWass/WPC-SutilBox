@@ -1,7 +1,7 @@
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Windows; // Para MessageBox
 
-namespace WassControlSys.Core
+namespace Wpc_SutilBox.Core
 {
     public class DialogService : IDialogService
     {
@@ -18,3 +18,4 @@ namespace WassControlSys.Core
         }
     }
 }
+

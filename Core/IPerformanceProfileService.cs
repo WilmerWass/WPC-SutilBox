@@ -1,7 +1,7 @@
-using System.Threading.Tasks;
-using WassControlSys.Models;
+﻿using System.Threading.Tasks;
+using Wpc_SutilBox.Models;
 
-namespace WassControlSys.Core
+namespace Wpc_SutilBox.Core
 {
     public interface IPerformanceProfileService
     {
@@ -9,3 +9,4 @@ namespace WassControlSys.Core
         Task<ApplyProfileResult> RestoreOriginalStateAsync();
     }
 }
+

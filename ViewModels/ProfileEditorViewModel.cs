@@ -1,17 +1,17 @@
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using WassControlSys.Core;
-using WassControlSys.Models;
+using Wpc_SutilBox.Core;
+using Wpc_SutilBox.Models;
+using Wpc_SutilBox.Core;
+using Wpc_SutilBox.Models;
 
 #nullable enable
 
-namespace WassControlSys.ViewModels
+namespace Wpc_SutilBox.ViewModels
 {
     public class ProfileEditorViewModel : INotifyPropertyChanged
     {
@@ -320,3 +320,4 @@ namespace WassControlSys.ViewModels
         }
     }
 }
+

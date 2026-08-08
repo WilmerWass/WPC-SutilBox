@@ -1,8 +1,8 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using WassControlSys.Models;
+using Wpc_SutilBox.Models;
 
-namespace WassControlSys.Core
+namespace Wpc_SutilBox.Core
 {
     public interface IStartupService
     {
@@ -11,3 +11,4 @@ namespace WassControlSys.Core
         Task<bool> DisableStartupItemAsync(StartupItem item);
     }
 }
+

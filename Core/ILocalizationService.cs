@@ -1,5 +1,5 @@
-using System.Threading.Tasks;
-namespace WassControlSys.Core
+﻿using System.Threading.Tasks;
+namespace Wpc_SutilBox.Core
 {
     public interface ILocalizationService
     {
@@ -7,3 +7,4 @@ namespace WassControlSys.Core
         string CurrentLanguage { get; }
     }
 }
+

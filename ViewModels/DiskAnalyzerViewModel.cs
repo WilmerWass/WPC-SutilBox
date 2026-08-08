@@ -1,11 +1,11 @@
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using WassControlSys.Models;
+using Wpc_SutilBox.Models;
 
 #nullable enable
 
-namespace WassControlSys.ViewModels
+namespace Wpc_SutilBox.ViewModels
 {
     public class DiskAnalyzerViewModel : INotifyPropertyChanged
     {
@@ -39,3 +39,4 @@ namespace WassControlSys.ViewModels
         }
     }
 }
+

@@ -1,4 +1,4 @@
-namespace WassControlSys.Models
+﻿namespace Wpc_SutilBox.Models
 {
     public enum AppSection
     {
@@ -13,3 +13,4 @@ namespace WassControlSys.Models
         EditorPerfiles
     }
 }
+

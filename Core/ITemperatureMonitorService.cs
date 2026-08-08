@@ -1,10 +1,9 @@
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
-namespace WassControlSys.Core
+namespace Wpc_SutilBox.Core
 {
     public interface ITemperatureMonitorService
     {
         Task<double?> GetCpuTemperatureCAsync();
     }
 }
-

@@ -1,9 +1,9 @@
-<UserControl x:Class="WassControlSys.Views.ProfileEditorView"
+﻿<UserControl x:Class="Wpc_SutilBox.Views.ProfileEditorView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:models="clr-namespace:WassControlSys.Models"
+             xmlns:models="clr-namespace:Wpc_SutilBox.Models"
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="1000">
     <Grid Style="{DynamicResource AnimatedViewStyle}" Margin="20" DataContext="{Binding ProfileEditor}">
@@ -211,7 +211,7 @@
                         <TextBlock Text="Plan de Energía Preferido:" Foreground="#888" FontSize="11" Margin="0,0,0,10"/>
                         <ComboBox SelectedValuePath="Tag" SelectedValue="{Binding EditingConfig.PowerPlanGuid}" Height="40">
                             <ComboBoxItem Content="Equilibrado (Windows)" Tag="381b4222-f694-41f0-9685-ff5bb260df2e"/>
-                            <ComboBoxItem Content="⭐ WassControl Alto Rendimiento" Tag="8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c"/>
+                            <ComboBoxItem Content="⭐ WPC-SutilBox Alto Rendimiento" Tag="8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c"/>
                             <ComboBoxItem Content="Ahorro de Energía" Tag="a1841308-3541-4fab-bc81-f71556f20b4a"/>
                         </ComboBox>
                         <TextBlock Text="* Se activará automáticamente al habilitar este modo." Foreground="#666" FontSize="10" Margin="0,10,0,0" FontStyle="Italic"/>

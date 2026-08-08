@@ -1,17 +1,10 @@
-﻿using System.Text;
+﻿using System;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using WassControlSys.ViewModels;
-using WassControlSys.Core;
+using Wpc_SutilBox.Core;
+using Wpc_SutilBox.Core;
+using Wpc_SutilBox.ViewModels;
 
-namespace WassControlSys;
+namespace Wpc_SutilBox;
 
 /// <summary>
 /// Lógica de interacción para MainWindow.xaml
@@ -90,7 +83,7 @@ public partial class MainWindow : Window
         bool minimize = true; // Default
         if (this.DataContext is MainViewModel vm)
         {
-            minimize = vm.MinimizeToTray;
+            vm.MinimizeToTray();
         }
 
         if (minimize)

@@ -1,8 +1,8 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
-namespace WassControlSys.Models
+namespace Wpc_SutilBox.Models
 {
     public enum PerformanceMode
     {
@@ -20,9 +20,9 @@ namespace WassControlSys.Models
     }
 }
 
-namespace WassControlSys.Core
+namespace Wpc_SutilBox.Core
 {
-    using WassControlSys.Models;
+    using Wpc_SutilBox.Models;
 
     public class PerformanceProfileService : IPerformanceProfileService
     {
@@ -354,3 +354,4 @@ namespace WassControlSys.Core
         }
     }
 }
+

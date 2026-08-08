@@ -1,11 +1,11 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceProcess; // Para ServiceController
 using System.Threading.Tasks;
-using WassControlSys.Models;
+using Wpc_SutilBox.Models;
 
-namespace WassControlSys.Core
+namespace Wpc_SutilBox.Core
 {
     public class ServiceOptimizerService : IServiceOptimizerService
     {
@@ -206,3 +206,4 @@ namespace WassControlSys.Core
         }
     }
 }
+

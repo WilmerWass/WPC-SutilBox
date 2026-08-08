@@ -1,7 +1,7 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace WassControlSys.Models
+namespace Wpc_SutilBox.Models
 {
     public class BloatwareApp : INotifyPropertyChanged
     {
@@ -61,3 +61,4 @@ namespace WassControlSys.Models
         }
     }
 }
+
