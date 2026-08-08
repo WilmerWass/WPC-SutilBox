@@ -227,6 +227,21 @@ WPC-SutilBox/
 - 📚 [Estándares de Código](docs/CODIGO_ESTANDARES.md)
 - 🧪 [Guía de Testing](docs/TESTING.md)
 
+### 📚 Arquitectura y Diseño
+- 🏗️ [Arquitectura del Sistema](./docs/ARCHITECTURE.md)
+- 🎯 [Blueprint del Producto](./docs/PRODUCT_BLUEPRINT_ES.md)
+- 🚀 [Plan v1.2.0 Beta 1](./docs/PLAN_V1.2.0_BETA1.md)
+- 🤝 [Guía de Contribución](./CONTRIBUTING.md)
+
+### 📋 Historial de Cambios y Notas de Versión
+- 📜 [Changelog General](./release_versiones/CHANGELOG.md)
+- 🔖 [Notas de Versión v1.1.7](./release_versiones/RELEASE_NOTES_v1.1.7.md)
+- 🔖 [Notas de Versión v1.1.6](./release_versiones/RELEASE_NOTES_v1.1.6.md)
+- 🔖 [Notas de Versión v1.1.5](./release_versiones/RELEASE_NOTES_v1.1.5.md)
+- 🔖 [Notas de Versión v1.1.4](./release_versiones/RELEASE_NOTES_v1.1.4.md)
+- 🔖 [Notas de Versión v1.1.2](./release_versiones/RELEASE_NOTES_v1.1.2.md)
+- 🔖 [Notas de Versión v1.1.1](./release_versiones/RELEASE_NOTES_v1.1.1.md)
+
 ---
 
 ## ❓ Preguntas Frecuentes
