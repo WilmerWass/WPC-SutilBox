@@ -103,7 +103,6 @@
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
 
-                        <!-- Selector de Disco -->
                         <!-- Selector de Disco y Refrescar -->
                         <Border Style="{StaticResource AnimatedCardStyle}" Margin="0,0,0,20">
                             <Grid>
@@ -121,7 +120,7 @@
                                         <ComboBox.ItemTemplate>
                                             <DataTemplate>
                                                 <StackPanel Orientation="Horizontal">
-                                                    <TextBlock Text="💾"  Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                                    <TextBlock Text="💾" Margin="0,0,8,0" VerticalAlignment="Center"/>
                                                     <TextBlock Text="{Binding Label, StringFormat='{}{0} '}" FontWeight="Bold"/>
                                                     <TextBlock Text="{Binding DriveLetter, StringFormat='({0})'}" Foreground="{DynamicResource SecondaryTextBrush}"/>
                                                 </StackPanel>
@@ -154,10 +153,7 @@
                                                 <!-- Gráfico de Uso (Izquierda) -->
                                                 <StackPanel Grid.Column="0" Margin="0,0,20,0" VerticalAlignment="Center">
                                                     <Grid Height="120" Width="120">
-                                                        <!-- Fondo -->
                                                         <Ellipse Stroke="#333" StrokeThickness="10"/>
-                                                        <!-- Progreso (Simulado con Arc o simplificado con texto central por ahora) -->
-                                                        <!-- Nota: Sin librería de gráficos, usamos texto y barra abajo -->
                                                         <TextBlock Text="{Binding UsagePercentage, StringFormat={}{0:F0}%, Mode=OneWay}" 
                                                                    Foreground="{DynamicResource PrimaryBrush}" 
                                                                    FontSize="28" FontWeight="Bold" 

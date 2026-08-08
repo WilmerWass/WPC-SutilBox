@@ -2,7 +2,9 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:WassControlSys"
-             xmlns:core="clr-namespace:WassControlSys.Core">
+             xmlns:core="clr-namespace:WassControlSys.Core"
+             xmlns:System="clr-namespace:System;assembly=System.Runtime">
+
     <Application.Resources>
         <!-- Idioma por defecto -->
         <ResourceDictionary>
@@ -36,6 +38,13 @@
             <Color x:Key="DangerColor">#EF4444</Color>
             <Color x:Key="InfoColor">#3B82F6</Color>
 
+            <System:Double x:Key="SpacingXS">4</System:Double>
+            <System:Double x:Key="SpacingSM">8</System:Double>
+            <System:Double x:Key="SpacingMD">12</System:Double>
+            <System:Double x:Key="SpacingLG">16</System:Double>
+            <System:Double x:Key="SpacingXL">24</System:Double>
+            <System:Double x:Key="SpacingXXL">32</System:Double>
+
             <!-- Design System Brushes -->
             <SolidColorBrush x:Key="BackgroundBrush" Color="{DynamicResource BackgroundColor}"/>
             <SolidColorBrush x:Key="SurfaceElevatedBrush" Color="{DynamicResource SurfaceElevatedColor}"/>
@@ -54,7 +63,6 @@
             <!-- Pinceles Dinámicos -->
             <SolidColorBrush x:Key="PrimaryBrush" Color="{DynamicResource PrimaryColor}"/>
             <SolidColorBrush x:Key="PrimaryHoverBrush" Color="{DynamicResource PrimaryHoverColor}"/>
-            <Color x:Key="SurfaceHoverColor">#2A2A2A</Color>
             <SolidColorBrush x:Key="SurfaceHoverBrush" Color="{DynamicResource SurfaceHoverColor}"/>
             <Color x:Key="SelectionColor">#403B82F6</Color>
             <SolidColorBrush x:Key="SelectionBrush" Color="{DynamicResource SelectionColor}"/>

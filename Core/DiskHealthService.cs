@@ -13,7 +13,7 @@ namespace WassControlSys.Core
             return await Task.Run(() =>
             {
                 var list = new List<DiskHealthInfo>();
-                var smartEntries = GetSmartEntries(); // Se obtienen los datos SMART una sola vez
+                var smartEntries = GetSmartEntries(); // Obtiene SMART sin lanzar excepciones
 
                 try
                 {
@@ -25,101 +25,167 @@ namespace WassControlSys.Core
                         try
                         {
                             var id = d["DeviceID"]?.ToString() ?? "";
-                            var model = d["Model"]?.ToString() ?? "";
-                            var serial = d["SerialNumber"]?.ToString() ?? "";
+                            var model = d["Model"]?.ToString()?.Trim();
+                            if (string.IsNullOrWhiteSpace(model)) model = "Unidad de Almacenamiento";
+
+                            var serial = d["SerialNumber"]?.ToString()?.Trim() ?? "N/D";
                             var pnpDeviceId = d["PNPDeviceID"]?.ToString();
                             int? index = d["Index"] != null ? Convert.ToInt32(d["Index"]) : (int?)null;
                             long? sizeBytes = d["Size"] != null ? Convert.ToInt64(d["Size"]) : (long?)null;
 
-                            var status = GetSmartStatus(smartEntries, index, pnpDeviceId);
+                            var status = GetSmartStatus(smartEntries, index, pnpDeviceId, model);
+
                             list.Add(new DiskHealthInfo
                             {
                                 DeviceId = id,
                                 Model = model,
                                 Serial = serial,
-                                Capacity = sizeBytes.HasValue ? FormatBytes(sizeBytes.Value) : "",
+                                Capacity = sizeBytes.HasValue ? FormatBytes(sizeBytes.Value) : "N/D",
                                 SmartOk = status.HasValue && status.Value,
                                 SmartStatusKnown = status.HasValue,
-                                SmartStatus = status.HasValue ? (status.Value ? "OK" : "FALLA") : "N/D",
-                                Temperature = GetDiskTemperature(index), // Populate temperature
-                                PnpDeviceId = pnpDeviceId, // Populate new property
-                                PhysicalDiskIndex = index // Populate new property
+                                SmartStatus = status.HasValue ? (status.Value ? "OK" : "FALLA") : "Sin datos SMART",
+                                Temperature = GetDiskTemperature(index, id),
+                                PnpDeviceId = pnpDeviceId,
+                                PhysicalDiskIndex = index
                             });
                         }
                         catch
                         {
-                            // Error procesando un disco individual, lo ignoramos y continuamos con el siguiente
-                            // Se podría añadir un log: Debug.WriteLine($"Error processing disk {d["DeviceID"]}: {ex.Message}");
+                            // Error procesando un disco individual, continuamos con el siguiente
                         }
                     }
                 }
                 catch
                 {
-                    // Error crítico al obtener la lista de discos
-                    // Se podría añadir un log: Debug.WriteLine($"Critical error getting disk drives: {ex.Message}");
+                    // Fallback general si Win32_DiskDrive falla por completo
+                }
+
+                // Fallback secundario: Si Win32_DiskDrive no devolvió discos, intentamos vía MSFT_PhysicalDisk (NVMe/Storage API)
+                if (list.Count == 0)
+                {
+                    try
+                    {
+                        using var searcher = new System.Management.ManagementObjectSearcher(@"root\Microsoft\Windows\Storage", "SELECT FriendlyName, SerialNumber, Size, HealthStatus, DeviceId FROM MSFT_PhysicalDisk");
+                        foreach (var mo in searcher.Get())
+                        {
+                            var model = mo["FriendlyName"]?.ToString()?.Trim();
+                            if (string.IsNullOrWhiteSpace(model)) model = "SSD NVMe / SATA";
+
+                            var serial = mo["SerialNumber"]?.ToString()?.Trim() ?? "N/D";
+                            var deviceId = mo["DeviceId"]?.ToString() ?? "0";
+                            long? sizeBytes = mo["Size"] != null ? Convert.ToInt64(mo["Size"]) : (long?)null;
+                            int health = mo["HealthStatus"] != null ? Convert.ToInt32(mo["HealthStatus"]) : -1;
+
+                            bool? isOk = health == 0 ? true : (health == 1 || health == 2 ? false : (bool?)null);
+
+                            int? physicalIndex = int.TryParse(deviceId, out int parsedIdx) ? parsedIdx : (int?)null;
+
+                            list.Add(new DiskHealthInfo
+                            {
+                                DeviceId = deviceId,
+                                Model = model,
+                                Serial = serial,
+                                Capacity = sizeBytes.HasValue ? FormatBytes(sizeBytes.Value) : "N/D",
+                                SmartOk = isOk.HasValue && isOk.Value,
+                                SmartStatusKnown = isOk.HasValue,
+                                SmartStatus = isOk.HasValue ? (isOk.Value ? "OK" : "REVISAR") : "Sin datos SMART",
+                                Temperature = GetDiskTemperature(physicalIndex, deviceId),
+                                PnpDeviceId = null,
+                                PhysicalDiskIndex = physicalIndex
+                            });
+                        }
+                    }
+                    catch
+                    {
+                        // Captura silenciosa si el namespace de Storage tampoco responde
+                    }
                 }
 
                 return list;
             });
         }
 
-        private static int GetDiskTemperature(int? diskIndex)
+        private static int GetDiskTemperature(int? diskIndex, string? deviceId = null)
         {
-            if (!diskIndex.HasValue) return 0; // Return 0 if no disk index
-
+            // Intento 1: API de Almacenamiento de Windows (NVMe, M.2 y SSDs modernos)
             try
             {
-                // Query for temperature from SMART data.
-                // This typically involves querying a class like MSStorageDriver_ATAPISmartData
-                // or a vendor-specific WMI class.
-                // For simplicity, let's assume we can find a common way, or iterate to find relevant SMART attributes.
-
-                // WMI path for SMART data (often specific to vendors or drivers)
-                string query = $"SELECT CurrentTemperature FROM MSAcpi_ThermalZoneTemperature WHERE InstanceName LIKE '%PhysicalDisk{diskIndex.Value}%'";
-                using var searcher = new System.Management.ManagementObjectSearcher(@"root\WMI", query);
+                using var searcher = new System.Management.ManagementObjectSearcher(
+                    @"root\Microsoft\Windows\Storage",
+                    "SELECT DeviceId, Temperature FROM MSFT_StorageReliabilityCounter");
 
                 foreach (var mo in searcher.Get())
                 {
-                    if (mo["CurrentTemperature"] != null)
+                    if (mo["Temperature"] != null)
                     {
-                        // Temperature is often returned in Kelvin by WMI, convert to Celsius
-                        // Kelvin to Celsius: K - 273.15
-                        return (int)(Convert.ToDouble(mo["CurrentTemperature"]) - 273.15);
+                        var devId = mo["DeviceId"]?.ToString();
+                        
+                        // Validar coincidencia por ID de dispositivo o índice
+                        if ((diskIndex.HasValue && devId == diskIndex.Value.ToString()) ||
+                            (!string.IsNullOrEmpty(deviceId) && deviceId.Contains(devId ?? "")))
+                        {
+                            int temp = Convert.ToInt32(mo["Temperature"]);
+                            if (temp > 0 && temp < 120) return temp; // Rango válido en Celsius
+                        }
                     }
                 }
             }
             catch
             {
-                // Fallback or log error
+                // Fallback silencioso si el contador no está soportado
             }
 
-            // Fallback to query Win32_TemperatureProbe (usually for CPU, but can sometimes show other temps)
-            try
+            // Intento 2: MSAcpi_ThermalZoneTemperature (ACPI Legacy / SATA)
+            if (diskIndex.HasValue)
             {
-                string query = $"SELECT CurrentReading FROM Win32_TemperatureProbe WHERE InstanceName LIKE '%Disk{diskIndex.Value}%'";
-                using var searcher = new System.Management.ManagementObjectSearcher(@"root\CIMV2", query);
-                 foreach (var mo in searcher.Get())
+                try
                 {
-                    if (mo["CurrentReading"] != null)
+                    string query = $"SELECT CurrentTemperature FROM MSAcpi_ThermalZoneTemperature WHERE InstanceName LIKE '%PhysicalDisk{diskIndex.Value}%'";
+                    using var searcher = new System.Management.ManagementObjectSearcher(@"root\WMI", query);
+
+                    foreach (var mo in searcher.Get())
                     {
-                        // Temperature is often returned in Celsius directly
-                        return Convert.ToInt32(mo["CurrentReading"]);
+                        if (mo["CurrentTemperature"] != null)
+                        {
+                            int kelvinTenths = Convert.ToInt32(mo["CurrentTemperature"]);
+                            int celsius = (int)((kelvinTenths / 10.0) - 273.15);
+                            if (celsius > 0 && celsius < 120) return celsius;
+                        }
                     }
                 }
-            }
-            catch
-            {
-                // Fallback or log error
+                catch
+                {
+                    // Ignorar error
+                }
+
+                // Intento 3: Win32_TemperatureProbe (Motherboards / Sensores CIMV2)
+                try
+                {
+                    string query = $"SELECT CurrentReading FROM Win32_TemperatureProbe WHERE InstanceName LIKE '%Disk{diskIndex.Value}%'";
+                    using var searcher = new System.Management.ManagementObjectSearcher(@"root\CIMV2", query);
+                    foreach (var mo in searcher.Get())
+                    {
+                        if (mo["CurrentReading"] != null)
+                        {
+                            int temp = Convert.ToInt32(mo["CurrentReading"]);
+                            if (temp > 0 && temp < 120) return temp;
+                        }
+                    }
+                }
+                catch
+                {
+                    // Ignorar error
+                }
             }
 
-            return 0; // Default to 0 if temperature cannot be found
+            return 0; // Se formateará en la interfaz como "--" si la unidad no expone sensor
         }
 
         private static List<(string InstanceName, bool? SmartOk)> GetSmartEntries()
         {
             var list = new List<(string InstanceName, bool? SmartOk)>();
-            
-            // Primer intento: MSStorageDriver_FailurePredictStatus (más común)
+
+            // Intento 1: MSStorageDriver_FailurePredictStatus (SATA/ATAPI clásico)
             try
             {
                 using var searcher = new System.Management.ManagementObjectSearcher(@"root\WMI", "SELECT PredictFailure, InstanceName FROM MSStorageDriver_FailurePredictStatus");
@@ -134,17 +200,17 @@ namespace WassControlSys.Core
                     if (!string.IsNullOrEmpty(instance)) list.Add((instance, ok));
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                throw new Exception("Error al consultar MSStorageDriver_FailurePredictStatus. Esto puede indicar problemas con el repositorio WMI o drivers de disco. Detalle: " + ex.Message, ex);
+                // Captura silenciosa
             }
 
-            // Si el primero no devolvió nada, segundo intento: MSStorageDriver_FailurePredictData
+            // Intento 2: MSStorageDriver_FailurePredictData
             if (list.Count == 0)
             {
                 try
                 {
-                    using var searcher = new System.Management.ManagementObjectSearcher(@"root\WMI", "SELECT InstanceName, PredictFailure, VendorSpecific FROM MSStorageDriver_FailurePredictData");
+                    using var searcher = new System.Management.ManagementObjectSearcher(@"root\WMI", "SELECT InstanceName, PredictFailure FROM MSStorageDriver_FailurePredictData");
                     foreach (var mo in searcher.Get())
                     {
                         var instance = mo["InstanceName"]?.ToString() ?? "";
@@ -156,31 +222,54 @@ namespace WassControlSys.Core
                         if (!string.IsNullOrEmpty(instance)) list.Add((instance, ok));
                     }
                 }
-                catch (Exception ex)
+                catch
                 {
-                    throw new Exception("Error al consultar MSStorageDriver_FailurePredictData. Detalle: " + ex.Message, ex);
+                    // Captura silenciosa
                 }
             }
-            
+
+            // Intento 3: MSFT_PhysicalDisk (NVMe y SSDs en Windows 10/11)
+            if (list.Count == 0)
+            {
+                try
+                {
+                    using var searcher = new System.Management.ManagementObjectSearcher(@"root\Microsoft\Windows\Storage", "SELECT FriendlyName, HealthStatus FROM MSFT_PhysicalDisk");
+                    foreach (var mo in searcher.Get())
+                    {
+                        var instance = mo["FriendlyName"]?.ToString() ?? "";
+                        bool? ok = null;
+                        if (mo["HealthStatus"] != null)
+                        {
+                            int health = Convert.ToInt32(mo["HealthStatus"]);
+                            ok = (health == 0); // 0 = Healthy
+                        }
+                        if (!string.IsNullOrEmpty(instance)) list.Add((instance, ok));
+                    }
+                }
+                catch
+                {
+                    // Captura silenciosa
+                }
+            }
+
             return list;
         }
 
-        private static bool? GetSmartStatus(List<(string InstanceName, bool? SmartOk)> entries, int? diskIndex, string? pnpDeviceId)
+        private static bool? GetSmartStatus(List<(string InstanceName, bool? SmartOk)> entries, int? diskIndex, string? pnpDeviceId, string model)
         {
             if (entries.Count == 0) return null;
 
             try
             {
-                // Intenta encontrar una coincidencia usando una consulta LINQ más clara.
                 var entry = entries.FirstOrDefault(e =>
                 {
-                    // Criterio 1: Coincidencia por índice de disco (más fiable cuando está disponible)
+                    // Coincidencia por índice de disco
                     if (diskIndex.HasValue && e.InstanceName.EndsWith($"_{diskIndex.Value}", StringComparison.OrdinalIgnoreCase))
                     {
                         return true;
                     }
 
-                    // Criterio 2: Coincidencia por PnpDeviceID (como fallback)
+                    // Coincidencia por PNPDeviceID
                     if (!string.IsNullOrWhiteSpace(pnpDeviceId))
                     {
                         string pnpNorm = NormalizeForMatch(pnpDeviceId);
@@ -189,12 +278,20 @@ namespace WassControlSys.Core
                             return true;
                         }
                     }
-                    
+
+                    // Coincidencia por Nombre/Modelo
+                    if (!string.IsNullOrWhiteSpace(model))
+                    {
+                        string modelNorm = NormalizeForMatch(model);
+                        if (!string.IsNullOrEmpty(modelNorm) && NormalizeForMatch(e.InstanceName).Contains(modelNorm, StringComparison.OrdinalIgnoreCase))
+                        {
+                            return true;
+                        }
+                    }
+
                     return false;
                 });
 
-                // Si se encontró una entrada (incluso si es el default, que sería null), devuelve su estado.
-                // Si no se encontró ninguna coincidencia, `entry` será el valor por defecto de la tupla, y `entry.SmartOk` será null.
                 return entry.SmartOk;
             }
             catch
@@ -206,7 +303,6 @@ namespace WassControlSys.Core
         private static string NormalizeForMatch(string s)
         {
             if (string.IsNullOrEmpty(s)) return "";
-            // Elimina caracteres no alfanuméricos para una coincidencia más flexible.
             return new string(s.Where(char.IsLetterOrDigit).ToArray());
         }
 
@@ -218,7 +314,7 @@ namespace WassControlSys.Core
             while (len >= 1024 && order < sizes.Length - 1)
             {
                 order++;
-                len = len / 1024;
+                len /= 1024;
             }
             return $"{len:0.##} {sizes[order]}";
         }
