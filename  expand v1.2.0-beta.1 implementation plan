@@ -1,0 +1,191 @@
+[1mdiff --git a/docs/PLAN_V1.2.0_BETA1.md b/docs/PLAN_V1.2.0_BETA1.md[m
+[1mindex a511d40..c4bb0f4 100644[m
+[1m--- a/docs/PLAN_V1.2.0_BETA1.md[m
+[1m+++ b/docs/PLAN_V1.2.0_BETA1.md[m
+[36m@@ -106,3 +106,186 @@[m [mLos cambios realizados deberán quedar registrados para mantener trazabilidad du[m
+ [m
+ La versión `v1.2.0-beta.1` deberá presentar una interfaz más ordenada, consistente y fácil de utilizar, manteniendo las funciones existentes que ya funcionan correctamente y evitando regresiones.[m
+ [m
+[32m+[m[32m## 5. Fases de trabajo[m
+[32m+[m
+[32m+[m[32m### 5.1 Sistema visual[m
+[32m+[m
+[32m+[m[32m#### 5.1.1 Tokens visuales[m
+[32m+[m[32m- Normalizar colores.[m
+[32m+[m[32m- Normalizar superficies.[m
+[32m+[m[32m- Normalizar textos.[m
+[32m+[m[32m- Normalizar bordes.[m
+[32m+[m[32m- Definir estados: información, éxito, advertencia, error y sin datos.[m
+[32m+[m[32m- Reducir valores visuales definidos directamente dentro de las vistas.[m
+[32m+[m
+[32m+[m[32m#### 5.1.2 Espaciado y alineación[m
+[32m+[m[32m- Establecer una escala consistente de espaciado.[m
+[32m+[m[32m- Normalizar márgenes.[m
+[32m+[m[32m- Normalizar padding.[m
+[32m+[m[32m- Alinear correctamente títulos, contenido y acciones.[m
+[32m+[m[32m- Evitar elementos innecesariamente pegados a los bordes.[m
+[32m+[m
+[32m+[m[32m#### 5.1.3 Tipografía[m
+[32m+[m[32m- Establecer jerarquía entre título, sección, tarjeta, contenido y texto secundario.[m
+[32m+[m[32m- Reducir tamaños definidos directamente en las vistas cuando exista un estilo equivalente.[m
+[32m+[m
+[32m+[m[32m#### 5.1.4 Componentes[m
+[32m+[m[32m- Unificar tarjetas.[m
+[32m+[m[32m- Unificar encabezados de sección.[m
+[32m+[m[32m- Unificar botones.[m
+[32m+[m[32m- Unificar indicadores de estado.[m
+[32m+[m[32m- Mantener los componentes existentes cuando puedan reutilizarse.[m
+[32m+[m
+[32m+[m[32m### 5.2 Navegación y estructura[m
+[32m+[m
+[32m+[m[32m#### 5.2.1 Navegación principal[m
+[32m+[m[32m- Revisar la estructura actual.[m
+[32m+[m[32m- Compararla con la estructura definida en el Blueprint.[m
+[32m+[m[32m- Mejorar la jerarquía visual.[m
+[32m+[m[32m- Eliminar elementos heredados de la identidad anterior cuando corresponda.[m
+[32m+[m
+[32m+[m[32m#### 5.2.2 Shell de la aplicación[m
+[32m+[m[32m- Revisar encabezado.[m
+[32m+[m[32m- Revisar navegación lateral.[m
+[32m+[m[32m- Revisar área de contenido.[m
+[32m+[m[32m- Mantener una estructura visual consistente entre páginas.[m
+[32m+[m
+[32m+[m[32m### 5.3 Configuración[m
+[32m+[m
+[32m+[m[32m#### 5.3.1 Organización[m
+[32m+[m[32m- Agrupar opciones relacionadas.[m
+[32m+[m[32m- Separar configuración general, apariencia, comportamiento y opciones avanzadas.[m
+[32m+[m[32m- Reducir la sensación de lista vertical desordenada.[m
+[32m+[m
+[32m+[m[32m#### 5.3.2 Distribución[m
+[32m+[m[32m- Mejorar alineación entre etiquetas, descripciones y controles.[m
+[32m+[m[32m- Normalizar espacios.[m
+[32m+[m[32m- Mantener acciones y controles en posiciones previsibles.[m
+[32m+[m
+[32m+[m[32m#### 5.3.3 Usabilidad[m
+[32m+[m[32m- Hacer evidente qué modifica cada opción.[m
+[32m+[m[32m- Mantener los controles existentes.[m
+[32m+[m[32m- Evitar cambios funcionales innecesarios.[m
+[32m+[m
+[32m+[m[32m### 5.4 Inicio[m
+[32m+[m
+[32m+[m[32m#### 5.4.1 Jerarquía[m
+[32m+[m[32m- Separar información del sistema, recomendaciones y acciones.[m
+[32m+[m[32m- Reducir la sobrecarga visual.[m
+[32m+[m[32m- Priorizar la información más importante.[m
+[32m+[m
+[32m+[m[32m#### 5.4.2 Acciones[m
+[32m+[m[32m- Diferenciar acción principal, acciones secundarias y acciones sensibles.[m
+[32m+[m[32m- Evitar presentar demasiadas acciones con el mismo peso visual.[m
+[32m+[m
+[32m+[m[32m### 5.5 Rendimiento[m
+[32m+[m
+[32m+[m[32m#### 5.5.1 Métricas[m
+[32m+[m[32m- Reorganizar las métricas principales.[m
+[32m+[m[32m- Mejorar alineación y distribución.[m
+[32m+[m
+[32m+[m[32m#### 5.5.2 Procesos[m
+[32m+[m[32m- Mejorar la organización de la lista de procesos.[m
+[32m+[m[32m- Mejorar búsqueda y lectura.[m
+[32m+[m[32m- Revisar acciones disponibles.[m
+[32m+[m[32m- Proteger procesos críticos.[m
+[32m+[m
+[32m+[m[32m#### 5.5.3 Servicios[m
+[32m+[m[32m- Separar visualmente servicios y procesos.[m
+[32m+[m[32m- Mantener las funciones existentes.[m
+[32m+[m
+[32m+[m[32m#### 5.5.4 Fluidez[m
+[32m+[m[32m- Revisar operaciones que puedan bloquear la interfaz.[m
+[32m+[m[32m- Evitar actualizaciones innecesarias de la UI.[m
+[32m+[m[32m- Mantener la aplicación responsiva.[m
+[32m+[m
+[32m+[m[32m### 5.6 Almacenamiento[m
+[32m+[m
+[32m+[m[32m#### 5.6.1 Discos[m
+[32m+[m[32m- Mejorar presentación de unidades.[m
+[32m+[m[32m- Mejorar jerarquía de información.[m
+[32m+[m
+[32m+[m[32m#### 5.6.2 SMART[m
+[32m+[m[32m- Diferenciar datos disponibles, datos no disponibles y errores.[m
+[32m+[m[32m- Mantener el análisis existente.[m
+[32m+[m
+[32m+[m[32m#### 5.6.3 Limpieza[m
+[32m+[m[32m- Organizar las acciones de limpieza.[m
+[32m+[m[32m- Evitar acciones destructivas ambiguas.[m
+[32m+[m
+[32m+[m[32m### 5.7 Aplicaciones[m
+[32m+[m
+[32m+[m[32m- Mejorar organización visual.[m
+[32m+[m[32m- Revisar distribución de acciones.[m
+[32m+[m[32m- Mantener las funciones existentes.[m
+[32m+[m[32m- Evitar acciones destructivas sin confirmación adecuada.[m
+[32m+[m
+[32m+[m[32m### 5.8 Protección y seguridad[m
+[32m+[m
+[32m+[m[32m- Revisar acciones sensibles.[m
+[32m+[m[32m- Mejorar advertencias.[m
+[32m+[m[32m- Mantener mecanismos de protección existentes.[m
+[32m+[m[32m- Mantener reversión/restauración cuando esté disponible.[m
+[32m+[m[32m- Diferenciar advertencia de error.[m
+[32m+[m
+[32m+[m[32m### 5.9 Herramientas avanzadas[m
+[32m+[m
+[32m+[m[32m- Separar claramente herramientas avanzadas de acciones normales.[m
+[32m+[m[32m- Mejorar advertencias.[m
+[32m+[m[32m- Evitar ejecuciones accidentales.[m
+[32m+[m
+[32m+[m[32m### 5.10 Hardware[m
+[32m+[m
+[32m+[m[32m- Mejorar organización de la información.[m
+[32m+[m[32m- Mantener diagnóstico existente.[m
+[32m+[m[32m- Mejorar presentación de datos no disponibles.[m
+[32m+[m[32m- Mantener privacidad de información sensible.[m
+[32m+[m
+[32m+[m[32m### 5.11 Historial y registros[m
+[32m+[m
+[32m+[m[32m- Mejorar organización visual.[m
+[32m+[m[32m- Facilitar lectura de acciones realizadas.[m
+[32m+[m[32m- Mantener trazabilidad.[m
+[32m+[m[32m- Facilitar identificación de errores y acciones reversibles.[m
+[32m+[m
+[32m+[m[32m### 5.12 QA y estabilización[m
+[32m+[m
+[32m+[m[32m- Compilar después de cada bloque importante.[m
+[32m+[m[32m- Revisar navegación completa.[m
+[32m+[m[32m- Revisar regresiones.[m
+[32m+[m[32m- Probar acciones modificadas.[m
+[32m+[m[32m- Revisar rendimiento.[m
+[32m+[m[32m- Revisar estados de error y ausencia de datos.[m
+[32m+[m[32m- Preparar el estado candidato para `v1.2.0-beta.1`.[m
+[32m+[m
+[32m+[m[32m## 6. Reglas de commits[m
+[32m+[m
+[32m+[m[32mLos commits deberán representar cambios lógicos independientes.[m
+[32m+[m
+[32m+[m[32mEjemplos:[m
+[32m+[m
+[32m+[m[32m- `docs: define v1.2.0-beta.1 work plan`[m
+[32m+[m[32m- `ui: normalize design tokens`[m
+[32m+[m[32m- `ui: improve settings layout`[m
+[32m+[m[32m- `ui: reorganize dashboard`[m
+[32m+[m[32m- `perf: improve process view`[m
+[32m+[m[32m- `fix: protect critical process actions`[m
+[32m+[m
+[32m+[m[32mNo se deberán mezclar cambios funcionales no relacionados dentro de un mismo commit.[m
+[32m+[m
+[32m+[m[32m## 7. Estado de la versión[m
+[32m+[m
+[32m+[m[32m### v1.2.0-beta.1[m
+[32m+[m
+[32m+[m[32mEstado inicial: planificación.[m
+[32m+[m
+[32m+[m[32mObjetivo de cierre:[m
+[32m+[m
+[32m+[m[32m- Interfaz reorganizada.[m
+[32m+[m[32m- Navegación consistente.[m
+[32m+[m[32m- Configuración ordenada.[m
+[32m+[m[32m- Inicio simplificado.[m
+[32m+[m[32m- Rendimiento reorganizado.[m
+[32m+[m[32m- Acciones sensibles protegidas.[m
+[32m+[m[32m- Sin regresiones conocidas.[m
+[32m+[m[32m- Proyecto compilable y funcional.[m

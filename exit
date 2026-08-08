@@ -1,0 +1,44 @@
+[1mdiff --git a/App.xaml b/App.xaml[m
+[1mindex 9aa15e8..7abd871 100644[m
+[1m--- a/App.xaml[m
+[1m+++ b/App.xaml[m
+[36m@@ -17,6 +17,39 @@[m
+             <!-- Paleta de Colores -->[m
+             <Color x:Key="PrimaryColor">#3B82F6</Color>[m
+             <Color x:Key="PrimaryHoverColor">#60A5FA</Color>[m
+[32m+[m[41m            [m
+[32m+[m[32m            <!-- Design System v1.2.0 -->[m[41m [m
+[32m+[m[32m            <Color x:Key="BackgroundColor">#121212</Color>[m
+[32m+[m[32m            <Color x:Key="SurfaceColor">#1E1E1E</Color>[m
+[32m+[m[32m            <Color x:Key="SurfaceElevatedColor">#252525</Color>[m
+[32m+[m[32m            <Color x:Key="SurfaceHoverColor">#2A2A2A</Color>[m
+[32m+[m
+[32m+[m[32m            <Color x:Key="TextPrimaryColor">#FFFFFF</Color>[m
+[32m+[m[32m            <Color x:Key="TextSecondaryColor">#C8C8C8</Color>[m
+[32m+[m[32m            <Color x:Key="TextMutedColor">#888888</Color>[m
+[32m+[m
+[32m+[m[32m            <Color x:Key="BorderColor">#444444</Color>[m
+[32m+[m[32m            <Color x:Key="BorderSubtleColor">#333333</Color>[m
+[32m+[m
+[32m+[m[32m            <Color x:Key="SuccessColor">#22C55E</Color>[m
+[32m+[m[32m            <Color x:Key="WarningColor">#F59E0B</Color>[m
+[32m+[m[32m            <Color x:Key="DangerColor">#EF4444</Color>[m
+[32m+[m[32m            <Color x:Key="InfoColor">#3B82F6</Color>[m
+[32m+[m
+[32m+[m[32m            <!-- Design System Brushes -->[m
+[32m+[m[32m            <SolidColorBrush x:Key="BackgroundBrush" Color="{DynamicResource BackgroundColor}"/>[m
+[32m+[m[32m            <SolidColorBrush x:Key="SurfaceElevatedBrush" Color="{DynamicResource SurfaceElevatedColor}"/>[m
+[32m+[m[41m            [m
+[32m+[m[32m            <SolidColorBrush x:Key="TextPrimaryBrush" Color="{DynamicResource TextPrimaryColor}"/>[m
+[32m+[m[32m            <SolidColorBrush x:Key="TextMutedBrush" Color="{DynamicResource TextMutedColor}"/>[m
+[32m+[m[41m            [m
+[32m+[m[32m            <SolidColorBrush x:Key="BorderBrush" Color="{DynamicResource BorderColor}"/>[m
+[32m+[m[32m            <SolidColorBrush x:Key="BorderSubtleBrush" Color="{DynamicResource BorderSubtleColor}"/>[m
+[32m+[m[41m            [m
+[32m+[m[32m            <SolidColorBrush x:Key="SuccessBrush" Color="{DynamicResource SuccessColor}"/>[m
+[32m+[m[32m            <SolidColorBrush x:Key="WarningBrush" Color="{DynamicResource WarningColor}"/>[m
+[32m+[m[32m            <SolidColorBrush x:Key="DangerBrush" Color="{DynamicResource DangerColor}"/>[m
+[32m+[m[32m            <SolidColorBrush x:Key="InfoBrush" Color="{DynamicResource InfoColor}"/>[m
+ [m
+             <!-- Pinceles Dinámicos -->[m
+             <SolidColorBrush x:Key="PrimaryBrush" Color="{DynamicResource PrimaryColor}"/>[m
