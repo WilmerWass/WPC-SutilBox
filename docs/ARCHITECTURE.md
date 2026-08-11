@@ -1,4 +1,4 @@
-# Arquitectura de WPC-SutilBox Beta 1
+# Arquitectura de WPC-SutilBox Beta-1
 
 ## Capas
 

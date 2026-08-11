@@ -1,4 +1,4 @@
-# Blueprint de producto — WPC-SutilBox Beta 1
+# Blueprint de producto — WPC-SutilBox Beta-1
 
 ## Propuesta
 
@@ -71,7 +71,7 @@ Equilibrado, Gaming, Productividad, Desarrollo y A tu medida se aplican desde `P
 
 `FileLogService` crea un archivo por sesión y expone sus últimas entradas para que el usuario pueda revisar la actividad sin abrir una carpeta externa.
 
-## Fuera del alcance de Beta 1
+## Fuera del alcance de WPC-SutilBox Beta-1
 
 - Sincronización en la nube.
 - Automatizaciones remotas.
