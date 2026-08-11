@@ -35,6 +35,49 @@ namespace Wpc_SutilBox.ViewModels
         // ==========================================
         // 2. PROPIEDADES DE ENLACE (BINDINGS)
         // ==========================================
+        private bool _isBusy;
+        public bool IsBusy
+        {
+            get => _isBusy;
+            set => SetProperty(ref _isBusy, value);
+        }
+
+        private string _statusMessage = string.Empty;
+        public string StatusMessage
+        {
+            get => _statusMessage;
+            set => SetProperty(ref _statusMessage, value);
+        }
+        // Nuevos Perfiles de Rendimiento
+        private bool _isLigeroModeSelected;
+        public bool IsLigeroModeSelected
+        {
+            get => _isLigeroModeSelected;
+            set { SetProperty(ref _isLigeroModeSelected, value); if (value) OnPerformanceModeChanged("Sutil Ligero"); }
+        }
+        private bool _isBalanceModeSelected = true; // Por defecto
+        public bool IsBalanceModeSelected
+        {
+            get => _isBalanceModeSelected;
+            set { SetProperty(ref _isBalanceModeSelected, value); if (value) OnPerformanceModeChanged("OptiBalance"); }
+        }
+        private bool _isTurboModeSelected;
+        public bool IsTurboModeSelected
+        {
+            get => _isTurboModeSelected;
+            set { SetProperty(ref _isTurboModeSelected, value); if (value) OnPerformanceModeChanged("Turbo Boost"); }
+        }
+        private bool _isCustomModeSelected;
+        public bool IsCustomModeSelected
+        {
+            get => _isCustomModeSelected;
+            set { SetProperty(ref _isCustomModeSelected, value); if (value) OnPerformanceModeChanged("Custom"); }
+        }
+        private void OnPerformanceModeChanged(string modeName)
+        {
+            Debug.WriteLine($"Modo de rendimiento cambiado a: {modeName}");
+            WriteLog($"El usuario seleccionó el perfil de rendimiento: {modeName}");
+        }
         public string ApplicationTitle
         {
             get => _applicationTitle;
@@ -61,6 +104,28 @@ namespace Wpc_SutilBox.ViewModels
 
         public ObservableCollection<DiskHealthInfo> Disks { get; } = new ObservableCollection<DiskHealthInfo>();
         public bool IsWindowVisible { get; set; } = true;
+
+        private async Task MiAccionAsync()
+{
+    IsBusy = true;
+    StatusMessage = "Optimizando sistema...";
+
+    try
+    {
+        // Tu código de proceso asíncrono aquí
+        await Task.Delay(2000);
+    }
+    catch (Exception ex)
+    {
+        Debug.WriteLine($"Error: {ex.Message}");
+    }
+    finally
+    {
+        // ESTO APAGA LA CARGA INFINITA OBLIGATORIAMENTE
+        IsBusy = false;
+        StatusMessage = string.Empty;
+    }
+}
 
         // ==========================================
         // 3. COMANDOS DE ACCIÓN Y NAVEGACIÓN
