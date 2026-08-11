@@ -3,83 +3,395 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:vm="clr-namespace:Wpc_SutilBox.ViewModels"
-        xmlns:core="clr-namespace:Wpc_SutilBox.Core"
         xmlns:views="clr-namespace:Wpc_SutilBox.Views"
         mc:Ignorable="d"
-        Title="Wpc_SutilBox" Height="600" Width="1000"
+        Title="WPC-SutilBox"
+        Height="700"
+        Width="1180"
+        MinHeight="560"
+        MinWidth="900"
         WindowStyle="SingleBorderWindow"
         ResizeMode="CanResize"
         WindowState="Normal"
         WindowStartupLocation="CenterScreen"
         ShowActivated="True"
-        Icon="Resources/img/logo_WCS.ico">
+        Icon="Resources/img/logo_WCS.ico"
+        Background="{DynamicResource BackgroundBrush}">
 
-    <Border Background="{StaticResource WindowBackgroundBrush}">
+    <Border Background="{DynamicResource BackgroundBrush}">
+
         <Grid>
-            <!-- Main Content -->
-            <Grid Grid.Row="0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="220"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
 
-                <!-- Barra lateral -->
-                <Border Grid.Column="0" Background="{StaticResource SurfaceBrush}" BorderBrush="#333" BorderThickness="0,0,1,0">
-                    <StackPanel Margin="20">
-                        <!-- Logo / Título -->
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,30">
-                            <Image Source="Resources/img/logo_WCS.png" Width="32" Height="32" Margin="0,0,10,0"/>
-                            <TextBlock Text="WPC-SutilBox" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource PrimaryBrush}" VerticalAlignment="Center"/>
-                        </StackPanel>
+            <!-- ========================================================= -->
+            <!-- ESTRUCTURA PRINCIPAL                                      -->
+            <!-- ========================================================= -->
 
-                        <!-- Navegación -->
-                        <ScrollViewer VerticalScrollBarVisibility="Auto">
-                            <StackPanel>
-                                <Button Content="🏠 Inicio Principal" Command="{Binding NavigateCommand}" CommandParameter="Dashboard" Style="{StaticResource NavButtonStyle}"/>
-                                <Button Content="🛡️ Protección" Command="{Binding NavigateCommand}" CommandParameter="Proteccion" Style="{StaticResource NavButtonStyle}"/>
-                                <Button Content="🧹 Almacenamiento" Command="{Binding NavigateCommand}" CommandParameter="Almacenamiento" Style="{StaticResource NavButtonStyle}"/>
-                                <Button Content="⚡ Rendimiento" Command="{Binding NavigateCommand}" CommandParameter="Rendimiento" Style="{StaticResource NavButtonStyle}"/>
-                                <Button Content="📦 Aplicaciones" Command="{Binding NavigateCommand}" CommandParameter="Aplicaciones" Style="{StaticResource NavButtonStyle}"/>
-                                <Button Content="🛠️ Caja de Herramientas" Command="{Binding NavigateCommand}" CommandParameter="Herramientas" Style="{StaticResource NavButtonStyle}"/>
-                                <Button Content="🖥️ Hardware" Command="{Binding NavigateCommand}" CommandParameter="Hardware" Style="{StaticResource NavButtonStyle}"/>
-                                <Button Content="⚙️ Configuración" Command="{Binding NavigateCommand}" CommandParameter="Configuracion" Style="{StaticResource NavButtonStyle}" Margin="0,20,0,0"/>
-                            </StackPanel>
-                        </ScrollViewer>
-                    </StackPanel>
-                </Border>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="SidebarColumn"
+                                  Width="235"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-                <!-- Área de contenido principal -->
-                <Grid Grid.Column="1">
+            <!-- ========================================================= -->
+            <!-- SIDEBAR                                                   -->
+            <!-- ========================================================= -->
+
+            <Border Grid.Column="0"
+                    Background="{DynamicResource SurfaceBrush}"
+                    BorderBrush="{DynamicResource BorderSubtleBrush}"
+                    BorderThickness="0,0,1,0">
+
+                <Grid>
+
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <!-- Subtle Loading Bar -->
-                    <ProgressBar Grid.Row="0" IsIndeterminate="True" Height="2" Background="Transparent" BorderThickness="0"
-                                 Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                 VerticalAlignment="Top" Panel.ZIndex="100"/>
+                    <!-- LOGO -->
+                    
+                    <!-- BOTÓN CONTRAER -->
+                    
+                    <Grid Grid.Row="0"
+                        Margin="18,18,18,28">
+                        
+                        <Button Width="36"
+                            Height="36"
+                            HorizontalAlignment="Right"
+                            Content="☰"
+                            ToolTip="Expandir / contraer menú"
+                            Background="{DynamicResource SurfaceElevatedBrush}"
+                            Foreground="{DynamicResource TextSecondaryBrush}"
+                            BorderThickness="0"
+                            Cursor="Hand"
+                            Click="ToggleSidebar_Click"/>
+                            </Grid>
 
-                    <Grid Grid.Row="1" Margin="30">
-                        <views:DashboardView Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Dashboard}"/>
-                        <views:SecurityView Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Proteccion}"/>
-                        <views:CleaningView Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Almacenamiento}"/>
-                        <views:RendimientoView Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Rendimiento}"/>
-                        <views:ProfileEditorView Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=EditorPerfiles}"/>
-                        <views:AplicacionesView Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Aplicaciones}"/>
-                        <views:HardwareView Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Hardware}"/>
-                        <views:ToolboxView Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Herramientas}"/>
-                        <views:SettingsView Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Configuracion}"/>
+                    <!-- ================================================= -->
+                    <!-- NAVEGACIÓN                                         -->
+                    <!-- ================================================= -->
+
+                    <ScrollViewer Grid.Row="1"
+                                  VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled">
+
+                        <StackPanel Margin="12,0">
+
+                            <!-- GRUPO PRINCIPAL -->
+
+                            <TextBlock Text="PRINCIPAL"
+                                       Margin="10,0,0,8"
+                                       FontSize="10"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextMutedBrush}"/>
+
+                            <Button Content="⌂  Inicio"
+                                    Command="{Binding NavigateCommand}"
+                                    CommandParameter="Dashboard"
+                                    Style="{StaticResource NavButtonStyle}"/>
+
+                            <Button Content="◈  Protección"
+                                    Command="{Binding NavigateCommand}"
+                                    CommandParameter="Proteccion"
+                                    Style="{StaticResource NavButtonStyle}"/>
+
+                            <Button Content="⚡  Rendimiento"
+                                    Command="{Binding NavigateCommand}"
+                                    CommandParameter="Rendimiento"
+                                    Style="{StaticResource NavButtonStyle}"/>
+
+                            <Button Content="▣  Almacenamiento"
+                                    Command="{Binding NavigateCommand}"
+                                    CommandParameter="Almacenamiento"
+                                    Style="{StaticResource NavButtonStyle}"/>
+
+                            <!-- SISTEMA -->
+
+                            <TextBlock Text="SISTEMA"
+                                       Margin="10,24,0,8"
+                                       FontSize="10"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextMutedBrush}"/>
+
+                            <Button Content="▦  Aplicaciones"
+                                    Command="{Binding NavigateCommand}"
+                                    CommandParameter="Aplicaciones"
+                                    Style="{StaticResource NavButtonStyle}"/>
+
+                            <Button Content="▣  Hardware"
+                                    Command="{Binding NavigateCommand}"
+                                    CommandParameter="Hardware"
+                                    Style="{StaticResource NavButtonStyle}"/>
+
+                            <!-- HERRAMIENTAS -->
+
+                            <TextBlock Text="HERRAMIENTAS"
+                                       Margin="10,24,0,8"
+                                       FontSize="10"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextMutedBrush}"/>
+
+                            <Button Content="⚒  Caja de herramientas"
+                                    Command="{Binding NavigateCommand}"
+                                    CommandParameter="Herramientas"
+                                    Style="{StaticResource NavButtonStyle}"/>
+
+                            <!-- PREPARACIÓN FUTURA -->
+
+                            <Border Margin="8,22,8,8"
+                                    Padding="12"
+                                    CornerRadius="10"
+                                    Background="{DynamicResource SurfaceElevatedBrush}">
+
+                                <StackPanel>
+
+                                    <TextBlock Text="PRÓXIMAMENTE"
+                                               FontSize="9"
+                                               FontWeight="Bold"
+                                               Foreground="{DynamicResource PrimaryBrush}"/>
+
+                                    <TextBlock Text="Más módulos llegarán a SutilBox."
+                                               Margin="0,5,0,0"
+                                               FontSize="11"
+                                               TextWrapping="Wrap"
+                                               Foreground="{DynamicResource TextSecondaryBrush}"/>
+
+                                </StackPanel>
+
+                            </Border>
+
+                        </StackPanel>
+
+                    </ScrollViewer>
+
+                    <!-- ================================================= -->
+                    <!-- PARTE INFERIOR                                    -->
+                    <!-- ================================================= -->
+
+                    <StackPanel Grid.Row="2"
+                                Margin="12,10,12,16">
+
+                        <Button Content="⚙  Configuración"
+                                Command="{Binding NavigateCommand}"
+                                CommandParameter="Configuracion"
+                                Style="{StaticResource NavButtonStyle}"/>
+
+                        <Border Margin="8,10,8,0"
+                                Padding="10"
+                                CornerRadius="8"
+                                Background="{DynamicResource BackgroundBrush}">
+
+                            <StackPanel>
+
+                                <TextBlock Text="WPC-SutilBox Beta.1"
+                                           FontSize="10"
+                                           Foreground="{DynamicResource TextMutedBrush}"/>
+
+                                <TextBlock Text="Construyendo una suite todo-en-uno."
+                                           Margin="0,3,0,0"
+                                           FontSize="10"
+                                           TextWrapping="Wrap"
+                                           Foreground="{DynamicResource TextSecondaryBrush}"/>
+
+                            </StackPanel>
+
+                        </Border>
+
+                    </StackPanel>
+
+                </Grid>
+
+            </Border>
+
+
+            <!-- ========================================================= -->
+            <!-- CONTENIDO                                                 -->
+            <!-- ========================================================= -->
+
+            <Grid Grid.Column="1">
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="72"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+
+                <!-- ===================================================== -->
+                <!-- HEADER                                                -->
+                <!-- ===================================================== -->
+
+                <Border Grid.Row="0"
+                        Background="{DynamicResource BackgroundBrush}"
+                        BorderBrush="{DynamicResource BorderSubtleBrush}"
+                        BorderThickness="0,0,0,1">
+
+                    <Grid Margin="28,0">
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel VerticalAlignment="Center">
+
+                            <TextBlock Text="WPC-SutilBox"
+                                       FontSize="13"
+                                       Foreground="{DynamicResource TextMutedBrush}"/>
+
+                            <TextBlock Text="Centro de control"
+                                       Margin="0,2,0,0"
+                                       FontSize="21"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextPrimaryBrush}"/>
+
+                        </StackPanel>
+
+
+                        <StackPanel Grid.Column="1"
+                                    Orientation="Horizontal"
+                                    VerticalAlignment="Center">
+
+                            <!-- INDICADOR DE ESTADO -->
+
+                            <Border Padding="10,6"
+                                    Margin="0,0,10,0"
+                                    CornerRadius="8"
+                                    Background="{DynamicResource SurfaceElevatedBrush}">
+
+                                <StackPanel Orientation="Horizontal">
+
+                                    <Ellipse Width="7"
+                                             Height="7"
+                                             Margin="0,0,7,0"
+                                             Fill="{DynamicResource SuccessBrush}"
+                                             VerticalAlignment="Center"/>
+
+                                    <TextBlock Text="Sistema listo"
+                                               FontSize="11"
+                                               Foreground="{DynamicResource TextSecondaryBrush}"/>
+
+                                </StackPanel>
+
+                            </Border>
+
+                            <!-- BOTÓN DE AJUSTES -->
+
+                            <Button Width="38"
+                                    Height="38"
+                                    Content="⚙"
+                                    ToolTip="Configuración"
+                                    Command="{Binding NavigateCommand}"
+                                    CommandParameter="Configuracion"
+                                    Background="{DynamicResource SurfaceElevatedBrush}"
+                                    Foreground="{DynamicResource TextSecondaryBrush}"
+                                    BorderThickness="0"
+                                    Cursor="Hand"/>
+
+                        </StackPanel>
+
                     </Grid>
 
-                    <!-- Small Status Indicator at Bottom -->
-                    <TextBlock Grid.Row="1" Text="{Binding StatusMessage}" 
-                               VerticalAlignment="Bottom" HorizontalAlignment="Right" 
-                               Margin="0,0,30,10" Foreground="{DynamicResource SecondaryTextBrush}" FontSize="11"
-                               Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                </Border>
+
+
+                <!-- ===================================================== -->
+                <!-- BARRA DE CARGA                                        -->
+                <!-- ===================================================== -->
+
+                <ProgressBar Grid.Row="1"
+                             Height="2"
+                             IsIndeterminate="True"
+                             Background="Transparent"
+                             BorderThickness="0"
+                             Visibility="{Binding IsBusy,
+                                 Converter={StaticResource BooleanToVisibilityConverter}}"
+                             VerticalAlignment="Top"
+                             Panel.ZIndex="100"/>
+
+
+                <!-- ===================================================== -->
+                <!-- ÁREA DE VISTAS                                        -->
+                <!-- ===================================================== -->
+
+                <Grid Grid.Row="2"
+                      Margin="28,24,28,28"
+                      ClipToBounds="True">
+
+                    <views:DashboardView
+                        Visibility="{Binding CurrentSection,
+                            Converter={StaticResource EnumToVisibilityConverter},
+                            ConverterParameter=Dashboard}"/>
+
+                    <views:SecurityView
+                        Visibility="{Binding CurrentSection,
+                            Converter={StaticResource EnumToVisibilityConverter},
+                            ConverterParameter=Proteccion}"/>
+
+                    <views:CleaningView
+                        Visibility="{Binding CurrentSection,
+                            Converter={StaticResource EnumToVisibilityConverter},
+                            ConverterParameter=Almacenamiento}"/>
+
+                    <views:RendimientoView
+                        Visibility="{Binding CurrentSection,
+                            Converter={StaticResource EnumToVisibilityConverter},
+                            ConverterParameter=Rendimiento}"/>
+
+                    <views:ProfileEditorView
+                        Visibility="{Binding CurrentSection,
+                            Converter={StaticResource EnumToVisibilityConverter},
+                            ConverterParameter=EditorPerfiles}"/>
+
+                    <views:AplicacionesView
+                        Visibility="{Binding CurrentSection,
+                            Converter={StaticResource EnumToVisibilityConverter},
+                            ConverterParameter=Aplicaciones}"/>
+
+                    <views:HardwareView
+                        Visibility="{Binding CurrentSection,
+                            Converter={StaticResource EnumToVisibilityConverter},
+                            ConverterParameter=Hardware}"/>
+
+                    <views:ToolboxView
+                        Visibility="{Binding CurrentSection,
+                            Converter={StaticResource EnumToVisibilityConverter},
+                            ConverterParameter=Herramientas}"/>
+
+                    <views:SettingsView
+                        Visibility="{Binding CurrentSection,
+                            Converter={StaticResource EnumToVisibilityConverter},
+                            ConverterParameter=Configuracion}"/>
+
                 </Grid>
+
+
+                <!-- ===================================================== -->
+                <!-- ESTADO                                                -->
+                <!-- ===================================================== -->
+
+                <Border Grid.Row="2"
+                        VerticalAlignment="Bottom"
+                        HorizontalAlignment="Right"
+                        Margin="0,0,28,16"
+                        Padding="10,6"
+                        CornerRadius="7"
+                        Background="{DynamicResource SurfaceElevatedBrush}"
+                        Opacity="0.92"
+                        Visibility="{Binding IsBusy,
+                            Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                    <TextBlock Text="{Binding StatusMessage}"
+                               FontSize="11"
+                               Foreground="{DynamicResource TextSecondaryBrush}"/>
+
+                </Border>
+
             </Grid>
+
         </Grid>
+
     </Border>
+
 </Window>
