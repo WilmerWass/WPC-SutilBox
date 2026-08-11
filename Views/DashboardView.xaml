@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Wpc_SutilBox.Views.DashboardView"
+<UserControl x:Class="Wpc_SutilBox.Views.DashboardView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -48,11 +48,11 @@
                             </Ellipse>
                         </Grid>
 
-                        <!-- Botón Principal PC Boost -->
-                        <Button Grid.Row="1" Command="{Binding PcBoostCommand}" Style="{StaticResource PrimaryButtonStyle}" Height="50" HorizontalAlignment="Stretch">
+                        <!-- Botón Principal: Diagnóstico del sistema -->
+                        <Button Grid.Row="1" Command="{Binding NavigateCommand}" CommandParameter="RevisarPC" Style="{StaticResource PrimaryButtonStyle}" Height="48" HorizontalAlignment="Stretch">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="MEJORAR RENDIMIENTO" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,10,0"/>
-                                <TextBlock Text="(PC Boost)" FontSize="12" VerticalAlignment="Center" Opacity="0.8"/>
+                                <TextBlock Text="🔍   Revisar mi PC" FontWeight="SemiBold" FontSize="14" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                <TextBlock Text="(Diagnóstico general de salud y rendimiento)" FontSize="12" VerticalAlignment="Center" Opacity="0.8"/>
                             </StackPanel>
                         </Button>
 
