@@ -18,6 +18,10 @@
 
 </p>
 
+## Nombre de la entrega
+
+Esta entrega se publica como **WPC-SutilBox Beta-1**, un nuevo comienzo para la línea de producto. La futura versión estable se identificará como **WPC-SutilBox V1.0.0**.
+
 <p align="center">
 
 **[📥 Descargar](#-descarga-e-instalación)** •
