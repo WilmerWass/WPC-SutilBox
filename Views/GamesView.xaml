@@ -1,0 +1,61 @@
+<UserControl x:Class="Wpc_SutilBox.Views.GamesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="550" d:DesignWidth="800">
+    <Grid Style="{StaticResource AnimatedViewStyle}">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="20">
+                <TextBlock Text="🎮 Módulo de Juegos y Perfiles Gaming" Style="{StaticResource HeaderTextStyle}" Margin="0,0,0,10"/>
+                <TextBlock Text="Gestión de biblioteca, perfiles de optimización individual y monitor de rendimiento." Style="{StaticResource SubHeaderTextStyle}" Margin="0,0,0,25"/>
+
+                <UniformGrid Columns="3" Margin="0,0,0,25">
+                    <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="10" Padding="15" Margin="0,0,10,0">
+                        <StackPanel>
+                            <TextBlock Text="Modo Actual" FontSize="12" Foreground="{DynamicResource TextMutedBrush}"/>
+                            <TextBlock Text="OptiBalance" FontSize="18" FontWeight="Bold" Foreground="{DynamicResource PrimaryBrush}" Margin="0,4,0,0"/>
+                        </StackPanel>
+                    </Border>
+                    <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="10" Padding="15" Margin="5,0,5,0">
+                        <StackPanel>
+                            <TextBlock Text="Juegos Detectados" FontSize="12" Foreground="{DynamicResource TextMutedBrush}"/>
+                            <TextBlock Text="Auto-Detección" FontSize="18" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,4,0,0"/>
+                        </StackPanel>
+                    </Border>
+                    <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="10" Padding="15" Margin="10,0,0,0">
+                        <StackPanel>
+                            <TextBlock Text="GPU Preferida" FontSize="12" Foreground="{DynamicResource TextMutedBrush}"/>
+                            <TextBlock Text="Alto Rendimiento" FontSize="18" FontWeight="Bold" Foreground="{DynamicResource SuccessBrush}" Margin="0,4,0,0"/>
+                        </StackPanel>
+                    </Border>
+                </UniformGrid>
+
+                <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="12" Padding="20">
+                    <StackPanel>
+                        <TextBlock Text="Perfiles de Optimización para Juegos" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,15"/>
+
+                        <UniformGrid Columns="2">
+                            <Border Background="{DynamicResource SurfaceElevatedBrush}" CornerRadius="8" Padding="15" Margin="5">
+                                <StackPanel>
+                                    <TextBlock Text="🚀 Máximo Rendimiento" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                    <TextBlock Text="Priorización de proceso de juego, plan energético de alto rendimiento y GPU dedicada." FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,5,0,10" TextWrapping="Wrap"/>
+                                    <Button Content="Activar Perfil Gamer" Style="{StaticResource PrimaryButtonStyle}"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Background="{DynamicResource SurfaceElevatedBrush}" CornerRadius="8" Padding="15" Margin="5">
+                                <StackPanel>
+                                    <TextBlock Text="🔇 Modo Silencioso / Eficiente" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                    <TextBlock Text="Prioriza temperaturas controladas, menor consumo de energía y reducción de ruido." FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,5,0,10" TextWrapping="Wrap"/>
+                                    <Button Content="Activar Perfil Silencioso" Style="{StaticResource SecondaryButtonStyle}"/>
+                                </StackPanel>
+                            </Border>
+                        </UniformGrid>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

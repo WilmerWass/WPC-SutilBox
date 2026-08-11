@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
@@ -135,6 +135,10 @@ namespace Wpc_SutilBox.ViewModels
         public ICommand CleanTempFilesCommand { get; }
         public ICommand OpenLogFolderCommand { get; }
         public ICommand NavigateCommand { get; }
+        public ICommand RunToolCommand { get; }
+        public ICommand RunSfcCommand { get; }
+        public ICommand RunDismCommand { get; }
+        public ICommand RunChkdskCommand { get; }
 
         // Comandos requeridos por App.xaml.cs y MainWindow.xaml
         public ICommand? PcBoostCommand { get; set; }
@@ -158,44 +162,17 @@ namespace Wpc_SutilBox.ViewModels
             OpenCleanmgrCommand = new RelayCommand(ExecuteOpenCleanmgr);
             CleanTempFilesCommand = new AsyncRelayCommand(ExecuteCleanTempFilesAsync);
             OpenLogFolderCommand = new RelayCommand(ExecuteOpenLogFolder);
+            RunToolCommand = new RelayCommand(ExecuteRunTool);
+            RunSfcCommand = new AsyncRelayCommand(ExecuteRunSfcAsync);
+            RunDismCommand = new AsyncRelayCommand(ExecuteRunDismAsync);
+            RunChkdskCommand = new RelayCommand(ExecuteRunChkdsk);
 
             NavigateCommand = new RelayCommand(param =>
             {
                 if (param is string section && !string.IsNullOrWhiteSpace(section))
                 {
                     CurrentSection = section;
-
-                    switch (section)
-                    {
-                        case "Dashboard":
-                        case "Inicio":
-                            CurrentView = this;
-                            break;
-                        case "Proteccion":
-                            CurrentView = "Vista de Protección en construcción";
-                            break;
-                        case "Almacenamiento":
-                            CurrentView = "Vista de Almacenamiento";
-                            break;
-                        case "Rendimiento":
-                            CurrentView = "Vista de Rendimiento";
-                            break;
-                        case "Aplicaciones":
-                            CurrentView = "Vista de Aplicaciones";
-                            break;
-                        case "Hardware":
-                            CurrentView = "Vista de Hardware";
-                            break;
-                        case "Herramientas":
-                            CurrentView = "Vista de Herramientas";
-                            break;
-                        case "Configuracion":
-                            CurrentView = "Vista de Configuración";
-                            break;
-                        default:
-                            CurrentView = this;
-                            break;
-                    }
+                    WriteLog($"Navegando a la sección: {section}");
                 }
             });
 
@@ -309,6 +286,104 @@ namespace Wpc_SutilBox.ViewModels
             catch (Exception ex)
             {
                 MessageBox.Show($"No se pudo abrir la carpeta de registros: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void ExecuteRunTool(object? param)
+        {
+            if (param is string tool && !string.IsNullOrWhiteSpace(tool))
+            {
+                try
+                {
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = tool,
+                        UseShellExecute = true
+                    });
+                    WriteLog($"Herramienta ejecutada correctamente: {tool}");
+                }
+                catch (Exception ex)
+                {
+                    WriteLog($"Error al ejecutar la herramienta: {tool}", ex);
+                    MessageBox.Show($"No se pudo iniciar {tool}: {ex.Message}", "Error de ejecución", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        private async Task ExecuteRunSfcAsync()
+        {
+            IsBusy = true;
+            StatusMessage = "Ejecutando SFC /scannow...";
+            try
+            {
+                await Task.Run(() =>
+                {
+                    var psi = new ProcessStartInfo("cmd.exe", "/c sfc /scannow")
+                    {
+                        UseShellExecute = true,
+                        Verb = "runas"
+                    };
+                    Process.Start(psi);
+                });
+                WriteLog("SFC /scannow iniciado.");
+            }
+            catch (Exception ex)
+            {
+                WriteLog("Error al iniciar SFC", ex);
+                MessageBox.Show($"No se pudo ejecutar SFC: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                IsBusy = false;
+                StatusMessage = string.Empty;
+            }
+        }
+
+        private async Task ExecuteRunDismAsync()
+        {
+            IsBusy = true;
+            StatusMessage = "Ejecutando DISM...";
+            try
+            {
+                await Task.Run(() =>
+                {
+                    var psi = new ProcessStartInfo("cmd.exe", "/c DISM /Online /Cleanup-Image /RestoreHealth")
+                    {
+                        UseShellExecute = true,
+                        Verb = "runas"
+                    };
+                    Process.Start(psi);
+                });
+                WriteLog("DISM RestoreHealth iniciado.");
+            }
+            catch (Exception ex)
+            {
+                WriteLog("Error al iniciar DISM", ex);
+                MessageBox.Show($"No se pudo ejecutar DISM: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                IsBusy = false;
+                StatusMessage = string.Empty;
+            }
+        }
+
+        private void ExecuteRunChkdsk()
+        {
+            try
+            {
+                var psi = new ProcessStartInfo("cmd.exe", "/k chkdsk C:")
+                {
+                    UseShellExecute = true,
+                    Verb = "runas"
+                };
+                Process.Start(psi);
+                WriteLog("CHKDSK iniciado.");
+            }
+            catch (Exception ex)
+            {
+                WriteLog("Error al iniciar CHKDSK", ex);
+                MessageBox.Show($"No se pudo ejecutar CHKDSK: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
