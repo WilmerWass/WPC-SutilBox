@@ -74,10 +74,16 @@
                     <!-- ================================================= -->
 
                     <ScrollViewer Grid.Row="1"
-                                  VerticalScrollBarVisibility="Auto"
+                                  VerticalScrollBarVisibility="Hidden"
                                   HorizontalScrollBarVisibility="Disabled">
 
                         <StackPanel Margin="12,0">
+                            <StackPanel.Resources>
+                                <Style TargetType="Button" BasedOn="{StaticResource NavButtonStyle}">
+                                    <Setter Property="FontSize" Value="13"/>
+                                    <Setter Property="Padding" Value="12,6"/>
+                                </Style>
+                            </StackPanel.Resources>
 
                             <!-- GRUPO PRINCIPAL -->
                             <TextBlock Text="PRINCIPAL"
@@ -90,11 +96,13 @@
                                     Command="{Binding NavigateCommand}"
                                     CommandParameter="Dashboard"
                                     Style="{StaticResource NavButtonStyle}"/>
-
-                            <Button Content="🔍   Revisar mi PC"
-                                    Command="{Binding NavigateCommand}"
-                                    CommandParameter="RevisarPC"
-                                    Style="{StaticResource NavButtonStyle}"/>
+                            <Button Content="Revisar mi PC" Command="{Binding NavigateCommand}" CommandParameter="RevisarPC" Style="{StaticResource NavButtonStyle}"/>
+                            <StackPanel Margin="28,0,0,0">
+                                <Button Content="Resumen de salud" Command="{Binding NavigateCommand}" CommandParameter="RevisarPC" Style="{StaticResource NavButtonStyle}"/>
+                                <Button Content="Espacio y almacenamiento" Command="{Binding NavigateCommand}" CommandParameter="RevisarPC" Style="{StaticResource NavButtonStyle}"/>
+                                <Button Content="Hardware y temperaturas" Command="{Binding NavigateCommand}" CommandParameter="RevisarPC" Style="{StaticResource NavButtonStyle}"/>
+                                <Button Content="Procesos de alto consumo" Command="{Binding NavigateCommand}" CommandParameter="RevisarPC" Style="{StaticResource NavButtonStyle}"/>
+                            </StackPanel>
 
                             <Button Content="🧹   Liberar espacio"
                                     Command="{Binding NavigateCommand}"
@@ -334,7 +342,7 @@
                     <views:DashboardView
                         Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Dashboard}"/>
 
-                    <views:HardwareView
+                    <views:PcReviewView
                         Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=RevisarPC}"/>
 
                     <views:CleaningView
@@ -356,7 +364,8 @@
                         Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Privacidad}"/>
 
                     <views:ProfileEditorView
-                        Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=EditorPerfiles}"/>
+                        DataContext="{Binding ProfileEditorViewModel}"
+                        Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=EditorPerfiles}"/>
 
                     <views:ActualizacionesView
                         Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Actualizaciones}"/>

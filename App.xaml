@@ -46,7 +46,7 @@
                                 <Border x:Name="BackgroundBorder" 
                                         Background="{DynamicResource SurfaceBrush}" 
                                         CornerRadius="15"
-                                        BorderBrush="#444"
+                                        BorderBrush="{DynamicResource BorderBrush}"
                                         BorderThickness="1"/>
                                 <Border x:Name="Dot" 
                                         Background="White" 
@@ -87,19 +87,19 @@
                 <Setter Property="Background" Value="Transparent"/>
                 <Setter Property="BorderThickness" Value="0"/>
                 <Setter Property="RowBackground" Value="{DynamicResource SurfaceBrush}"/>
-                <Setter Property="AlternatingRowBackground" Value="#252525"/>
+                <Setter Property="AlternatingRowBackground" Value="{DynamicResource SurfaceHoverBrush}"/>
                 <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
                 <Setter Property="GridLinesVisibility" Value="None"/>
                 <Setter Property="HeadersVisibility" Value="Column"/>
                 <Setter Property="ColumnHeaderStyle">
                     <Setter.Value>
                         <Style TargetType="DataGridColumnHeader">
-                            <Setter Property="Background" Value="#1A1A1A"/>
+                            <Setter Property="Background" Value="{DynamicResource SurfaceElevatedBrush}"/>
                             <Setter Property="Foreground" Value="{DynamicResource SecondaryTextBrush}"/>
                             <Setter Property="Padding" Value="10,5"/>
                             <Setter Property="FontWeight" Value="SemiBold"/>
                             <Setter Property="BorderThickness" Value="0,0,0,1"/>
-                            <Setter Property="BorderBrush" Value="#333"/>
+                            <Setter Property="BorderBrush" Value="{DynamicResource BorderSubtleBrush}"/>
                         </Style>
                     </Setter.Value>
                 </Setter>
@@ -194,8 +194,8 @@
                 <Setter Property="Background" Value="Transparent"/>
                 <Setter Property="Foreground" Value="{DynamicResource SecondaryTextBrush}"/>
                 <Setter Property="FontFamily" Value="{StaticResource MainFont}"/>
-                <Setter Property="FontSize" Value="14"/>
-                <Setter Property="Padding" Value="15,10"/>
+                <Setter Property="FontSize" Value="13"/>
+                <Setter Property="Padding" Value="12,7"/>
                 <Setter Property="BorderThickness" Value="0"/>
                 <Setter Property="HorizontalContentAlignment" Value="Left"/>
                 <Setter Property="Cursor" Value="Hand"/>
@@ -248,7 +248,7 @@
             <Style x:Key="ModernTextBoxStyle" TargetType="TextBox">
                 <Setter Property="Background" Value="#1A1A1A"/>
                 <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
-                <Setter Property="BorderBrush" Value="#333"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource BorderSubtleBrush}"/>
                 <Setter Property="BorderThickness" Value="1"/>
                 <Setter Property="Padding" Value="10,8"/>
                 <Setter Property="VerticalContentAlignment" Value="Center"/>

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Wpc_SutilBox.Models;
@@ -87,6 +89,20 @@ namespace Wpc_SutilBox.Core
         public void Info(string message) => Write("INFO", message);
         public void Warn(string message) => Write("WARN", message);
         public void Error(string message, Exception? ex = null) => Write("ERROR", ex == null ? message : message + " | " + ex);
+
+        public IReadOnlyList<string> GetRecentEntries(int maxEntries)
+        {
+            try
+            {
+                lock (_lock)
+                {
+                    return File.Exists(_logFile)
+                        ? File.ReadLines(_logFile).TakeLast(Math.Max(1, maxEntries)).Reverse().ToList()
+                        : Array.Empty<string>();
+                }
+            }
+            catch { return Array.Empty<string>(); }
+        }
 
         private void Write(string level, string message)
         {

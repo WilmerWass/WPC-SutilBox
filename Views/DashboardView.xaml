@@ -48,11 +48,11 @@
                             </Ellipse>
                         </Grid>
 
-                        <!-- Botón Principal: Diagnóstico del sistema -->
-                        <Button Grid.Row="1" Command="{Binding NavigateCommand}" CommandParameter="RevisarPC" Style="{StaticResource PrimaryButtonStyle}" Height="48" HorizontalAlignment="Stretch">
+                        <!-- Botón Principal: Optimización rápida -->
+                        <Button Grid.Row="1" Command="{Binding QuickOptimizeCommand}" Style="{StaticResource PrimaryButtonStyle}" Height="48" HorizontalAlignment="Stretch">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="🔍   Revisar mi PC" FontWeight="SemiBold" FontSize="14" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                                <TextBlock Text="(Diagnóstico general de salud y rendimiento)" FontSize="12" VerticalAlignment="Center" Opacity="0.8"/>
+                                <TextBlock Text="⚡   Optimizar" FontWeight="SemiBold" FontSize="14" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                <TextBlock Text="(temporales, RAM y perfil activo)" FontSize="12" VerticalAlignment="Center" Opacity="0.8"/>
                             </StackPanel>
                         </Button>
 
@@ -158,11 +158,11 @@
                                         </Style>
                                     </UniformGrid.Resources>
 
-                                    <RadioButton Content="Equilibrado" Tag="⚖️" IsChecked="{Binding CurrentMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=General}" Command="{Binding ApplyPerformanceModeCommand}" CommandParameter="General" ToolTip="Una configuración pensada para el uso diario."/>
-                                    <RadioButton Content="Gaming" Tag="🎮" IsChecked="{Binding CurrentMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Gamer}" Command="{Binding ApplyPerformanceModeCommand}" CommandParameter="Gamer" ToolTip="Prioriza tu experiencia de juego de forma reversible."/>
-                                    <RadioButton Content="Productividad" Tag="📊" IsChecked="{Binding CurrentMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Oficina}" Command="{Binding ApplyPerformanceModeCommand}" CommandParameter="Oficina" ToolTip="Enfocado en trabajo, estudio y estabilidad."/>
-                                    <RadioButton Content="Desarrollo" Tag="👨‍💻" IsChecked="{Binding CurrentMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Dev}" Command="{Binding ApplyPerformanceModeCommand}" CommandParameter="Dev" ToolTip="Prepara el entorno para programar y desarrollar."/>
-                                    <RadioButton Content="A tu medida" Tag="⚙️" IsChecked="{Binding CurrentMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Personalizado}" Command="{Binding ApplyPerformanceModeCommand}" CommandParameter="Personalizado" ToolTip="Elige exactamente qué acciones quieres aplicar."/>
+                                    <RadioButton Content="Equilibrado" Tag="⚖️" IsChecked="{Binding CurrentMode, Mode=OneWay, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=General}" Command="{Binding ApplyPerformanceModeCommand}" CommandParameter="General" ToolTip="Una configuración pensada para el uso diario."/>
+                                    <RadioButton Content="Gaming" Tag="🎮" IsChecked="{Binding CurrentMode, Mode=OneWay, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Gamer}" Command="{Binding ApplyPerformanceModeCommand}" CommandParameter="Gamer" ToolTip="Prioriza tu experiencia de juego de forma reversible."/>
+                                    <RadioButton Content="Productividad" Tag="📊" IsChecked="{Binding CurrentMode, Mode=OneWay, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Oficina}" Command="{Binding ApplyPerformanceModeCommand}" CommandParameter="Oficina" ToolTip="Enfocado en trabajo, estudio y estabilidad."/>
+                                    <RadioButton Content="Desarrollo" Tag="👨‍💻" IsChecked="{Binding CurrentMode, Mode=OneWay, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Dev}" Command="{Binding ApplyPerformanceModeCommand}" CommandParameter="Dev" ToolTip="Prepara el entorno para programar y desarrollar."/>
+                                    <RadioButton Content="A tu medida" Tag="⚙️" IsChecked="{Binding CurrentMode, Mode=OneWay, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Personalizado}" Command="{Binding ApplyPerformanceModeCommand}" CommandParameter="Personalizado" ToolTip="Elige exactamente qué acciones quieres aplicar."/>
                                 </UniformGrid>
                             </StackPanel>
                         </Border>
@@ -188,9 +188,9 @@
                                 <StackPanel>
                                     <Grid>
                                         <TextBlock Text="CPU" Foreground="#888" FontSize="12"/>
-                                        <TextBlock Text="{Binding CpuUsage, StringFormat={}{0:F0}%}" Foreground="White" HorizontalAlignment="Right" FontSize="12" FontWeight="Bold"/>
+                                        <TextBlock Text="{Binding CpuUsage, Mode=OneWay, StringFormat={}{0:F0}%}" Foreground="White" HorizontalAlignment="Right" FontSize="12" FontWeight="Bold"/>
                                     </Grid>
-                                    <ProgressBar Value="{Binding CpuUsage}" Maximum="100" Height="4" Margin="0,5,0,0" Foreground="{DynamicResource PrimaryBrush}"/>
+                                    <ProgressBar Value="{Binding CpuUsage, Mode=OneWay}" Maximum="100" Height="4" Margin="0,5,0,0" Foreground="{DynamicResource PrimaryBrush}"/>
                                 </StackPanel>
                             </Grid>
 
@@ -199,9 +199,9 @@
                                 <StackPanel>
                                     <Grid>
                                         <TextBlock Text="RAM" Foreground="#888" FontSize="12"/>
-                                        <TextBlock Text="{Binding RamUsage, StringFormat={}{0:F0}%}" Foreground="White" HorizontalAlignment="Right" FontSize="12" FontWeight="Bold"/>
+                                        <TextBlock Text="{Binding RamUsage, Mode=OneWay, StringFormat={}{0:F0}%}" Foreground="White" HorizontalAlignment="Right" FontSize="12" FontWeight="Bold"/>
                                     </Grid>
-                                    <ProgressBar Value="{Binding RamUsage}" Maximum="100" Height="4" Margin="0,5,0,0" Foreground="#A855F7"/>
+                                    <ProgressBar Value="{Binding RamUsage, Mode=OneWay}" Maximum="100" Height="4" Margin="0,5,0,0" Foreground="#A855F7"/>
                                 </StackPanel>
                             </Grid>
 
@@ -210,9 +210,9 @@
                                 <StackPanel>
                                     <Grid>
                                         <TextBlock Text="Temperatura CPU" Foreground="#888" FontSize="12"/>
-                                        <TextBlock Text="{Binding CpuTempC, StringFormat={}{0:F0}°C}" Foreground="White" HorizontalAlignment="Right" FontSize="12" FontWeight="Bold"/>
+                                        <TextBlock Text="{Binding CpuTempC, Mode=OneWay, StringFormat={}{0:F0}°C}" Foreground="White" HorizontalAlignment="Right" FontSize="12" FontWeight="Bold"/>
                                     </Grid>
-                                    <ProgressBar Value="{Binding CpuTempC}" Maximum="100" Height="4" Margin="0,5,0,0" Foreground="#F59E0B"/>
+                                    <ProgressBar Value="{Binding CpuTempC, Mode=OneWay}" Maximum="100" Height="4" Margin="0,5,0,0" Foreground="#F59E0B"/>
                                 </StackPanel>
                             </Grid>
 

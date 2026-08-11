@@ -27,7 +27,7 @@
                                   VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="Aplicación" Binding="{Binding Name}" Width="*"/>
-                                <DataGridTextColumn Header="Ruta" Binding="{Binding Command}" Width="*"/>
+                                <DataGridTextColumn Header="Ruta" Binding="{Binding Path}" Width="*"/>
                                 <DataGridTextColumn Header="Impacto" Binding="{Binding ImpactScore, StringFormat={}{0:F1}}" Width="80"/>
                                 <DataGridTemplateColumn Header="Estado" Width="130">
                                     <DataGridTemplateColumn.CellTemplate>

@@ -132,6 +132,11 @@ namespace Wpc_SutilBox.Core
                 var usage = new SystemUsage { CpuUsage = cpu, RamUsage = ram, DiskUsage = disk };
                 try
                 {
+                    usage.CpuPerCore = _cpuCoreCounters.Select(c => Math.Clamp((double)c.NextValue(), 0, 100)).ToArray();
+                }
+                catch { usage.CpuPerCore = Array.Empty<double>(); }
+                try
+                {
                     usage.DiskReadsPerSec = _diskReadsPerSecTotal?.NextValue() ?? 0;
                     usage.DiskWritesPerSec = _diskWritesPerSecTotal?.NextValue() ?? 0;
                     usage.DiskAvgQueueLength = _diskAvgQueueLen?.NextValue() ?? 0;

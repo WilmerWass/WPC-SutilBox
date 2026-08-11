@@ -14,7 +14,9 @@
                 <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="12" Padding="20" Margin="0,0,0,20">
                     <StackPanel>
                         <TextBlock Text="Registros de Sesión" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,10"/>
-                        <TextBlock Text="Consulte la carpeta local con los logs detallados de todas las actividades ejecutadas." FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,15"/>
+                        <TextBlock Text="Actividad reciente de esta sesión." FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,15"/>
+                        <ListBox ItemsSource="{Binding RecentLogEntries}" Height="300" Background="Transparent" BorderThickness="0" Foreground="{DynamicResource TextSecondaryBrush}" FontFamily="Consolas" FontSize="11" Margin="0,0,0,15"/>
+                        <Button Content="Actualizar registros" Command="{Binding RefreshLogsCommand}" Style="{StaticResource SecondaryButtonStyle}" HorizontalAlignment="Left" Margin="0,0,0,8"/>
                         <Button Content="Abrir Carpeta de Logs" Command="{Binding OpenLogFolderCommand}" Style="{StaticResource PrimaryButtonStyle}" HorizontalAlignment="Left"/>
                     </StackPanel>
                 </Border>

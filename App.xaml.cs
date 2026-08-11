@@ -91,6 +91,7 @@ namespace Wpc_SutilBox
             services.AddSingleton<IWingetService, WingetService>();
             services.AddSingleton<IDriverService, DriverService>();
             services.AddSingleton<IDiskAnalyzerService, DiskAnalyzerService>();
+            services.AddTransient<ProfileEditorViewModel>();
 
             services.AddSingleton<MainViewModel>();
             services.AddTransient<MainWindow>(s => new MainWindow(s.GetRequiredService<ILogService>()));
@@ -146,6 +147,7 @@ namespace Wpc_SutilBox
 
                 SetupTrayIcon();
                 mainWindow.Show();
+                (_serviceProvider!.GetRequiredService<MainViewModel>()).StartMonitoring();
                 ShowMainWindow();
             }
             catch (Exception ex)

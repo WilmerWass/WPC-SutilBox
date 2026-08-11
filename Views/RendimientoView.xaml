@@ -26,16 +26,15 @@
         <TextBlock Grid.Row="0" Text="Rendimiento y Procesos" Style="{StaticResource HeaderTextStyle}"/>
 
         <!-- Dashboard Moderno de Métricas -->
-        <UniformGrid Grid.Row="1" Columns="5" Margin="0,0,0,20">
+        <UniformGrid Grid.Row="1" Columns="4" Margin="0,0,0,20">
             <!-- CPU -->
             <Border Style="{StaticResource AnimatedCardStyle}" Margin="5">
                 <StackPanel HorizontalAlignment="Center">
                     <TextBlock Text="Procesador (CPU)" Foreground="{DynamicResource SecondaryTextBrush}" FontSize="11" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,10"/>
                     <Grid>
-                        <Ellipse Stroke="{DynamicResource PrimaryBrush}" StrokeThickness="4" Width="80" Height="80" Opacity="0.1"/>
                         <StackPanel VerticalAlignment="Center">
-                            <TextBlock Text="{Binding CpuTempC, StringFormat={}{0:F0}°C}" Foreground="White" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center"/>
-                            <TextBlock Text="Temp" Foreground="{DynamicResource SecondaryTextBrush}" FontSize="10" HorizontalAlignment="Center"/>
+                            <TextBlock Text="{Binding CpuUsage, Mode=OneWay, StringFormat={}{0:F0}%}" Foreground="White" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Uso actual" Foreground="{DynamicResource SecondaryTextBrush}" FontSize="10" HorizontalAlignment="Center"/>
                         </StackPanel>
                     </Grid>
                     <TextBlock Text="{Binding ThermalAlert}" Foreground="#EF4444" FontSize="10" Margin="0,8,0,0" TextAlignment="Center" TextWrapping="Wrap"
@@ -48,9 +47,8 @@
                 <StackPanel HorizontalAlignment="Center">
                     <TextBlock Text="Memoria (RAM)" Foreground="{DynamicResource SecondaryTextBrush}" FontSize="11" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,10"/>
                     <Grid>
-                        <Ellipse Stroke="{DynamicResource PrimaryBrush}" StrokeThickness="4" Width="80" Height="80" Opacity="0.1"/>
                         <StackPanel VerticalAlignment="Center">
-                            <TextBlock Text="{Binding RamUsage, StringFormat={}{0:0}%}" Foreground="White" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center"/>
+                            <TextBlock Text="{Binding RamUsage, Mode=OneWay, StringFormat={}{0:0}%}" Foreground="White" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center"/>
                             <TextBlock Text="Uso" Foreground="{DynamicResource SecondaryTextBrush}" FontSize="10" HorizontalAlignment="Center"/>
                         </StackPanel>
                     </Grid>
@@ -86,7 +84,6 @@
                 <StackPanel HorizontalAlignment="Center">
                     <TextBlock Text="Red (Descarga)" Foreground="{DynamicResource SecondaryTextBrush}" FontSize="11" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,10"/>
                     <Grid>
-                        <Ellipse Stroke="{DynamicResource PrimaryBrush}" StrokeThickness="4" Width="80" Height="80" Opacity="0.1"/>
                         <StackPanel VerticalAlignment="Center">
                             <TextBlock Text="{Binding NetRecvMbps, StringFormat={}{0:F1}}" Foreground="White" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center"/>
                             <TextBlock Text="Mbps" Foreground="{DynamicResource SecondaryTextBrush}" FontSize="10" HorizontalAlignment="Center"/>
@@ -101,7 +98,6 @@
                 <StackPanel HorizontalAlignment="Center">
                     <TextBlock Text="Impacto Disco" Foreground="{DynamicResource SecondaryTextBrush}" FontSize="11" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,10"/>
                     <Grid>
-                        <Ellipse Stroke="{DynamicResource PrimaryBrush}" StrokeThickness="4" Width="80" Height="80" Opacity="0.1"/>
                         <StackPanel VerticalAlignment="Center">
                             <TextBlock Text="{Binding DiskWritesPerSec, StringFormat={}{0:F0}}" Foreground="White" FontSize="22" FontWeight="Bold" HorizontalAlignment="Center"/>
                             <TextBlock Text="I/O" Foreground="{DynamicResource SecondaryTextBrush}" FontSize="10" HorizontalAlignment="Center"/>

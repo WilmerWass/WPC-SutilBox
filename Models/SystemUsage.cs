@@ -16,5 +16,11 @@
         public double DiskWriteLatencyMs { get; set; }
         public List<DiskPerformanceInfo> DiskPerformanceInfos { get; set; } = new();
     }
+
+    public class CpuCoreMetric
+    {
+        public int Index { get; set; }
+        public double Usage { get; set; }
+    }
 }
 

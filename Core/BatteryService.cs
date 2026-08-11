@@ -2,6 +2,7 @@
 using System.Management;
 using System.Threading.Tasks;
 using Wpc_SutilBox.Models;
+using FormsPowerStatus = System.Windows.Forms.PowerStatus;
 
 namespace Wpc_SutilBox.Core
 {
@@ -21,6 +22,17 @@ namespace Wpc_SutilBox.Core
                 var info = new BatteryInfo { IsPresent = false };
                 try
                 {
+                    // PowerStatus es la fuente rápida del estado expuesto por Windows.
+                    // WMI se conserva para capacidad/estado detallado y salud de batería.
+                    FormsPowerStatus powerStatus = System.Windows.Forms.SystemInformation.PowerStatus;
+                    if (powerStatus.BatteryChargeStatus != System.Windows.Forms.BatteryChargeStatus.NoSystemBattery)
+                    {
+                        info.IsPresent = true;
+                        info.EstimatedChargeRemaining = (int)Math.Round(powerStatus.BatteryLifePercent * 100);
+                        info.Status = powerStatus.PowerLineStatus == System.Windows.Forms.PowerLineStatus.Online
+                            ? "Conectada (AC)" : "Descargando";
+                    }
+
                     // WMI Win32_Battery for basic info
                     using (var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_Battery"))
                     {

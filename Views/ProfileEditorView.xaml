@@ -6,7 +6,7 @@
              xmlns:models="clr-namespace:Wpc_SutilBox.Models"
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="1000">
-    <Grid Style="{DynamicResource AnimatedViewStyle}" Margin="20" DataContext="{Binding ProfileEditor}">
+    <Grid Style="{DynamicResource AnimatedViewStyle}" Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>

@@ -14,7 +14,7 @@
             <Border Style="{StaticResource AnimatedCardStyle}" Margin="0,0,0,20">
                 <StackPanel>
                     <TextBlock Text="Herramientas Avanzadas" FontSize="18" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryBrush}" Margin="0,0,0,20"/>
-                    <TextBlock Text="Configuración detallada de rendimiento y perfiles." Foreground="#888" FontSize="12" Margin="0,0,0,15"/>
+                    <TextBlock Text="Configuración detallada de rendimiento y perfiles." Foreground="{DynamicResource TextMutedBrush}" FontSize="12" Margin="0,0,0,15"/>
                     <Button Content="⚙️ Abrir Editor de Perfiles" Command="{Binding NavigateCommand}" CommandParameter="EditorPerfiles" Style="{StaticResource SecondaryButtonStyle}" HorizontalAlignment="Left" Padding="20,10"/>
                 </StackPanel>
             </Border>
@@ -26,28 +26,28 @@
                     
                     <Grid Margin="0,0,0,15">
                         <StackPanel>
-                            <TextBlock Text="Ejecutar al iniciar Windows" Foreground="White" FontSize="15" Margin="0,0,0,5"/>
-                            <TextBlock Text="Inicia la protección y el monitoreo automáticamente." Foreground="#888" FontSize="12"/>
+                            <TextBlock Text="Ejecutar al iniciar Windows" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="15" Margin="0,0,0,5"/>
+                            <TextBlock Text="Inicia la protección y el monitoreo automáticamente." Foreground="{DynamicResource TextMutedBrush}" FontSize="12"/>
                         </StackPanel>
                         <ToggleButton HorizontalAlignment="Right" IsChecked="{Binding RunOnStartup}" Style="{StaticResource ToggleSwitchStyle}"/>
                     </Grid>
 
-                    <Separator Background="#222" Margin="0,15"/>
+                    <Separator Background="{DynamicResource BorderSubtleBrush}" Margin="0,15"/>
 
                     <Grid Margin="0,0,0,15">
                         <StackPanel>
-                            <TextBlock Text="Optimizar cuando no uso el PC (Idle)" Foreground="White" FontSize="15" Margin="0,0,0,5"/>
-                            <TextBlock Text="Ejecuta limpieza y optimización automática tras 10 min de inactividad." Foreground="#888" FontSize="12"/>
+                            <TextBlock Text="Optimizar cuando no uso el PC (Idle)" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="15" Margin="0,0,0,5"/>
+                            <TextBlock Text="Ejecuta limpieza y optimización automática tras 10 min de inactividad." Foreground="{DynamicResource TextMutedBrush}" FontSize="12"/>
                         </StackPanel>
                         <ToggleButton HorizontalAlignment="Right" IsChecked="{Binding OptimizeOnIdle}" Style="{StaticResource ToggleSwitchStyle}"/>
                     </Grid>
 
-                    <Separator Background="#222" Margin="0,15"/>
+                    <Separator Background="{DynamicResource BorderSubtleBrush}" Margin="0,15"/>
 
                     <Grid>
                         <StackPanel>
-                            <TextBlock Text="Minimizar a la bandeja" Foreground="White" FontSize="15" Margin="0,0,0,5"/>
-                            <TextBlock Text="Al cerrar la ventana, la aplicación seguirá en segundo plano." Foreground="#888" FontSize="12"/>
+                            <TextBlock Text="Minimizar a la bandeja" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="15" Margin="0,0,0,5"/>
+                            <TextBlock Text="Al cerrar la ventana, la aplicación seguirá en segundo plano." Foreground="{DynamicResource TextMutedBrush}" FontSize="12"/>
                         </StackPanel>
                         <ToggleButton HorizontalAlignment="Right" IsChecked="{Binding MinimizeToTray}" Style="{StaticResource ToggleSwitchStyle}"/>
                     </Grid>
@@ -61,13 +61,13 @@
                     
                     <Grid Margin="0,0,0,20">
                         <StackPanel>
-                            <TextBlock Text="Modo Oscuro" Foreground="White" FontSize="15" Margin="0,0,0,5"/>
-                            <TextBlock Text="Alterna entre tema claro y oscuro (Recomendado: Oscuro)." Foreground="#888" FontSize="12"/>
+                            <TextBlock Text="Modo Oscuro" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="15" Margin="0,0,0,5"/>
+                            <TextBlock Text="Alterna entre tema claro y oscuro." Foreground="{DynamicResource TextMutedBrush}" FontSize="12"/>
                         </StackPanel>
                         <ToggleButton HorizontalAlignment="Right" IsChecked="{Binding IsDarkMode}" Style="{StaticResource ToggleSwitchStyle}"/>
                     </Grid>
 
-                    <TextBlock Text="Color del Tema" Foreground="White" FontSize="15" Margin="0,0,0,15"/>
+                    <TextBlock Text="Color del Tema" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="15" Margin="0,0,0,15"/>
                     <WrapPanel Orientation="Horizontal" Margin="0,0,0,25">
                         <!-- Azul (Default) -->
                         <Button Command="{Binding ChangeAccentColorCommand}" CommandParameter="#3B82F6" Width="30" Height="30" Margin="0,0,10,10" ToolTip="Azul Sky">
@@ -118,7 +118,7 @@
                         </StackPanel>
                     </WrapPanel>
 
-                    <Separator Background="#222" Margin="0,15"/>
+                    <Separator Background="{DynamicResource BorderSubtleBrush}" Margin="0,15"/>
 
                     <Grid>
                         <StackPanel>

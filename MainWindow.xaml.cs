@@ -76,7 +76,13 @@ public partial class MainWindow : Window
 
         if (DataContext is MainViewModel vm)
         {
-            vm.MinimizeToTray();
+            if (!vm.MinimizeToTray)
+            {
+                _allowClose = true;
+                base.OnClosing(e);
+                return;
+            }
+            vm.MinimizeToTrayWindow();
 
             e.Cancel = true;
             Hide();

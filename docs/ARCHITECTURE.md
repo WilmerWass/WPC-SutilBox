@@ -1,68 +1,49 @@
-# Arquitectura del Sistema
+# Arquitectura de WPC-SutilBox Beta 1
 
-WassControlSys está construido utilizando **WPF (Windows Presentation Foundation)** sobre **.NET 8.0**, siguiendo estrictamente el patrón de diseño **MVVM (Model-View-ViewModel)** y principios de **Clean Architecture**.
+## Capas
 
-## 🏗️ Estructura de Alto Nivel
+```text
+Views (XAML)
+    ↓ bindings y comandos
+ViewModels (MainViewModel, ProfileEditorViewModel)
+    ↓ interfaces
+Core (servicios Windows)
+    ↓
+WMI / PerformanceCounter / Registry / Process / PowerStatus
+```
 
-El proyecto se divide en las siguientes capas lógicas:
+## Navegación
 
-### 1. Views (Vistas - UI)
+`MainWindow` mantiene una única región de contenido. `CurrentSection` decide qué `UserControl` está visible mediante `EnumToVisibilityConverter`; el resto permanece `Collapsed`. `Revisar mi PC` usa `PcReviewView`, que agrupa salud, almacenamiento, hardware/temperatura y procesos de alto consumo en pestañas internas.
 
-- Responsable únicamente de la presentación y la interacción con el usuario.
-- **Tecnología**: XAML.
-- **Ubicación**: Carpeta `Views/` y `MainWindow.xaml`.
-- **Características**:
-  - Uso de `UserControls` para navegación modular.
-  - Estilos y recursos centralizados en `App.xaml`.
-  - `WindowChrome` personalizado para una apariencia moderna (sin barra de título estándar).
+## Servicios principales
 
-### 2. ViewModels (Lógica de Presentación)
+| Servicio | Responsabilidad |
+|---|---|
+| `MonitoringService` | CPU, RAM, red, disco, núcleos y conexiones TCP |
+| `TemperatureMonitorService` | Temperatura WMI |
+| `BatteryService` | `PowerStatus` y `Win32_Battery` |
+| `ProcessManagerService` | Procesos, prioridades, finalización y RAM |
+| `PerformanceProfileService` | Planes de energía, servicios y ajustes de perfil |
+| `RestorePointService` | Puntos de restauración WMI |
+| `StartupService` | Aplicaciones de inicio y Registro |
+| `BloatwareService` | Detección y desinstalación |
+| `WingetService` | Consulta y actualización de aplicaciones |
+| `SettingsService` | Persistencia JSON |
+| `FileLogService` | Log de sesión y lectura de actividad reciente |
 
-- Actúa como intermediario entre la Vista y el Modelo/Servicios.
-- Gestiona el estado de la aplicación y expone comandos (`ICommand`).
-- **Ubicación**: Carpeta `ViewModels/`.
-- **Componente Principal**: `MainViewModel.cs`.
-  - Gestiona la navegación (`CurrentSection`).
-  - Centraliza la inyección de todos los servicios.
-  - Implementa `INotifyPropertyChanged` para el databinding.
+## Flujo de Optimizar
 
-### 3. Models (Datos)
+1. El usuario pulsa `QuickOptimizeCommand`.
+2. Se eliminan temporales de usuario.
+3. Se ejecuta `OptimizeRamAsync`.
+4. Se aplica el `PerformanceMode` activo.
+5. Se actualizan las métricas y se registra el resultado.
 
-- Representa las entidades de datos del dominio.
-- Objetos POCO (Plain Old CLR Objects) simples.
-- **Ubicación**: Carpeta `Models/`.
-- **Ejemplos**: `SystemInfo`, `BloatwareApp`, `ServiceInfo`.
+## Temas
 
-### 4. Core / Services (Lógica de Negocio e Infraestructura)
+`Theme.Dark.xaml` y `Theme.Light.xaml` declaran el mismo contrato de recursos: `BackgroundBrush`, `SurfaceBrush`, `TextPrimaryBrush`, `TextSecondaryBrush`, `BorderBrush`, `PrimaryBrush` y estados semánticos. Los controles reutilizables consumen `DynamicResource`, por lo que el cambio de tema no requiere reiniciar.
 
-- Contiene la lógica pesada y el acceso a APIs del sistema.
-- **Ubicación**: Carpeta `Core/`.
-- **Implementación**:
-  - Interfaces (`ISystemMaintenanceService`, `IBloatwareService`) para desacople y testabilidad.
-  - Implementaciones concretas que usan:
-    - `System.Management` (WMI) para hardware y servicios.
-    - `Microsoft.Win32.Registry` para bloatware y configuraciones.
-    - `System.Diagnostics.Process` para ejecutar comandos de sistema (`cmd`, `powershell`, `defrag`).
+## Seguridad
 
-## 💉 Inyección de Dependencias (DI)
-
-Utilizamos `Microsoft.Extensions.DependencyInjection` para gestionar el ciclo de vida de los servicios.
-
-- La configuración se realiza en `App.xaml.cs`.
-- Todos los servicios se registran como `Singleton` o `Transient` según necesidad.
-- `MainViewModel` recibe sus dependencias vía constructor.
-
-## 🔄 Flujo de Datos
-
-1. **Usuario** interactúa con la **Vista** (ej. clic en "Limpiar").
-2. **Vista** ejecuta un `ICommand` en el **ViewModel**.
-3. **ViewModel** llama a un método asíncrono en un **Servicio** (`Core`).
-4. **Servicio** ejecuta la operación (ej. borrar archivo, consulta WMI) en un hilo de fondo (`Task.Run`).
-5. **ViewModel** recibe el resultado y actualiza sus propiedades observables.
-6. **Vista** refleja los cambios automáticamente gracias al Databinding.
-
-## 🛡️ Consideraciones de Seguridad
-
-- **Ejecución Elevada**: Métodos críticos (`LaunchElevated`) solicitan permisos de administrador mediante el verbo `runas`.
-- **Validación**: Los servicios validan rutas y entradas antes de ejecutar comandos destructivos (ej. limpieza de archivos).
-- **Manejo de Errores**: Bloques `try-catch` robustos en todos los puntos de integración con el sistema operativo para evitar crashes.
+Las operaciones administrativas se ejecutan con UAC. Los perfiles solicitan un punto de restauración antes de modificar el sistema. La configuración se almacena en `%LOCALAPPDATA%\\Wpc_SutilBox` y no contiene credenciales.

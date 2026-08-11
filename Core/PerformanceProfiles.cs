@@ -33,18 +33,21 @@ namespace Wpc_SutilBox.Core
         private readonly IProcessManagerService? _processManager;
         private readonly IServiceOptimizerService? _serviceOptimizer;
         private readonly ISettingsService _settings;
+        private readonly IRestorePointService? _restorePointService;
         private readonly ILogService? _log;
 
         public PerformanceProfileService(
             ISettingsService settings,
             IProcessManagerService? processManager = null, 
             IServiceOptimizerService? serviceOptimizer = null, 
-            ILogService? log = null)
+            ILogService? log = null,
+            IRestorePointService? restorePointService = null)
         {
             _settings = settings;
             _processManager = processManager;
             _serviceOptimizer = serviceOptimizer;
             _log = log;
+            _restorePointService = restorePointService;
         }
 
         public async Task<ApplyProfileResult> ApplyProfileAsync(PerformanceMode mode)
@@ -56,6 +59,16 @@ namespace Wpc_SutilBox.Core
 
             var settings = await _settings.LoadAsync();
             string modeKey = mode.ToString();
+
+            if (_restorePointService != null)
+            {
+                var restorePoint = await _restorePointService.CreateRestorePointAsync($"WPC-SutilBox - perfil {mode} - {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
+                if (!restorePoint.Success)
+                {
+                    _log?.Warn($"Perfil {mode} cancelado: no se pudo crear el punto de restauración.");
+                    return new ApplyProfileResult { Success = false, Message = $"Perfil cancelado: {restorePoint.Message}" };
+                }
+            }
             
             if (!settings.PerformanceProfiles.TryGetValue(modeKey, out var config))
             {

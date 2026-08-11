@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Management;
 using System.Threading.Tasks;
+using System.Runtime.InteropServices;
 
 namespace Wpc_SutilBox.Core
 {
@@ -49,6 +50,12 @@ namespace Wpc_SutilBox.Core
                             }
                         }
                     }
+                }
+                catch (COMException ex) when ((uint)ex.HResult == 0x80070422)
+                {
+                    const string message = "La Protección del sistema está deshabilitada o el servicio requerido no está disponible.";
+                    _log.Warn(message);
+                    return (false, message);
                 }
                 catch (Exception ex)
                 {
