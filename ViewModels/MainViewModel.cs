@@ -49,29 +49,35 @@ namespace Wpc_SutilBox.ViewModels
             set => SetProperty(ref _statusMessage, value);
         }
         // Nuevos Perfiles de Rendimiento
-        private bool _isLigeroModeSelected;
-        public bool IsLigeroModeSelected
+        private bool _isEquilibradoModeSelected = true; // Por defecto
+        public bool IsEquilibradoModeSelected
         {
-            get => _isLigeroModeSelected;
-            set { SetProperty(ref _isLigeroModeSelected, value); if (value) OnPerformanceModeChanged("Sutil Ligero"); }
+            get => _isEquilibradoModeSelected;
+            set { SetProperty(ref _isEquilibradoModeSelected, value); if (value) OnPerformanceModeChanged("Equilibrado"); }
         }
-        private bool _isBalanceModeSelected = true; // Por defecto
-        public bool IsBalanceModeSelected
+        private bool _isGamingModeSelected;
+        public bool IsGamingModeSelected
         {
-            get => _isBalanceModeSelected;
-            set { SetProperty(ref _isBalanceModeSelected, value); if (value) OnPerformanceModeChanged("OptiBalance"); }
+            get => _isGamingModeSelected;
+            set { SetProperty(ref _isGamingModeSelected, value); if (value) OnPerformanceModeChanged("Gaming"); }
         }
-        private bool _isTurboModeSelected;
-        public bool IsTurboModeSelected
+        private bool _isProductividadModeSelected;
+        public bool IsProductividadModeSelected
         {
-            get => _isTurboModeSelected;
-            set { SetProperty(ref _isTurboModeSelected, value); if (value) OnPerformanceModeChanged("Turbo Boost"); }
+            get => _isProductividadModeSelected;
+            set { SetProperty(ref _isProductividadModeSelected, value); if (value) OnPerformanceModeChanged("Productividad"); }
+        }
+        private bool _isDesarrolloModeSelected;
+        public bool IsDesarrolloModeSelected
+        {
+            get => _isDesarrolloModeSelected;
+            set { SetProperty(ref _isDesarrolloModeSelected, value); if (value) OnPerformanceModeChanged("Desarrollo"); }
         }
         private bool _isCustomModeSelected;
         public bool IsCustomModeSelected
         {
             get => _isCustomModeSelected;
-            set { SetProperty(ref _isCustomModeSelected, value); if (value) OnPerformanceModeChanged("Custom"); }
+            set { SetProperty(ref _isCustomModeSelected, value); if (value) OnPerformanceModeChanged("A tu medida"); }
         }
         private void OnPerformanceModeChanged(string modeName)
         {

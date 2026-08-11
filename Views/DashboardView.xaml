@@ -158,11 +158,11 @@
                                         </Style>
                                     </UniformGrid.Resources>
 
-                                    <RadioButton Content="General" Tag="🏠" IsChecked="{Binding CurrentMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=General}" Command="{Binding ApplyPerformanceModeCommand}" CommandParameter="General"/>
-                                    <RadioButton Content="Gamer" Tag="🎮" IsChecked="{Binding CurrentMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Gamer}" Command="{Binding ApplyPerformanceModeCommand}" CommandParameter="Gamer"/>
-                                    <RadioButton Content="Dev" Tag="👨‍💻" IsChecked="{Binding CurrentMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Dev}" Command="{Binding ApplyPerformanceModeCommand}" CommandParameter="Dev"/>
-                                    <RadioButton Content="Oficina" Tag="📊" IsChecked="{Binding CurrentMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Oficina}" Command="{Binding ApplyPerformanceModeCommand}" CommandParameter="Oficina"/>
-                                    <RadioButton Content="Personal." Tag="⚙️" IsChecked="{Binding CurrentMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Personalizado}" Command="{Binding ApplyPerformanceModeCommand}" CommandParameter="Personalizado"/>
+                                    <RadioButton Content="Equilibrado" Tag="⚖️" IsChecked="{Binding CurrentMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=General}" Command="{Binding ApplyPerformanceModeCommand}" CommandParameter="General" ToolTip="Una configuración pensada para el uso diario."/>
+                                    <RadioButton Content="Gaming" Tag="🎮" IsChecked="{Binding CurrentMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Gamer}" Command="{Binding ApplyPerformanceModeCommand}" CommandParameter="Gamer" ToolTip="Prioriza tu experiencia de juego de forma reversible."/>
+                                    <RadioButton Content="Productividad" Tag="📊" IsChecked="{Binding CurrentMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Oficina}" Command="{Binding ApplyPerformanceModeCommand}" CommandParameter="Oficina" ToolTip="Enfocado en trabajo, estudio y estabilidad."/>
+                                    <RadioButton Content="Desarrollo" Tag="👨‍💻" IsChecked="{Binding CurrentMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Dev}" Command="{Binding ApplyPerformanceModeCommand}" CommandParameter="Dev" ToolTip="Prepara el entorno para programar y desarrollar."/>
+                                    <RadioButton Content="A tu medida" Tag="⚙️" IsChecked="{Binding CurrentMode, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Personalizado}" Command="{Binding ApplyPerformanceModeCommand}" CommandParameter="Personalizado" ToolTip="Elige exactamente qué acciones quieres aplicar."/>
                                 </UniformGrid>
                             </StackPanel>
                         </Border>

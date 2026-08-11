@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -33,6 +33,7 @@ namespace Wpc_SutilBox.ViewModels
                     _profileToEdit = value; 
                     OnPropertyChanged(); 
                     OnPropertyChanged(nameof(CurrentProfileTitle));
+                    OnPropertyChanged(nameof(CurrentProfileDescription));
                     OnPropertyChanged(nameof(CurrentProfileIcon));
                     OnPropertyChanged(nameof(ProfileThemeBrush));
                     OnPropertyChanged(nameof(ProfileHeaderGradient));
@@ -44,10 +45,11 @@ namespace Wpc_SutilBox.ViewModels
 
         public string ProfileThemeBrush => ProfileToEdit switch
         {
-            PerformanceMode.Gamer => "#EF4444", // Rojo Gamer
-            PerformanceMode.Dev => "#8B5CF6",   // Violeta Dev
-            PerformanceMode.Oficina => "#10B981", // Esmeralda Oficina
-            _ => "#3B82F6" // Azul Personalizado
+            PerformanceMode.Gamer => "#EF4444", // Rojo Gaming
+            PerformanceMode.Dev => "#8B5CF6",   // Violeta Desarrollo
+            PerformanceMode.Oficina => "#10B981", // Esmeralda Productividad
+            PerformanceMode.Personalizado => "#3B82F6", // Azul A tu medida
+            _ => "#3B82F6"
         };
 
         public string ProfileHeaderGradient => ProfileToEdit switch
@@ -60,15 +62,27 @@ namespace Wpc_SutilBox.ViewModels
 
         public string CurrentProfileTitle => ProfileToEdit switch
         {
-            PerformanceMode.Gamer => "Optimización para Juegos",
-            PerformanceMode.Dev => "Entorno de Desarrollo",
-            PerformanceMode.Oficina => "Modo Oficina / Productividad",
-            PerformanceMode.Personalizado => "Configuración Personalizada",
+            PerformanceMode.General => "Equilibrado",
+            PerformanceMode.Gamer => "Gaming",
+            PerformanceMode.Oficina => "Productividad",
+            PerformanceMode.Dev => "Desarrollo",
+            PerformanceMode.Personalizado => "A tu medida",
             _ => "Perfil de Rendimiento"
+        };
+
+        public string CurrentProfileDescription => ProfileToEdit switch
+        {
+            PerformanceMode.General => "Una configuración pensada para el uso diario.",
+            PerformanceMode.Gamer => "Prioriza tu experiencia de juego de forma reversible.",
+            PerformanceMode.Oficina => "Enfocado en trabajo, estudio y estabilidad.",
+            PerformanceMode.Dev => "Prepara el entorno para programar y desarrollar.",
+            PerformanceMode.Personalizado => "Elige exactamente qué acciones quieres aplicar.",
+            _ => "Selecciona las acciones que deseas configurar para tu sistema."
         };
 
         public string CurrentProfileIcon => ProfileToEdit switch
         {
+            PerformanceMode.General => "⚖️",
             PerformanceMode.Gamer => "🎮",
             PerformanceMode.Dev => "👨‍💻",
             PerformanceMode.Oficina => "📊",

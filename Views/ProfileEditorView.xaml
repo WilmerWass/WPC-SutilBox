@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Wpc_SutilBox.Views.ProfileEditorView"
+<UserControl x:Class="Wpc_SutilBox.Views.ProfileEditorView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -33,7 +33,7 @@
                 
                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
                     <TextBlock Text="{Binding CurrentProfileTitle}" FontSize="28" FontWeight="ExtraBold" Foreground="White" Margin="0,0,0,5"/>
-                    <TextBlock Text="Ajustes predefinidos y avanzados aplicados al activar este modo." Foreground="#BBB" FontSize="13"/>
+                    <TextBlock Text="{Binding CurrentProfileDescription}" Foreground="#BBB" FontSize="13"/>
                 </StackPanel>
 
                 <!-- Indicador de Cambios Sin Guardar -->
@@ -50,20 +50,23 @@
         <!-- Selector de Perfil Premium -->
         <Border Grid.Row="1" Background="{DynamicResource SurfaceBrush}" CornerRadius="12" Padding="20" Margin="0,0,0,20">
             <StackPanel>
-                <TextBlock Text="¿Qué perfil deseas configurar?" Foreground="{DynamicResource SecondaryTextBrush}" FontSize="12" FontWeight="Bold" Margin="0,0,0,15" Opacity="0.7"/>
-                <UniformGrid Columns="4">
-                    <RadioButton Style="{StaticResource NavButtonStyle}" Content="GAMER" 
+                <TextBlock Text="¿Para qué deseas preparar tu PC?" Foreground="{DynamicResource SecondaryTextBrush}" FontSize="12" FontWeight="Bold" Margin="0,0,0,15" Opacity="0.7"/>
+                <UniformGrid Columns="5">
+                    <RadioButton Style="{StaticResource NavButtonStyle}" Content="Equilibrado" 
+                                 IsChecked="{Binding ProfileToEdit, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=General}"
+                                 Tag="⚖️" Margin="4"/>
+                    <RadioButton Style="{StaticResource NavButtonStyle}" Content="Gaming" 
                                  IsChecked="{Binding ProfileToEdit, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Gamer}"
-                                 Tag="🎮" Margin="5"/>
-                    <RadioButton Style="{StaticResource NavButtonStyle}" Content="DEV" 
-                                 IsChecked="{Binding ProfileToEdit, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Dev}"
-                                 Tag="👨‍💻" Margin="5"/>
-                    <RadioButton Style="{StaticResource NavButtonStyle}" Content="OFICINA" 
+                                 Tag="🎮" Margin="4"/>
+                    <RadioButton Style="{StaticResource NavButtonStyle}" Content="Productividad" 
                                  IsChecked="{Binding ProfileToEdit, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Oficina}"
-                                 Tag="🏢" Margin="5"/>
-                    <RadioButton Style="{StaticResource NavButtonStyle}" Content="PERSONALIZADO" 
+                                 Tag="📊" Margin="4"/>
+                    <RadioButton Style="{StaticResource NavButtonStyle}" Content="Desarrollo" 
+                                 IsChecked="{Binding ProfileToEdit, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Dev}"
+                                 Tag="👨‍💻" Margin="4"/>
+                    <RadioButton Style="{StaticResource NavButtonStyle}" Content="A tu medida" 
                                  IsChecked="{Binding ProfileToEdit, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Personalizado}"
-                                 Tag="⚙️" Margin="5"/>
+                                 Tag="⚙️" Margin="4"/>
                 </UniformGrid>
             </StackPanel>
         </Border>
@@ -233,7 +236,7 @@
                 
                 <StackPanel Grid.Column="2" Orientation="Horizontal">
                     <Button Content="Descartar" Command="{Binding RestoreDefaultsCommand}" Style="{StaticResource NavButtonStyle}" Margin="0,0,10,0" BorderThickness="0" Background="Transparent"/>
-                    <Button Content="GUARDAR CONFIGURACIÓN" Command="{Binding SaveCommand}" 
+                    <Button Content="Revisar y aplicar" Command="{Binding SaveCommand}" 
                             Background="{Binding ProfileThemeBrush}" Foreground="White" FontWeight="Bold" Padding="35,12">
                         <Button.Style>
                             <Style TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
