@@ -25,6 +25,13 @@ namespace Wpc_SutilBox.ViewModels
         private string _applicationTitle = string.Empty;
         private string _currentSection = "Dashboard";
 
+        private object? _currentView;
+        public object? CurrentView
+        {
+            get => _currentView;
+            set => SetProperty(ref _currentView, value);
+        }
+
         // ==========================================
         // 2. PROPIEDADES DE ENLACE (BINDINGS)
         // ==========================================
@@ -81,6 +88,7 @@ namespace Wpc_SutilBox.ViewModels
             ApplicationTitle = "WPC-SutilBox";
             SystemStatus = "WPC-SutilBox - Listo";
 
+            CurrentView = this;
             OpenDiscordCommand = new RelayCommand(ExecuteOpenDiscord);
             OpenCleanmgrCommand = new RelayCommand(ExecuteOpenCleanmgr);
             CleanTempFilesCommand = new AsyncRelayCommand(ExecuteCleanTempFilesAsync);
@@ -91,6 +99,38 @@ namespace Wpc_SutilBox.ViewModels
                 if (param is string section && !string.IsNullOrWhiteSpace(section))
                 {
                     CurrentSection = section;
+
+                    switch (section)
+                    {
+                        case "Dashboard":
+                        case "Inicio":
+                            CurrentView = this;
+                            break;
+                        case "Proteccion":
+                            CurrentView = "Vista de Protección en construcción";
+                            break;
+                        case "Almacenamiento":
+                            CurrentView = "Vista de Almacenamiento";
+                            break;
+                        case "Rendimiento":
+                            CurrentView = "Vista de Rendimiento";
+                            break;
+                        case "Aplicaciones":
+                            CurrentView = "Vista de Aplicaciones";
+                            break;
+                        case "Hardware":
+                            CurrentView = "Vista de Hardware";
+                            break;
+                        case "Herramientas":
+                            CurrentView = "Vista de Herramientas";
+                            break;
+                        case "Configuracion":
+                            CurrentView = "Vista de Configuración";
+                            break;
+                        default:
+                            CurrentView = this;
+                            break;
+                    }
                 }
             });
 

@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Wpc_SutilBox.Core;
 using Wpc_SutilBox.Models;
-using Wpc_SutilBox.Core;
-using Wpc_SutilBox.Models;
 
 #nullable enable
 
@@ -274,12 +272,12 @@ namespace Wpc_SutilBox.ViewModels
                 await Task.Delay(800);
                 
                 HasUnsavedChanges = false;
-                _log.Info($"Configuración guardada para el perfil: {key}");
+                _log.Info($"Configuración guardada para el perfil: {key}"); // Sin await (devuelve void)
             }
             catch (Exception ex)
             {
                 _log.Error("Error al guardar perfil", ex);
-                _dialogService.ShowMessage($"No se pudo guardar: {ex.Message}", "Error");
+                await _dialogService.ShowMessage($"No se pudo guardar: {ex.Message}", "Error");
             }
             finally
             {
@@ -320,4 +318,3 @@ namespace Wpc_SutilBox.ViewModels
         }
     }
 }
-

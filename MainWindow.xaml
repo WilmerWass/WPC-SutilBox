@@ -27,13 +27,12 @@
             <!-- ========================================================= -->
 
             <Grid.ColumnDefinitions>
-                <ColumnDefinition x:Name="SidebarColumn"
-                                  Width="235"/>
+                <ColumnDefinition x:Name="SidebarColumn" Width="235"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
             <!-- ========================================================= -->
-            <!-- SIDEBAR                                                   -->
+            <!-- SIDEBAR ÚNICO Y UNIFICADO                                 -->
             <!-- ========================================================= -->
 
             <Border Grid.Column="0"
@@ -49,27 +48,29 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <!-- LOGO -->
-                    
-                    <!-- BOTÓN CONTRAER -->
-                    
-                    <Grid Grid.Row="0"
-                        Margin="18,18,18,28">
+                    <!-- BOTÓN CONTRAER / EXPANDIR -->
+                    <Grid Grid.Row="0" Margin="18,18,18,12">
+                        <TextBlock Text="WPC SutilBox" 
+                                   FontSize="16" 
+                                   FontWeight="Bold" 
+                                   Foreground="{DynamicResource TextPrimaryBrush}" 
+                                   VerticalAlignment="Center" 
+                                   HorizontalAlignment="Left"/>
                         
                         <Button Width="36"
-                            Height="36"
-                            HorizontalAlignment="Right"
-                            Content="☰"
-                            ToolTip="Expandir / contraer menú"
-                            Background="{DynamicResource SurfaceElevatedBrush}"
-                            Foreground="{DynamicResource TextSecondaryBrush}"
-                            BorderThickness="0"
-                            Cursor="Hand"
-                            Click="ToggleSidebar_Click"/>
-                            </Grid>
+                                Height="36"
+                                HorizontalAlignment="Right"
+                                Content="☰"
+                                ToolTip="Expandir / contraer menú"
+                                Background="{DynamicResource SurfaceElevatedBrush}"
+                                Foreground="{DynamicResource TextSecondaryBrush}"
+                                BorderThickness="0"
+                                Cursor="Hand"
+                                Click="ToggleSidebar_Click"/>
+                    </Grid>
 
                     <!-- ================================================= -->
-                    <!-- NAVEGACIÓN                                         -->
+                    <!-- NAVEGACIÓN                                        -->
                     <!-- ================================================= -->
 
                     <ScrollViewer Grid.Row="1"
@@ -79,73 +80,68 @@
                         <StackPanel Margin="12,0">
 
                             <!-- GRUPO PRINCIPAL -->
-
                             <TextBlock Text="PRINCIPAL"
                                        Margin="10,0,0,8"
                                        FontSize="10"
                                        FontWeight="SemiBold"
                                        Foreground="{DynamicResource TextMutedBrush}"/>
 
-                            <Button Content="⌂  Inicio"
+                            <Button Content="⌂   Inicio"
                                     Command="{Binding NavigateCommand}"
                                     CommandParameter="Dashboard"
                                     Style="{StaticResource NavButtonStyle}"/>
 
-                            <Button Content="◈  Protección"
+                            <Button Content="◈   Protección"
                                     Command="{Binding NavigateCommand}"
                                     CommandParameter="Proteccion"
                                     Style="{StaticResource NavButtonStyle}"/>
 
-                            <Button Content="⚡  Rendimiento"
+                            <Button Content="⚡   Rendimiento"
                                     Command="{Binding NavigateCommand}"
                                     CommandParameter="Rendimiento"
                                     Style="{StaticResource NavButtonStyle}"/>
 
-                            <Button Content="▣  Almacenamiento"
+                            <Button Content="▣   Almacenamiento"
                                     Command="{Binding NavigateCommand}"
                                     CommandParameter="Almacenamiento"
                                     Style="{StaticResource NavButtonStyle}"/>
 
                             <!-- SISTEMA -->
-
                             <TextBlock Text="SISTEMA"
                                        Margin="10,24,0,8"
                                        FontSize="10"
                                        FontWeight="SemiBold"
                                        Foreground="{DynamicResource TextMutedBrush}"/>
 
-                            <Button Content="▦  Aplicaciones"
+                            <Button Content="▦   Aplicaciones"
                                     Command="{Binding NavigateCommand}"
                                     CommandParameter="Aplicaciones"
                                     Style="{StaticResource NavButtonStyle}"/>
 
-                            <Button Content="▣  Hardware"
+                            <Button Content="▣   Hardware"
                                     Command="{Binding NavigateCommand}"
                                     CommandParameter="Hardware"
                                     Style="{StaticResource NavButtonStyle}"/>
 
                             <!-- HERRAMIENTAS -->
-
                             <TextBlock Text="HERRAMIENTAS"
                                        Margin="10,24,0,8"
                                        FontSize="10"
                                        FontWeight="SemiBold"
                                        Foreground="{DynamicResource TextMutedBrush}"/>
 
-                            <Button Content="⚒  Caja de herramientas"
+                            <Button Content="⚒   Caja de herramientas"
                                     Command="{Binding NavigateCommand}"
                                     CommandParameter="Herramientas"
                                     Style="{StaticResource NavButtonStyle}"/>
 
                             <!-- PREPARACIÓN FUTURA -->
-
                             <Border Margin="8,22,8,8"
                                     Padding="12"
                                     CornerRadius="10"
                                     Background="{DynamicResource SurfaceElevatedBrush}">
 
                                 <StackPanel>
-
                                     <TextBlock Text="PRÓXIMAMENTE"
                                                FontSize="9"
                                                FontWeight="Bold"
@@ -156,7 +152,6 @@
                                                FontSize="11"
                                                TextWrapping="Wrap"
                                                Foreground="{DynamicResource TextSecondaryBrush}"/>
-
                                 </StackPanel>
 
                             </Border>
@@ -172,7 +167,7 @@
                     <StackPanel Grid.Row="2"
                                 Margin="12,10,12,16">
 
-                        <Button Content="⚙  Configuración"
+                        <Button Content="⚙   Configuración"
                                 Command="{Binding NavigateCommand}"
                                 CommandParameter="Configuracion"
                                 Style="{StaticResource NavButtonStyle}"/>
@@ -183,7 +178,6 @@
                                 Background="{DynamicResource BackgroundBrush}">
 
                             <StackPanel>
-
                                 <TextBlock Text="WPC-SutilBox Beta.1"
                                            FontSize="10"
                                            Foreground="{DynamicResource TextMutedBrush}"/>
@@ -193,7 +187,6 @@
                                            FontSize="10"
                                            TextWrapping="Wrap"
                                            Foreground="{DynamicResource TextSecondaryBrush}"/>
-
                             </StackPanel>
 
                         </Border>
@@ -235,7 +228,6 @@
                         </Grid.ColumnDefinitions>
 
                         <StackPanel VerticalAlignment="Center">
-
                             <TextBlock Text="WPC-SutilBox"
                                        FontSize="13"
                                        Foreground="{DynamicResource TextMutedBrush}"/>
@@ -245,7 +237,6 @@
                                        FontSize="21"
                                        FontWeight="SemiBold"
                                        Foreground="{DynamicResource TextPrimaryBrush}"/>
-
                         </StackPanel>
 
 
@@ -254,14 +245,12 @@
                                     VerticalAlignment="Center">
 
                             <!-- INDICADOR DE ESTADO -->
-
                             <Border Padding="10,6"
                                     Margin="0,0,10,0"
                                     CornerRadius="8"
                                     Background="{DynamicResource SurfaceElevatedBrush}">
 
                                 <StackPanel Orientation="Horizontal">
-
                                     <Ellipse Width="7"
                                              Height="7"
                                              Margin="0,0,7,0"
@@ -271,13 +260,11 @@
                                     <TextBlock Text="Sistema listo"
                                                FontSize="11"
                                                Foreground="{DynamicResource TextSecondaryBrush}"/>
-
                                 </StackPanel>
 
                             </Border>
 
                             <!-- BOTÓN DE AJUSTES -->
-
                             <Button Width="38"
                                     Height="38"
                                     Content="⚙"
@@ -305,8 +292,7 @@
                              IsIndeterminate="True"
                              Background="Transparent"
                              BorderThickness="0"
-                             Visibility="{Binding IsBusy,
-                                 Converter={StaticResource BooleanToVisibilityConverter}}"
+                             Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}"
                              VerticalAlignment="Top"
                              Panel.ZIndex="100"/>
 
@@ -320,49 +306,31 @@
                       ClipToBounds="True">
 
                     <views:DashboardView
-                        Visibility="{Binding CurrentSection,
-                            Converter={StaticResource EnumToVisibilityConverter},
-                            ConverterParameter=Dashboard}"/>
+                        Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Dashboard}"/>
 
                     <views:SecurityView
-                        Visibility="{Binding CurrentSection,
-                            Converter={StaticResource EnumToVisibilityConverter},
-                            ConverterParameter=Proteccion}"/>
+                        Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Proteccion}"/>
 
                     <views:CleaningView
-                        Visibility="{Binding CurrentSection,
-                            Converter={StaticResource EnumToVisibilityConverter},
-                            ConverterParameter=Almacenamiento}"/>
+                        Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Almacenamiento}"/>
 
                     <views:RendimientoView
-                        Visibility="{Binding CurrentSection,
-                            Converter={StaticResource EnumToVisibilityConverter},
-                            ConverterParameter=Rendimiento}"/>
+                        Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Rendimiento}"/>
 
                     <views:ProfileEditorView
-                        Visibility="{Binding CurrentSection,
-                            Converter={StaticResource EnumToVisibilityConverter},
-                            ConverterParameter=EditorPerfiles}"/>
+                        Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=EditorPerfiles}"/>
 
                     <views:AplicacionesView
-                        Visibility="{Binding CurrentSection,
-                            Converter={StaticResource EnumToVisibilityConverter},
-                            ConverterParameter=Aplicaciones}"/>
+                        Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Aplicaciones}"/>
 
                     <views:HardwareView
-                        Visibility="{Binding CurrentSection,
-                            Converter={StaticResource EnumToVisibilityConverter},
-                            ConverterParameter=Hardware}"/>
+                        Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Hardware}"/>
 
                     <views:ToolboxView
-                        Visibility="{Binding CurrentSection,
-                            Converter={StaticResource EnumToVisibilityConverter},
-                            ConverterParameter=Herramientas}"/>
+                        Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Herramientas}"/>
 
                     <views:SettingsView
-                        Visibility="{Binding CurrentSection,
-                            Converter={StaticResource EnumToVisibilityConverter},
-                            ConverterParameter=Configuracion}"/>
+                        Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Configuracion}"/>
 
                 </Grid>
 
@@ -379,8 +347,7 @@
                         CornerRadius="7"
                         Background="{DynamicResource SurfaceElevatedBrush}"
                         Opacity="0.92"
-                        Visibility="{Binding IsBusy,
-                            Converter={StaticResource BooleanToVisibilityConverter}}">
+                        Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                     <TextBlock Text="{Binding StatusMessage}"
                                FontSize="11"
