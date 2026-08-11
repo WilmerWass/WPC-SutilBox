@@ -1,6 +1,6 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows;
-using Wpc_SutilBox.Core;
 using Wpc_SutilBox.Core;
 using Wpc_SutilBox.ViewModels;
 
@@ -12,91 +12,83 @@ namespace Wpc_SutilBox;
 public partial class MainWindow : Window
 {
     private readonly ILogService _logService;
+
+    private bool _sidebarExpanded = true;
+    private bool _allowClose;
+
     public MainWindow(ILogService logService)
     {
         _logService = logService;
+
         InitializeComponent();
-        
-        _logService.Info($"MainWindow constructor - Initial WindowState: {this.WindowState}");
 
-        // Forzar estado normal ANTES de que se muestre
-        this.WindowState = WindowState.Normal;
-        _logService.Info($"MainWindow constructor - WindowState set to Normal: {this.WindowState}");
-        
-        // Actualizar el icono del botón de maximizar según el estado de la ventana
+        _logService.Info("MainWindow inicializado - WPC-SutilBox Beta.1");
 
+        WindowState = WindowState.Normal;
 
-
-        void UpdateVMVisibility()
-        {
-            if (this.DataContext is MainViewModel vm)
-            {
-                // App is "Visible" only if Window is Visible AND Not Minimized
-                vm.IsWindowVisible = this.IsVisible && this.WindowState != WindowState.Minimized;
-            }
-             _logService.Info($"Window State Changed - Visible: {this.IsVisible}, State: {this.WindowState}");
-        }
-
-        this.IsVisibleChanged += (s, e) => UpdateVMVisibility();
-        this.StateChanged += (s, e) => UpdateVMVisibility();
-
-
-        // SourceInitialized se ejecuta ANTES de que la ventana se muestre
-        this.SourceInitialized += (s, e) =>
-        {
-            this.WindowState = WindowState.Normal;
-            this.Width = 1000;
-            this.Height = 600;
-            _logService.Info($"MainWindow SourceInitialized event - WindowState set to Normal, Width=1000, Height=600. Current WindowState: {this.WindowState}");
-        };
-
-        // Forzar ventana al frente al cargar
-        this.Loaded += async (s, e) =>
-        {
-            this.WindowState = WindowState.Normal; // Asegurar estado normal
-            _logService.Info($"MainWindow Loaded event - Ensuring visibility.");
-            
-            this.Activate();
-            this.Focus();
-            
-            // Forzar al frente temporalmente para superar el foco de otras apps al inicio
-            this.Topmost = true;
-            await System.Threading.Tasks.Task.Delay(150);
-            this.Topmost = false;
-        };
+        IsVisibleChanged += MainWindow_IsVisibleChanged;
+        StateChanged += MainWindow_StateChanged;
     }
 
-
-
-
-
-
-
-    protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+    private void MainWindow_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
-        if (Application.Current is App app && app.IsShuttingDown)
+        UpdateViewModelWindowState();
+    }
+
+    private void MainWindow_StateChanged(object? sender, EventArgs e)
+    {
+        UpdateViewModelWindowState();
+    }
+
+    private void UpdateViewModelWindowState()
+    {
+        if (DataContext is MainViewModel vm)
+        {
+            vm.IsWindowVisible =
+                IsVisible &&
+                WindowState != WindowState.Minimized;
+        }
+
+        _logService.Info(
+            $"Window State Changed - Visible: {IsVisible}, State: {WindowState}");
+    }
+
+    private void ToggleSidebar_Click(object sender, RoutedEventArgs e)
+    {
+        _sidebarExpanded = !_sidebarExpanded;
+
+        SidebarColumn.Width = _sidebarExpanded
+            ? new GridLength(235)
+            : new GridLength(72);
+
+        _logService.Info(
+            $"Sidebar {( _sidebarExpanded ? "expandida" : "contraída" )}");
+    }
+
+    protected override void OnClosing(CancelEventArgs e)
+    {
+        if (_allowClose ||
+            Application.Current is App app && app.IsShuttingDown)
         {
             base.OnClosing(e);
             return;
         }
 
-        bool minimize = true; // Default
-        if (this.DataContext is MainViewModel vm)
+        if (DataContext is MainViewModel vm)
         {
             vm.MinimizeToTray();
+
+            e.Cancel = true;
+            Hide();
+
+            return;
         }
 
-        if (minimize)
-        {
-            e.Cancel = true;
-            this.Hide();
-        }
-        else
-        {
-            // Apagado real si la opción está desactivada
-            if (Application.Current is App app2) app2.Shutdown();
-        }
+        base.OnClosing(e);
     }
 
-
+    public void AllowRealClose()
+    {
+        _allowClose = true;
+    }
 }
