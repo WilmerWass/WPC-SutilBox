@@ -1,38 +1,118 @@
-# Cierre funcional WPC-SutilBox Beta-1
+# WPC SUTILBOX — Plan de Trabajo v1.2.0-beta.1
 
-## Objetivo
+**Estado:** Beta en estabilización y refactor visual  
+**Objetivo:** mejorar claridad, consistencia, seguridad y experiencia sin romper las funciones existentes.
 
-Entregar una suite Windows funcional, con acciones reales detrás de cada control visible y una navegación coherente.
+## 1. Objetivos
 
-## Alcance entregado
+1. Orden y organización visual.
+2. Facilidad de uso.
+3. Claridad de acciones y estados.
+4. Rendimiento y fluidez.
+5. Seguridad de acciones sensibles.
+6. Consistencia entre secciones.
+7. Mantener el foco en SUTILBOX General.
 
-- Inicio con `Optimizar`: temporales, RAM y perfil activo.
-- `Revisar mi PC`: salud, almacenamiento, hardware/temperaturas y procesos.
-- `Liberar espacio`: limpieza básica, Descargas y archivos grandes.
-- `Aplicaciones`: inicio, bloatware y Winget.
-- `Herramientas avanzadas`: reparación, servicios, procesos y perfiles.
-- `Historial y seguridad`: logs de sesión y restauración.
-- `Ajustes`: idioma, temas, color, inicio, bandeja y optimización en reposo.
+## 2. Estado actual
 
-## Criterios de aceptación
+### Verificado recientemente
 
-- `dotnet build --no-restore` termina con cero advertencias y cero errores.
-- El botón `Optimizar` ejecuta una rutina asíncrona real.
-- CPU, RAM, temperatura, batería, red y disco actualizan sus bindings.
-- Los perfiles no modifican servicios o energía sin punto de restauración.
-- Las listas de aplicaciones cargan al refrescar o al abrir la sección.
-- Los logs recientes aparecen dentro de la interfaz.
-- Tema claro y oscuro definen el mismo conjunto de recursos.
-- No existen bindings `TwoWay` sobre propiedades de solo lectura.
+- La ventana principal puede expandirse y contraerse correctamente.
+- Se corrigió el problema en el que el logo impedía recuperar correctamente la vista expandida.
+- Se retiró el logo de la zona problemática del shell.
+- `dotnet build` termina correctamente.
+- El build actual presenta **3 advertencias únicas**:
+  - `CS0105` por `using` duplicado de `Wpc_SutilBox.Core`.
+  - `CS0105` por `using` duplicado de `Wpc_SutilBox.Models`.
+  - `CS4014` por una llamada no esperada en `ProfileEditorViewModel.cs`.
+- `dotnet run` desde la consola puede requerir elevación en el entorno actual; esto no debe confundirse con un fallo de compilación.
 
-## Instalación de validación
+## 3. Regla de desarrollo
 
-Ejecutar `dotnet restore`, después `dotnet build --no-restore` y finalmente `dotnet run` desde la raíz del repositorio.
+Después de cada bloque importante:
 
-Validar en Windows 10/11 con una cuenta estándar y repetir las acciones administrativas aceptando o cancelando UAC.
+1. revisar el diff;
+2. compilar;
+3. ejecutar las pruebas disponibles;
+4. comprobar visualmente cuando corresponda;
+5. registrar el resultado;
+6. crear un commit lógico cuando el bloque esté terminado.
 
-## Riesgos conocidos
+## 4. Refactor visual
 
-- La temperatura depende de que el firmware exponga `MSAcpi_ThermalZoneTemperature`.
-- Winget depende de que el cliente esté instalado y disponible en PATH.
-- Algunas operaciones requieren permisos elevados o Protección del sistema activa.
+### App.xaml
+
+- reducir duplicación de recursos;
+- centralizar tokens;
+- mantener convertidores globales;
+- separar responsabilidades entre recursos globales y temas;
+- evitar referencias a recursos inexistentes.
+
+### Theme.Dark.xaml / Theme.Light.xaml
+
+- mantener el mismo contrato de recursos;
+- centralizar colores y estados;
+- evitar divergencias entre temas;
+- usar nombres semánticos.
+
+### Shell
+
+- navegación clara;
+- expansión/contracción estable;
+- evitar que logos u otros elementos bloqueen el cambio de tamaño;
+- mantener el contenido visible en ambos estados.
+
+## 5. Rendimiento
+
+- evitar bloqueos de UI;
+- reducir actualizaciones innecesarias;
+- mantener monitorización eficiente;
+- no permitir que SUTILBOX consuma recursos de forma desproporcionada.
+
+## 6. Seguridad
+
+- proteger procesos críticos;
+- explicar acciones sensibles;
+- evitar operaciones destructivas ambiguas;
+- conservar restauración/reversión cuando exista;
+- registrar operaciones importantes.
+
+## 7. Almacenamiento
+
+- distinguir datos disponibles de datos no disponibles;
+- mejorar presentación de discos;
+- mantener diagnóstico SMART sin afirmar salud cuando la lectura sea incompleta;
+- usar flujo analizar → revisar → confirmar → ejecutar.
+
+## 8. Aplicaciones
+
+- organizar inicio, bloatware y actualizaciones;
+- revisar acciones antes de ejecutarlas;
+- no instalar software adicional por defecto;
+- mostrar origen y resultado de las operaciones.
+
+## 9. Historial
+
+- registrar acciones y resultados;
+- facilitar diagnóstico;
+- conservar trazabilidad;
+- distinguir éxito, advertencia y error.
+
+## 10. Criterio de cierre de Beta
+
+La versión candidata debe:
+
+- ser compilable;
+- mantener navegación estable;
+- conservar las funciones existentes que funcionan;
+- evitar regresiones;
+- explicar acciones sensibles;
+- mantener una UI consistente;
+- reducir las advertencias del compilador hasta llegar a cero como objetivo de calidad;
+- pasar una revisión visual y funcional completa.
+
+## 11. No hacer todavía
+
+Mientras SUTILBOX General siga en Beta, no desplazar el foco para desarrollar WPC CLI, BOOTBOX OS u OPTIMOS PRO.
+
+Esas ideas permanecen documentadas como futuro.

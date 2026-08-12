@@ -1,49 +1,156 @@
-# Arquitectura de WPC-SutilBox Beta-1
+# Arquitectura de WPC-SutilBox
 
-## Capas
+**Estado:** arquitectura de referencia de la Beta  
+**Stack:** C# / .NET 8 / WPF / XAML / MVVM
+
+## 1. Principios arquitectónicos
+
+La arquitectura debe permitir que SUTILBOX sea:
+
+- mantenible;
+- verificable;
+- modular;
+- responsivo;
+- seguro frente a operaciones administrativas;
+- y coherente con la identidad del producto.
+
+La UI no debe contener lógica pesada de sistema. Las operaciones de Windows deben concentrarse en servicios y componentes de Core.
+
+## 2. Capas
 
 ```text
 Views (XAML)
-    ↓ bindings y comandos
-ViewModels (MainViewModel, ProfileEditorViewModel)
+    ↓ bindings / commands
+ViewModels
     ↓ interfaces
-Core (servicios Windows)
+Core / Services
     ↓
-WMI / PerformanceCounter / Registry / Process / PowerStatus
+Windows APIs / WMI / Registry / Process / PowerStatus
 ```
 
-## Navegación
+### Views
 
-`MainWindow` mantiene una única región de contenido. `CurrentSection` decide qué `UserControl` está visible mediante `EnumToVisibilityConverter`; el resto permanece `Collapsed`. `Revisar mi PC` usa `PcReviewView`, que agrupa salud, almacenamiento, hardware/temperatura y procesos de alto consumo en pestañas internas.
+Responsables de presentación e interacción.
 
-## Servicios principales
+Ubicación principal:
 
-| Servicio | Responsabilidad |
+- `MainWindow.xaml`
+- `Views/`
+
+Los estilos y recursos globales se centralizan en `App.xaml` y diccionarios de tema.
+
+### ViewModels
+
+Gestionan estado de presentación, comandos y comunicación con servicios.
+
+Ubicación:
+
+- `ViewModels/`
+
+Componentes relevantes incluyen `MainViewModel` y `ProfileEditorViewModel`.
+
+### Models
+
+Representan datos del dominio y del sistema.
+
+Ubicación:
+
+- `Models/`
+
+### Core / Services
+
+Contiene lógica de negocio, integración con Windows y operaciones del sistema.
+
+Ubicación:
+
+- `Core/`
+
+## 3. Servicios
+
+La solución utiliza servicios especializados para separar responsabilidades, entre ellas:
+
+| Área | Responsabilidad |
 |---|---|
-| `MonitoringService` | CPU, RAM, red, disco, núcleos y conexiones TCP |
-| `TemperatureMonitorService` | Temperatura WMI |
-| `BatteryService` | `PowerStatus` y `Win32_Battery` |
-| `ProcessManagerService` | Procesos, prioridades, finalización y RAM |
-| `PerformanceProfileService` | Planes de energía, servicios y ajustes de perfil |
-| `RestorePointService` | Puntos de restauración WMI |
-| `StartupService` | Aplicaciones de inicio y Registro |
-| `BloatwareService` | Detección y desinstalación |
-| `WingetService` | Consulta y actualización de aplicaciones |
-| `SettingsService` | Persistencia JSON |
-| `FileLogService` | Log de sesión y lectura de actividad reciente |
+| Monitorización | CPU, RAM, red, disco y métricas del sistema |
+| Temperatura | Lectura de sensores disponibles |
+| Batería | Estado de batería y alimentación |
+| Procesos | Consulta, clasificación y acciones sobre procesos |
+| Perfiles | Aplicación de configuraciones de rendimiento |
+| Restauración | Puntos de restauración |
+| Inicio | Aplicaciones de inicio |
+| Bloatware | Detección y desinstalación |
+| Winget | Consulta y actualización de aplicaciones |
+| Ajustes | Persistencia de configuración |
+| Logs | Registro de operaciones y resultados |
 
-## Flujo de Optimizar
+La lista exacta de servicios debe mantenerse sincronizada con el código real.
 
-1. El usuario pulsa `QuickOptimizeCommand`.
-2. Se eliminan temporales de usuario.
-3. Se ejecuta `OptimizeRamAsync`.
-4. Se aplica el `PerformanceMode` activo.
-5. Se actualizan las métricas y se registra el resultado.
+## 4. Navegación
 
-## Temas
+`MainWindow` mantiene la estructura principal de la aplicación y una región de contenido.
 
-`Theme.Dark.xaml` y `Theme.Light.xaml` declaran el mismo contrato de recursos: `BackgroundBrush`, `SurfaceBrush`, `TextPrimaryBrush`, `TextSecondaryBrush`, `BorderBrush`, `PrimaryBrush` y estados semánticos. Los controles reutilizables consumen `DynamicResource`, por lo que el cambio de tema no requiere reiniciar.
+El estado de navegación se centraliza mediante `CurrentSection` y los convertidores correspondientes.
 
-## Seguridad
+Las secciones se muestran/ocultan según el estado de navegación, manteniendo una estructura única y consistente.
 
-Las operaciones administrativas se ejecutan con UAC. Los perfiles solicitan un punto de restauración antes de modificar el sistema. La configuración se almacena en `%LOCALAPPDATA%\\Wpc_SutilBox` y no contiene credenciales.
+## 5. Flujo de datos
+
+```text
+Usuario
+  ↓
+View
+  ↓ ICommand
+ViewModel
+  ↓
+Service / Core
+  ↓
+Windows API
+  ↓
+Resultado
+  ↓
+ViewModel
+  ↓
+Binding
+  ↓
+Usuario
+```
+
+Las operaciones potencialmente largas deben ejecutarse de forma asíncrona para mantener la UI responsiva.
+
+## 6. Recursos y temas
+
+`App.xaml` funciona como punto de composición de recursos globales.
+
+Los diccionarios de tema definen el contrato visual común. Los controles deben consumir recursos mediante `DynamicResource` cuando corresponda.
+
+El sistema visual debe evitar duplicar colores, tipografías y estados en cada vista.
+
+La Beta incluye la evolución de:
+
+- `Theme.Dark.xaml`
+- `Theme.Light.xaml`
+- recursos globales de `App.xaml`
+
+## 7. Instalación y portable
+
+La versión autocontenida/portable permite ejecutar SUTILBOX sin una instalación tradicional.
+
+La versión instalada puede habilitar integración persistente, historial continuo, automatizaciones y actualizaciones controladas.
+
+La instalación no debe introducir software ajeno innecesario.
+
+## 8. Seguridad técnica
+
+Las operaciones que requieren privilegios utilizan los mecanismos de elevación de Windows.
+
+Las acciones sensibles deben tener protección en la capa de servicio y no depender únicamente de ocultarlas en la interfaz.
+
+Los procesos críticos no deben poder finalizarse mediante una acción normal.
+
+Las acciones de configuración sensibles deben considerar restauración y registro.
+
+## 9. Estado de la arquitectura
+
+La arquitectura existente funciona como base de la Beta, pero continuará evolucionando.
+
+No se debe introducir una nueva capa o abstracción solamente por estilo. Cada cambio arquitectónico debe resolver una necesidad real de mantenimiento, seguridad, testabilidad o evolución.

@@ -1,20 +1,29 @@
-# Blueprint de producto — WPC-SutilBox Beta-1
+# Blueprint de producto — WPC-SutilBox
 
-## Propuesta
+**Estado:** Beta / evolución activa  
+**Producto prioritario:** WPC-SutilBox General
 
-Una consola sencilla para mantener, revisar y optimizar Windows sin repartir el trabajo entre múltiples herramientas del sistema.
+> **Principio rector:** SUTILBOX debe explicar cada acción, evitar cambios aleatorios y dar al usuario control sobre lo que modifica.
 
-## Estructura de producto
+## 1. Definición del producto
+
+WPC-SutilBox es una aplicación para Windows orientada al diagnóstico, mantenimiento, optimización y administración comprensible del PC.
+
+La experiencia debe funcionar para usuarios cotidianos y, mediante áreas avanzadas, para usuarios técnicos.
+
+La aplicación no debe depender de una colección de herramientas externas para realizar las funciones básicas que puede ejecutar directamente.
+
+## 2. Experiencia principal
 
 ```text
 Inicio
-├── Optimizar
-├── Perfiles de rendimiento
-└── Uso del sistema
+├── Estado general
+├── Recomendaciones
+└── Acciones principales
 
 Revisar mi PC
 ├── Resumen de salud
-├── Espacio y almacenamiento
+├── Almacenamiento
 ├── Hardware y temperaturas
 └── Procesos de alto consumo
 
@@ -24,56 +33,154 @@ Liberar espacio
 └── Archivos grandes
 
 Aplicaciones
-├── Gestor de inicio
+├── Inicio
 ├── Bloatware
-└── Actualizaciones Winget
+└── Actualizaciones / Winget
 
 Herramientas avanzadas
 ├── Reparación de Windows
-├── Procesos y servicios
-└── Perfiles
+├── Procesos
+├── Servicios
+└── Perfiles / utilidades
 
 Historial y seguridad
-├── Logs de sesión
+├── Logs
 ├── Restauración / reversión
 └── Diagnóstico
 
 Ajustes
-├── Idioma y apariencia
-├── Frecuencia y optimización en reposo
-└── Inicio, bandeja e instalación
+├── Idioma
+├── Apariencia
+├── Comportamiento
+└── Instalación
 ```
 
-## Principios de experiencia
+La estructura exacta puede evolucionar durante la Beta, pero no debe contradecir la identidad del producto.
+
+## 3. Principios funcionales
 
 1. Cada botón debe ejecutar una acción real o navegar a una vista funcional.
-2. Las acciones administrativas deben explicar su alcance y respetar UAC.
-3. Los perfiles deben ser reversibles mediante puntos de restauración.
-4. Las métricas deben mostrar el estado actual, no valores decorativos.
-5. El modo claro y el oscuro deben conservar jerarquía, contraste y espaciado.
-6. Los resultados y errores deben quedar visibles en el estado de la interfaz y en el log.
+2. Las acciones sensibles deben explicar su alcance.
+3. El usuario debe conocer y consentir los cambios relevantes.
+4. Las métricas deben representar datos reales, no valores decorativos.
+5. Los resultados y errores deben quedar visibles.
+6. Las operaciones deben ser asíncronas cuando puedan bloquear la interfaz.
+7. La aplicación debe intentar verificar el resultado de las acciones.
+8. Una recomendación válida puede ser no hacer nada.
 
-## Modo claro / modo oscuro
+## 4. Flujo de una acción
 
-El modo claro usa fondo `#F5F7FB`, superficies blancas, texto `#111827`, texto secundario `#374151` y bordes `#D1D5DB`. El modo oscuro conserva superficies profundas y texto claro. Ambos temas comparten nombres de recursos para evitar estilos divergentes.
+```text
+Detectar
+   ↓
+Analizar
+   ↓
+Explicar
+   ↓
+Recomendar
+   ↓
+Confirmar
+   ↓
+Actuar
+   ↓
+Verificar
+   ↓
+Informar
+```
 
-## Acciones clave
+## 5. Estado actual frente a visión
 
-### Optimizar
+### Base Beta documentada
 
-Limpia temporales, libera working sets de procesos y aplica el perfil activo. Se ejecuta de forma asíncrona y actualiza las métricas al finalizar.
+La Beta dispone de las áreas principales de monitorización, optimización, revisión del PC, almacenamiento, aplicaciones, herramientas avanzadas, historial/seguridad y ajustes.
 
-### Perfiles
+### Evolución prevista
 
-Equilibrado, Gaming, Productividad, Desarrollo y A tu medida se aplican desde `PerformanceProfileService`. Los cambios sensibles se protegen con restauración previa.
+La dirección de producto contempla:
 
-### Historial
+- diagnóstico más profundo;
+- limpieza con vista previa y selección explícita;
+- clasificación de procesos críticos;
+- historial y reversión;
+- perfiles explicables;
+- Instalador Sutil;
+- mayor integración de la versión instalada;
+- alertas de rendimiento comprensibles;
+- mejoras específicas para equipos antiguos y modernos.
 
-`FileLogService` crea un archivo por sesión y expone sus últimas entradas para que el usuario pueda revisar la actividad sin abrir una carpeta externa.
+Estas capacidades deben considerarse **objetivos de producto** hasta que el código y el plan las marquen como implementadas.
 
-## Fuera del alcance de WPC-SutilBox Beta-1
+## 6. Portable y instalada
 
-- Sincronización en la nube.
-- Automatizaciones remotas.
-- Gestión multiplataforma.
-- Reemplazo completo de Windows Defender o Windows Update.
+| Capacidad | Portable / autocontenida | Instalada |
+|---|---|---|
+| Diagnóstico | Sí | Sí |
+| Mantenimiento básico | Sí | Sí |
+| Informe local | Sí | Sí |
+| Instalador Sutil | Acceso para instalar | Integrado |
+| Monitoreo persistente | No por defecto | Opcional |
+| Automatizaciones | Limitadas | Integradas y controladas |
+| Historial continuo | Limitado | Sí |
+| Actualizaciones integradas | Manuales | Controladas |
+
+La versión portable debe permitir probar el producto. La versión instalada debe poder integrarse de forma más sutil con Windows.
+
+## 7. Seguridad de producto
+
+No se deben ejecutar cambios destructivos de forma silenciosa.
+
+Para operaciones sensibles:
+
+- explicar la consecuencia;
+- mostrar el alcance;
+- pedir confirmación;
+- crear restauración cuando corresponda;
+- registrar el resultado;
+- ofrecer reversión cuando sea técnicamente posible.
+
+## 8. Perfiles
+
+Los perfiles son conjuntos de acciones preseleccionadas, no modos misteriosos.
+
+Cada perfil debe indicar:
+
+- objetivo;
+- acciones incluidas;
+- acciones excluidas;
+- riesgo;
+- necesidad de administrador;
+- necesidad de reinicio;
+- posibilidad de reversión.
+
+Perfiles futuros pueden incluir escenarios como uso diario, oficina, desarrollo y gaming, pero ningún perfil debe prometer mejoras universales.
+
+## 9. Rendimiento
+
+SUTILBOX debe poder detectar consumo inusual de CPU, memoria u otros recursos.
+
+La experiencia prevista es:
+
+1. identificar el proceso;
+2. explicar por qué genera la alerta;
+3. permitir revisar el proceso;
+4. ofrecer una acción segura cuando exista;
+5. abrir herramientas de monitorización si el usuario necesita más contexto.
+
+No se debe finalizar un proceso crítico simplemente porque consume recursos.
+
+## 10. Fuera del foco actual
+
+Durante la Beta, el foco principal es **SUTILBOX General**.
+
+WPC CLI, WPC BOOTBOX OS y WPC OPTIMOS PRO son conceptos futuros/documentados y no deben confundirse con funcionalidades actuales.
+
+## 11. Criterios de producto
+
+Una función está realmente lista cuando:
+
+- hace lo que promete;
+- es comprensible;
+- no añade software innecesario;
+- no perjudica de forma injustificada al sistema;
+- respeta consentimiento y seguridad;
+- deja un resultado verificable o explica por qué no pudo verificarlo.
