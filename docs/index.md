@@ -9,7 +9,7 @@ Bienvenido a la documentación oficial del proyecto.
 - [Identidad de la aplicación](WPC-SUTILBOX_APP_IDENTITY.md) — por qué existe SUTILBOX, para quién, principios, límites y visión.
 - [Blueprint del producto](PRODUCT_BLUEPRINT_ES.md) — qué producto estamos construyendo.
 - [Arquitectura](ARCHITECTURE.md) — cómo está construido técnicamente.
-- [Plan Beta 1](PLAN_V1.2.0_BETA1.md) — qué estamos haciendo ahora y cuál es el estado de la Beta.
+- [Plan de Reinicio Beta 1](PLAN_WPC_SUTILBOX_BETA1.md) — qué estamos haciendo ahora y cuál es el estado de la Beta.
 - [Roadmap](ROADMAP.md) — dirección por etapas y versiones.
 
 ## Orden recomendado de lectura

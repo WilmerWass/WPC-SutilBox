@@ -15,8 +15,10 @@
     
     <!-- Application Information -->
     <Company>WilmerWass</Company>
+    <AssemblyName>SutilBox</AssemblyName>
     <ApplicationIcon>Resources\img\logo_WCS.ico</ApplicationIcon>
-    <Product>WassControlSys</Product>
+    <Product>SutilBox</Product>
+    <AssemblyTitle>SutilBox</AssemblyTitle>
     <Description>Sistema de Control y Optimización para Windows</Description>
     <Copyright>Copyright © 2025 WilmerWass</Copyright>
     

@@ -444,7 +444,7 @@ Descripción de la arquitectura interna y organización técnica.
 
 ### 🧪 Plan Beta 1
 
-[**PLAN_V1.2.0_BETA1.md →**](https://github.com/WilmerWass/WPC-SutilBox/blob/main/docs/PLAN_V1.2.0_BETA1.md)
+[**PLAN_WPC_SUTILBOX_BETA1.md →**](https://github.com/WilmerWass/WPC-SutilBox/blob/main/docs/PLAN_WPC_SUTILBOX_BETA1.md)
 
 Plan de implementación y evolución de la Beta 1.
 

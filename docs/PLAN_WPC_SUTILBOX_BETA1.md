@@ -1,4 +1,4 @@
-# WPC SUTILBOX — Plan de Trabajo v1.2.0-beta.1
+# WPC SUTILBOX — Plan de Reinicio Beta 1
 
 **Estado:** Beta en estabilización y refactor visual  
 **Objetivo:** mejorar claridad, consistencia, seguridad y experiencia sin romper las funciones existentes.
@@ -20,11 +20,8 @@
 - La ventana principal puede expandirse y contraerse correctamente.
 - Se corrigió el problema en el que el logo impedía recuperar correctamente la vista expandida.
 - Se retiró el logo de la zona problemática del shell.
-- `dotnet build` termina correctamente.
-- El build actual presenta **3 advertencias únicas**:
-  - `CS0105` por `using` duplicado de `Wpc_SutilBox.Core`.
-  - `CS0105` por `using` duplicado de `Wpc_SutilBox.Models`.
-  - `CS4014` por una llamada no esperada en `ProfileEditorViewModel.cs`.
+- La compilación aislada termina correctamente con **0 advertencias y 0 errores**.
+- La compilación estándar puede quedar bloqueada si una instancia abierta de `WassControlSys.exe` mantiene ocupado el ejecutable de salida; esto es un bloqueo del entorno, no un fallo del código.
 - `dotnet run` desde la consola puede requerir elevación en el entorno actual; esto no debe confundirse con un fallo de compilación.
 
 ## 3. Regla de desarrollo
