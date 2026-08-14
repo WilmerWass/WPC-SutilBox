@@ -8,14 +8,6 @@ namespace Wpc_SutilBox.Views
         public DashboardView()
         {
             InitializeComponent();
-            Loaded += async (s, e) =>
-            {
-                if (DataContext is MainViewModel vm)
-                {
-                    await vm.UpdateSystemUsageAsync();
-                    await vm.UpdateThermalAsync();
-                }
-            };
         }
     }
 }

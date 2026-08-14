@@ -37,8 +37,16 @@ namespace Wpc_SutilBox.ViewModels
         private readonly ILocalizationService? _localizationService;
         private readonly ProfileEditorViewModel? _profileEditorViewModel;
         private CancellationTokenSource? _monitoringCts;
+        private Task? _monitoringTask;
         private bool _settingsReady;
         private DateTime _lastIdleOptimization = DateTime.MinValue;
+        private DateTime _lastGlobalUsageSampleUtc = DateTime.MinValue;
+        private DateTime _lastTemperatureSampleUtc = DateTime.MinValue;
+        private DateTime _lastBatterySampleUtc = DateTime.MinValue;
+
+        private static readonly TimeSpan GlobalUsageInterval = TimeSpan.FromSeconds(2.5);
+        private static readonly TimeSpan TemperatureInterval = TimeSpan.FromSeconds(20);
+        private static readonly TimeSpan BatteryInterval = TimeSpan.FromSeconds(45);
 
         private int _activeTcpConnections;
         private string _systemStatus = string.Empty;
@@ -46,7 +54,8 @@ namespace Wpc_SutilBox.ViewModels
         private string _currentSection = "Dashboard";
         private double _cpuUsage;
         private double _ramUsage;
-        private double _cpuTempC;
+        private double? _cpuTempC;
+        private string _cpuTemperatureStatus = "No disponible";
         private BatteryInfo _batteryInfo = new();
         private PerformanceMode _currentMode = PerformanceMode.General;
         private string _welcomeMessage = "Controla y optimiza tu equipo desde un solo lugar.";
@@ -87,7 +96,8 @@ namespace Wpc_SutilBox.ViewModels
 
         public double CpuUsage { get => _cpuUsage; set => SetProperty(ref _cpuUsage, value); }
         public double RamUsage { get => _ramUsage; set => SetProperty(ref _ramUsage, value); }
-        public double CpuTempC { get => _cpuTempC; set => SetProperty(ref _cpuTempC, value); }
+        public double? CpuTempC { get => _cpuTempC; private set => SetProperty(ref _cpuTempC, value); }
+        public string CpuTemperatureStatus { get => _cpuTemperatureStatus; private set => SetProperty(ref _cpuTemperatureStatus, value); }
         public BatteryInfo BatteryInfo { get => _batteryInfo; private set => SetProperty(ref _batteryInfo, value); }
         public PerformanceMode CurrentMode { get => _currentMode; set => SetProperty(ref _currentMode, value); }
         public string WelcomeMessage { get => _welcomeMessage; private set => SetProperty(ref _welcomeMessage, value); }
@@ -443,9 +453,9 @@ namespace Wpc_SutilBox.ViewModels
 
         public void StartMonitoring()
         {
-            if (_monitoringCts != null) return;
+            if (_monitoringTask != null) return;
             _monitoringCts = new CancellationTokenSource();
-            _ = MonitorSystemAsync(_monitoringCts.Token);
+            _monitoringTask = MonitorSystemAsync(_monitoringCts.Token);
         }
 
         private async Task MonitorSystemAsync(CancellationToken cancellationToken)
@@ -454,9 +464,26 @@ namespace Wpc_SutilBox.ViewModels
             {
                 try
                 {
-                    await UpdateSystemUsageAsync();
-                    await UpdateThermalAsync();
-                    if (_batteryService != null) BatteryInfo = await _batteryService.GetBatteryStatusAsync();
+                    var now = DateTime.UtcNow;
+
+                    if (now - _lastGlobalUsageSampleUtc >= GlobalUsageInterval)
+                    {
+                        _lastGlobalUsageSampleUtc = now;
+                        await UpdateGlobalUsageAsync(cancellationToken);
+                    }
+
+                    if (now - _lastTemperatureSampleUtc >= TemperatureInterval)
+                    {
+                        _lastTemperatureSampleUtc = now;
+                        await UpdateThermalAsync(cancellationToken);
+                    }
+
+                    if (_batteryService != null && now - _lastBatterySampleUtc >= BatteryInterval)
+                    {
+                        _lastBatterySampleUtc = now;
+                        await UpdateBatteryAsync(cancellationToken);
+                    }
+
                     if (OptimizeOnIdle && _monitoringService != null && RamUsage >= 85 &&
                         _monitoringService.GetIdleTime() >= TimeSpan.FromMinutes(10) &&
                         DateTime.Now - _lastIdleOptimization >= TimeSpan.FromMinutes(10))
@@ -465,6 +492,7 @@ namespace Wpc_SutilBox.ViewModels
                         await ExecuteOptimizeRamAsync();
                     }
                 }
+                catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { break; }
                 catch (Exception ex) { WriteLog("Error actualizando métricas del sistema", ex); }
 
                 try { await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken); }
@@ -779,12 +807,49 @@ namespace Wpc_SutilBox.ViewModels
             for (int i = 0; i < usage.CpuPerCore.Length; i++) CpuPerCore.Add(new CpuCoreMetric { Index = i, Usage = usage.CpuPerCore[i] });
         }
 
-        public async Task UpdateThermalAsync()
+        private async Task UpdateGlobalUsageAsync(CancellationToken cancellationToken)
         {
-            if (_temperatureMonitorService != null)
+            if (_monitoringService == null) return;
+
+            var usage = await _monitoringService.GetGlobalUsageAsync(cancellationToken);
+            if (usage.CpuUsage.HasValue) CpuUsage = usage.CpuUsage.Value;
+            if (usage.RamUsage.HasValue) RamUsage = usage.RamUsage.Value;
+        }
+
+        private async Task UpdateBatteryAsync(CancellationToken cancellationToken)
+        {
+            if (_batteryService == null) return;
+
+            cancellationToken.ThrowIfCancellationRequested();
+            var battery = await _batteryService.GetBatteryStatusAsync();
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (battery.IsReadSuccessful)
             {
-                var temp = await _temperatureMonitorService.GetCpuTemperatureCAsync();
-                CpuTempC = temp ?? 0;
+                BatteryInfo = battery;
+            }
+        }
+
+        public async Task UpdateThermalAsync(CancellationToken cancellationToken = default)
+        {
+            if (_temperatureMonitorService == null) return;
+
+            cancellationToken.ThrowIfCancellationRequested();
+            var temp = await _temperatureMonitorService.GetCpuTemperatureCAsync();
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (temp.HasValue)
+            {
+                CpuTempC = temp.Value;
+                CpuTemperatureStatus = "Correcto";
+            }
+            else if (CpuTempC.HasValue)
+            {
+                CpuTemperatureStatus = "Lectura fallida; último valor válido";
+            }
+            else
+            {
+                CpuTemperatureStatus = "No disponible";
             }
         }
 
@@ -809,10 +874,16 @@ namespace Wpc_SutilBox.ViewModels
             if (_monitoringCts != null)
             {
                 _monitoringCts.Cancel();
+                if (_monitoringTask != null)
+                {
+                    try { await _monitoringTask; }
+                    catch (OperationCanceledException) { }
+                }
+
                 _monitoringCts.Dispose();
                 _monitoringCts = null;
+                _monitoringTask = null;
             }
-            await Task.CompletedTask;
         }
 
         // ==========================================

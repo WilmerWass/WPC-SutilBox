@@ -212,6 +212,7 @@
                                         <TextBlock Text="Temperatura CPU" Foreground="#888" FontSize="12"/>
                                         <TextBlock Text="{Binding CpuTempC, Mode=OneWay, StringFormat={}{0:F0}°C}" Foreground="White" HorizontalAlignment="Right" FontSize="12" FontWeight="Bold"/>
                                     </Grid>
+                                    <TextBlock Text="{Binding CpuTemperatureStatus}" Foreground="#888" FontSize="10" Margin="0,2,0,0"/>
                                     <ProgressBar Value="{Binding CpuTempC, Mode=OneWay}" Maximum="100" Height="4" Margin="0,5,0,0" Foreground="#F59E0B"/>
                                 </StackPanel>
                             </Grid>

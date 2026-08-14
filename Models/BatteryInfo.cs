@@ -8,6 +8,7 @@
         public uint HealthPercentage { get; set; }
         public string Status { get; set; } = "Unknown";
         public bool IsPresent { get; set; }
+        public bool IsReadSuccessful { get; set; }
     }
 }
 

@@ -184,6 +184,34 @@ namespace Wpc_SutilBox.Core
             });
         }
 
+        public async Task<GlobalUsageSnapshot> GetGlobalUsageAsync(System.Threading.CancellationToken cancellationToken = default)
+        {
+            return await Task.Run(() =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                double? cpu = null;
+                try
+                {
+                    if (_cpuCounterAvailable && _cpuCounter != null)
+                    {
+                        cpu = Math.Clamp((double)_cpuCounter.NextValue(), 0, 100);
+                    }
+                }
+                catch
+                {
+                    cpu = null;
+                }
+
+                cancellationToken.ThrowIfCancellationRequested();
+                return new GlobalUsageSnapshot
+                {
+                    CpuUsage = cpu,
+                    RamUsage = GetMemoryUsagePercentOrNull()
+                };
+            }, cancellationToken);
+        }
+
         private static double GetSystemDriveUsagePercent()
         {
             try
@@ -239,6 +267,26 @@ namespace Wpc_SutilBox.Core
             }
             catch { }
             return 0;
+        }
+
+        private static double? GetMemoryUsagePercentOrNull()
+        {
+            try
+            {
+                MEMORYSTATUSEX mem = new();
+                mem.dwLength = (uint)Marshal.SizeOf(typeof(MEMORYSTATUSEX));
+                if (!GlobalMemoryStatusEx(ref mem) || mem.ullTotalPhys == 0)
+                {
+                    return null;
+                }
+
+                ulong used = mem.ullTotalPhys - mem.ullAvailPhys;
+                return used * 100.0 / mem.ullTotalPhys;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]

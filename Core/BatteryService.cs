@@ -72,7 +72,10 @@ namespace Wpc_SutilBox.Core
                 catch (Exception ex)
                 {
                     _log.Warn($"No se pudo obtener información detallada de la batería: {ex.Message}");
+                    return info;
                 }
+
+                info.IsReadSuccessful = true;
                 return info;
             });
         }
