@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
@@ -11,7 +11,7 @@ using Color = System.Windows.Media.Color;
 using ColorConverter = System.Windows.Media.ColorConverter;
 using System.Runtime.InteropServices;
 
-namespace Wpc_SutilBox  
+namespace Wpc_SutilBox
 {
     public partial class App : Application
     {
@@ -34,7 +34,7 @@ namespace Wpc_SutilBox
             // Verificar instancia única
             bool createdNew;
             _instanceMutex = new System.Threading.Mutex(true, "Wpc_SutilBox_SingleInstance_Mutex", out createdNew);
-            
+
             if (!createdNew)
             {
                 ActivateExistingInstance();
@@ -91,7 +91,9 @@ namespace Wpc_SutilBox
             services.AddSingleton<IWingetService, WingetService>();
             services.AddSingleton<IDriverService, DriverService>();
             services.AddSingleton<IDiskAnalyzerService, DiskAnalyzerService>();
+
             services.AddTransient<ProfileEditorViewModel>();
+            services.AddTransient<PcReviewViewModel>();   // Beta 1.2 — Revisar mi PC
 
             services.AddSingleton<MainViewModel>();
             services.AddTransient<MainWindow>(s => new MainWindow(s.GetRequiredService<ILogService>()));
@@ -118,9 +120,9 @@ namespace Wpc_SutilBox
             };
 
             var settings = _serviceProvider!.GetService<ISettingsService>();
-            var loc = _serviceProvider!.GetService<ILocalizationService>();
-            var log = _serviceProvider!.GetService<ILogService>();
-            
+            var loc      = _serviceProvider!.GetService<ILocalizationService>();
+            var log      = _serviceProvider!.GetService<ILogService>();
+
             try
             {
                 if (settings != null)
@@ -188,18 +190,18 @@ namespace Wpc_SutilBox
                 contextMenu.Items.Add("🚀 Optimizar PC", null, (s, e) => (MainWindow?.DataContext as MainViewModel)?.PcBoostCommand?.Execute(null));
                 contextMenu.Items.Add("🧹 Limpiar RAM", null, (s, e) => (MainWindow?.DataContext as MainViewModel)?.OptimizeRamCommand?.Execute(null));
                 contextMenu.Items.Add("-");
-                
+
                 var navMenu = new ToolStripMenuItem("Navegar a...");
-                navMenu.DropDownItems.Add("Inicio", null, (s, e) => NavigateToSection("Dashboard"));
-                navMenu.DropDownItems.Add("Protección", null, (s, e) => NavigateToSection("Proteccion"));
+                navMenu.DropDownItems.Add("Inicio",      null, (s, e) => NavigateToSection("Dashboard"));
+                navMenu.DropDownItems.Add("Protección",  null, (s, e) => NavigateToSection("Proteccion"));
                 navMenu.DropDownItems.Add("Rendimiento", null, (s, e) => NavigateToSection("Rendimiento"));
-                navMenu.DropDownItems.Add("Hardware", null, (s, e) => NavigateToSection("Hardware"));
+                navMenu.DropDownItems.Add("Hardware",    null, (s, e) => NavigateToSection("Hardware"));
                 contextMenu.Items.Add(navMenu);
 
                 contextMenu.Items.Add("-");
                 contextMenu.Items.Add("Restaurar App", null, (s, e) => ShowMainWindow());
-                contextMenu.Items.Add("Salir", null, (s, e) => ShutdownApp());
-                
+                contextMenu.Items.Add("Salir",         null, (s, e) => ShutdownApp());
+
                 _notifyIcon.ContextMenuStrip = contextMenu;
             }
             catch (Exception ex)
@@ -256,20 +258,20 @@ namespace Wpc_SutilBox
         {
             try
             {
-                var color = (Color)ColorConverter.ConvertFromString(hexColor);
+                var color     = (Color)ColorConverter.ConvertFromString(hexColor);
                 var solidBrush = new SolidColorBrush(color);
-                
+
                 byte r = (byte)Math.Min(255, color.R + 30);
                 byte g = (byte)Math.Min(255, color.G + 30);
                 byte b = (byte)Math.Min(255, color.B + 30);
                 var hoverColor = Color.FromRgb(r, g, b);
                 var hoverBrush = new SolidColorBrush(hoverColor);
 
-                Resources["PrimaryColor"] = color;
-                Resources["PrimaryBrush"] = solidBrush;
+                Resources["PrimaryColor"]      = color;
+                Resources["PrimaryBrush"]      = solidBrush;
                 Resources["PrimaryHoverColor"] = hoverColor;
                 Resources["PrimaryHoverBrush"] = hoverBrush;
-                
+
                 var selectionColor = Color.FromArgb(40, color.R, color.G, color.B);
                 Resources["SelectionColor"] = selectionColor;
                 Resources["SelectionBrush"] = new SolidColorBrush(selectionColor);
@@ -288,22 +290,17 @@ namespace Wpc_SutilBox
                 Resources.MergedDictionaries.Clear();
 
                 foreach (var dict in nonThemeDictionaries)
-                {
                     Resources.MergedDictionaries.Add(dict);
-                }
 
                 var themeName = isDark ? "Theme.Dark.xaml" : "Theme.Light.xaml";
                 var uri = new Uri($"Resources/{themeName}", UriKind.Relative);
                 Resources.MergedDictionaries.Add(new ResourceDictionary { Source = uri });
 
                 if (isDark)
-                {
                     Resources["SurfaceHoverColor"] = (Color)ColorConverter.ConvertFromString("#2A2A2A");
-                }
                 else
-                {
                     Resources["SurfaceHoverColor"] = (Color)ColorConverter.ConvertFromString("#E5E7EB");
-                }
+
                 Resources["SurfaceHoverBrush"] = new SolidColorBrush((Color)Resources["SurfaceHoverColor"]);
             }
             catch { }

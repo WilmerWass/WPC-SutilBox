@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Threading.Tasks;
 using Wpc_SutilBox.Models;
 
 namespace Wpc_SutilBox.Core
@@ -8,6 +9,11 @@ namespace Wpc_SutilBox.Core
         Task<SystemUsage> GetSystemUsageAsync();
         Task<GlobalUsageSnapshot> GetGlobalUsageAsync(System.Threading.CancellationToken cancellationToken = default);
         TimeSpan GetIdleTime();
+
+        /// <summary>Inicia los contadores de rendimiento. Es idempotente.</summary>
+        Task StartAsync();
+
+        /// <summary>Detiene y libera los contadores de rendimiento para reducir consumo parásito.</summary>
+        Task StopAsync();
     }
 }
-

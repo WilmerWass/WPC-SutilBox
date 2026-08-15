@@ -1,11 +1,11 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Runtime.InteropServices;
-using Wpc_SutilBox.Models;
-using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using Wpc_SutilBox.Models;
 
 namespace Wpc_SutilBox.Core
 {
@@ -21,6 +21,7 @@ namespace Wpc_SutilBox.Core
         private PerformanceCounter[] _netSentCounters = Array.Empty<PerformanceCounter>();
         private PerformanceCounter[] _netRecvCounters = Array.Empty<PerformanceCounter>();
         private bool _cpuCounterAvailable;
+        private bool _isRunning = true; // Starts active by default (boot path)
 
         // New fields for per-disk performance counters
         private Dictionary<string, PerformanceCounter>? _perDiskReadsPerSec;
@@ -306,8 +307,39 @@ namespace Wpc_SutilBox.Core
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         private static extern bool GlobalMemoryStatusEx(ref MEMORYSTATUSEX lpBuffer);
 
+        /// <inheritdoc/>
+        public Task StartAsync()
+        {
+            if (_isRunning) return Task.CompletedTask;
+            _isRunning = true;
+
+            // Re-prime all counters so the first sample after resume is valid.
+            try { _ = _cpuCounter?.NextValue(); } catch { }
+            foreach (var c in _cpuCoreCounters) try { _ = c.NextValue(); } catch { }
+            try { _ = _diskReadsPerSecTotal?.NextValue(); } catch { }
+            try { _ = _diskWritesPerSecTotal?.NextValue(); } catch { }
+            if (_perDiskReadsPerSec != null)
+                foreach (var c in _perDiskReadsPerSec.Values) try { _ = c.NextValue(); } catch { }
+            if (_perDiskWritesPerSec != null)
+                foreach (var c in _perDiskWritesPerSec.Values) try { _ = c.NextValue(); } catch { }
+            foreach (var c in _netSentCounters) try { _ = c.NextValue(); } catch { }
+            foreach (var c in _netRecvCounters) try { _ = c.NextValue(); } catch { }
+
+            Debug.WriteLine("[MonitoringService] StartAsync — contadores activados.");
+            return Task.CompletedTask;
+        }
+
+        /// <inheritdoc/>
+        public Task StopAsync()
+        {
+            _isRunning = false;
+            Debug.WriteLine("[MonitoringService] StopAsync — contadores en pausa.");
+            return Task.CompletedTask;
+        }
+
         public void Dispose()
         {
+            _isRunning = false;
             _cpuCounter?.Dispose();
             foreach (var c in _cpuCoreCounters) c?.Dispose();
             _diskReadsPerSecTotal?.Dispose();
@@ -315,7 +347,7 @@ namespace Wpc_SutilBox.Core
             _diskAvgQueueLen?.Dispose();
             _diskSecPerRead?.Dispose();
             _diskSecPerWrite?.Dispose();
-            
+
             if (_perDiskReadsPerSec != null)
             {
                 foreach (var counter in _perDiskReadsPerSec.Values) counter?.Dispose();
@@ -360,7 +392,6 @@ namespace Wpc_SutilBox.Core
         {
             try
             {
-                // Usar IPGlobalProperties es MUCHO mÃ¡s eficiente que netstat
                 var properties = System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties();
                 var connections = properties.GetActiveTcpConnections();
                 return connections.Count(c => c.State == System.Net.NetworkInformation.TcpState.Established);
@@ -369,4 +400,3 @@ namespace Wpc_SutilBox.Core
         }
     }
 }
-

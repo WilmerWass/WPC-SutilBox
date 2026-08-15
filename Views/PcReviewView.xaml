@@ -1,29 +1,243 @@
 <UserControl x:Class="Wpc_SutilBox.Views.PcReviewView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
     <Grid Margin="20">
-        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
-        <StackPanel Grid.Row="0" Margin="0,0,0,18">
-            <TextBlock Text="Revisar mi PC" Style="{StaticResource HeaderTextStyle}"/>
-            <TextBlock Text="Diagnóstico centralizado de salud, hardware, almacenamiento y procesos." Style="{StaticResource SubHeaderTextStyle}" Margin="0,5,0,0"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- Encabezado -->
+            <RowDefinition Height="Auto"/>
+            <!-- Barra de estado / botón actualizar -->
+            <RowDefinition Height="*"/>
+            <!-- Contenido principal -->
+        </Grid.RowDefinitions>
+
+        <!-- ── Encabezado ──────────────────────────────────────────────── -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,14">
+            <TextBlock Text="Revisar mi PC"
+                       Style="{StaticResource HeaderTextStyle}"/>
+            <TextBlock Text="Diagnóstico centralizado de salud, hardware, almacenamiento y procesos."
+                       Style="{StaticResource SubHeaderTextStyle}"
+                       Margin="0,5,0,0"/>
         </StackPanel>
-        <TabControl Grid.Row="1" Background="Transparent" BorderThickness="0">
+
+        <!-- ── Barra de estado ─────────────────────────────────────────── -->
+        <Grid Grid.Row="1" Margin="0,0,0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0"
+                       Text="{Binding StatusMessage}"
+                       Foreground="{DynamicResource TextSecondaryBrush}"
+                       VerticalAlignment="Center"
+                       FontSize="12"/>
+
+            <Button Grid.Column="1"
+                    Content="↺  Actualizar diagnóstico"
+                    Command="{Binding RefreshCommand}"
+                    Style="{StaticResource PrimaryButtonStyle}"
+                    IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}"/>
+        </Grid>
+
+        <!-- ── Contenido en pestañas ───────────────────────────────────── -->
+        <TabControl Grid.Row="2"
+                    Background="Transparent"
+                    BorderThickness="0">
+
+            <!-- ── Pestaña 1: Resumen de salud ──────────────────────── -->
             <TabItem Header="Resumen de salud">
-                <UniformGrid Columns="3" Margin="0,12,0,0">
-                    <Border Style="{StaticResource AnimatedCardStyle}" Margin="0,0,10,10"><StackPanel><TextBlock Text="CPU" Foreground="{DynamicResource TextSecondaryBrush}"/><TextBlock Text="{Binding CpuUsage, Mode=OneWay, StringFormat={}{0:F0}%}" FontSize="30" Foreground="{DynamicResource TextPrimaryBrush}" FontWeight="Bold"/></StackPanel></Border>
-                    <Border Style="{StaticResource AnimatedCardStyle}" Margin="0,0,10,10"><StackPanel><TextBlock Text="RAM" Foreground="{DynamicResource TextSecondaryBrush}"/><TextBlock Text="{Binding RamUsage, Mode=OneWay, StringFormat={}{0:F0}%}" FontSize="30" Foreground="{DynamicResource TextPrimaryBrush}" FontWeight="Bold"/></StackPanel></Border>
-                    <Border Style="{StaticResource AnimatedCardStyle}" Margin="0,0,10,10"><StackPanel><TextBlock Text="Temperatura" Foreground="{DynamicResource TextSecondaryBrush}"/><TextBlock Text="{Binding CpuTempC, Mode=OneWay, StringFormat={}{0:F0} °C}" FontSize="30" Foreground="{DynamicResource TextPrimaryBrush}" FontWeight="Bold"/></StackPanel></Border>
-                </UniformGrid>
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="0,12,0,0">
+
+                        <!-- Métricas vivas -->
+                        <UniformGrid Columns="3" Margin="0,0,0,18">
+                            <Border Style="{StaticResource AnimatedCardStyle}" Margin="0,0,10,0">
+                                <StackPanel>
+                                    <TextBlock Text="CPU"
+                                               Foreground="{DynamicResource TextSecondaryBrush}"
+                                               FontSize="12"/>
+                                    <TextBlock Text="{Binding CpuUsage, Mode=OneWay, StringFormat={}{0:F0} %}"
+                                               FontSize="32" FontWeight="Bold"
+                                               Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Style="{StaticResource AnimatedCardStyle}" Margin="0,0,10,0">
+                                <StackPanel>
+                                    <TextBlock Text="RAM"
+                                               Foreground="{DynamicResource TextSecondaryBrush}"
+                                               FontSize="12"/>
+                                    <TextBlock Text="{Binding RamUsage, Mode=OneWay, StringFormat={}{0:F0} %}"
+                                               FontSize="32" FontWeight="Bold"
+                                               Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Style="{StaticResource AnimatedCardStyle}">
+                                <StackPanel>
+                                    <TextBlock Text="Temperatura CPU"
+                                               Foreground="{DynamicResource TextSecondaryBrush}"
+                                               FontSize="12"/>
+                                    <TextBlock Text="{Binding CpuTempC, Mode=OneWay, StringFormat={}{0:F0} °C}"
+                                               FontSize="32" FontWeight="Bold"
+                                               Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                </StackPanel>
+                            </Border>
+                        </UniformGrid>
+
+                        <!-- Información general del sistema -->
+                        <TextBlock Text="Información del Sistema"
+                                   FontSize="16" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"
+                                   Margin="0,0,0,10"/>
+
+                        <Border Style="{StaticResource AnimatedCardStyle}">
+                            <ItemsControl ItemsSource="{Binding SystemInfo.GeneralItems}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="0,4">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="140"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0"
+                                                       Text="{Binding Key}"
+                                                       Foreground="{DynamicResource TextSecondaryBrush}"
+                                                       FontWeight="SemiBold"/>
+                                            <TextBlock Grid.Column="1"
+                                                       Text="{Binding Value}"
+                                                       Foreground="{DynamicResource TextPrimaryBrush}"
+                                                       TextWrapping="Wrap"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
             </TabItem>
-            <TabItem Header="Espacio y almacenamiento">
-                <StackPanel Margin="0,20"><TextBlock Text="Análisis de almacenamiento" FontSize="20" Foreground="{DynamicResource TextPrimaryBrush}"/><TextBlock Text="La gestión detallada de limpieza y archivos grandes está disponible en Liberar espacio." Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,8,0,20"/><Button Content="Abrir Liberar espacio" Command="{Binding NavigateCommand}" CommandParameter="Almacenamiento" Style="{StaticResource PrimaryButtonStyle}" HorizontalAlignment="Left"/></StackPanel>
+
+            <!-- ── Pestaña 2: Discos y SMART ─────────────────────────── -->
+            <TabItem Header="Discos y SMART">
+                <Grid Margin="0,12,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0"
+                               Text="Estado de salud SMART de cada disco físico."
+                               Foreground="{DynamicResource TextSecondaryBrush}"
+                               Margin="0,0,0,10"/>
+
+                    <DataGrid Grid.Row="1"
+                              ItemsSource="{Binding Disks}"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False"
+                              IsReadOnly="True"
+                              Background="Transparent"
+                              Foreground="{DynamicResource TextPrimaryBrush}"
+                              GridLinesVisibility="Horizontal"
+                              HeadersVisibility="Column">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Disco"       Binding="{Binding DeviceId}"   Width="80"/>
+                            <DataGridTextColumn Header="Modelo"      Binding="{Binding Model}"      Width="*"/>
+                            <DataGridTextColumn Header="Capacidad"   Binding="{Binding Capacity}"   Width="100"/>
+                            <DataGridTextColumn Header="Estado SMART" Binding="{Binding SmartStatus}" Width="120"/>
+                            <DataGridTextColumn Header="Temp. (°C)"  Binding="{Binding Temperature}" Width="90"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
             </TabItem>
-            <TabItem Header="Hardware y temperaturas">
-                <StackPanel Margin="0,20"><TextBlock Text="Hardware y temperaturas" FontSize="20" Foreground="{DynamicResource TextPrimaryBrush}"/><StackPanel Orientation="Horizontal" Margin="0,12,0,4"><TextBlock Text="CPU: " Foreground="{DynamicResource TextSecondaryBrush}"/><TextBlock Text="{Binding CpuTempC, StringFormat={}{0:F0} °C}" Foreground="{DynamicResource TextSecondaryBrush}"/></StackPanel><StackPanel Orientation="Horizontal"><TextBlock Text="Uso de CPU: " Foreground="{DynamicResource TextSecondaryBrush}"/><TextBlock Text="{Binding CpuUsage, StringFormat={}{0:F0}%}" Foreground="{DynamicResource TextSecondaryBrush}"/></StackPanel><StackPanel Orientation="Horizontal" Margin="0,4,0,0"><TextBlock Text="Uso de RAM: " Foreground="{DynamicResource TextSecondaryBrush}"/><TextBlock Text="{Binding RamUsage, StringFormat={}{0:F0}%}" Foreground="{DynamicResource TextSecondaryBrush}"/></StackPanel></StackPanel>
+
+            <!-- ── Pestaña 3: Drivers ─────────────────────────────────── -->
+            <TabItem Header="Drivers">
+                <Grid Margin="0,12,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0"
+                               Text="Drivers con errores o estado degradado detectados por WMI."
+                               Foreground="{DynamicResource TextSecondaryBrush}"
+                               Margin="0,0,0,10"/>
+
+                    <DataGrid Grid.Row="1"
+                              ItemsSource="{Binding DriverIssues}"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False"
+                              IsReadOnly="True"
+                              Background="Transparent"
+                              Foreground="{DynamicResource TextPrimaryBrush}"
+                              GridLinesVisibility="Horizontal"
+                              HeadersVisibility="Column">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Driver"      Binding="{Binding Name}"             Width="*"/>
+                            <DataGridTextColumn Header="Estado"      Binding="{Binding Status}"           Width="120"/>
+                            <DataGridTextColumn Header="Descripción" Binding="{Binding ErrorDescription}" Width="*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
             </TabItem>
+
+            <!-- ── Pestaña 4: Procesos de alto consumo ───────────────── -->
             <TabItem Header="Procesos de alto consumo">
-                <Grid Margin="0,12"><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions><Button Content="Actualizar procesos" Command="{Binding RefreshProcessesCommand}" Style="{StaticResource SecondaryButtonStyle}" HorizontalAlignment="Right" Margin="0,0,0,10"/><DataGrid Grid.Row="1" ItemsSource="{Binding Processes}" AutoGenerateColumns="False" CanUserAddRows="False" Background="Transparent" Foreground="{DynamicResource TextPrimaryBrush}"><DataGrid.Columns><DataGridTextColumn Header="Proceso" Binding="{Binding Name}" Width="*"/><DataGridTextColumn Header="RAM (MB)" Binding="{Binding WorkingSetMb, StringFormat={}{0:F1}}" Width="120"/><DataGridTextColumn Header="PID" Binding="{Binding Pid}" Width="80"/></DataGrid.Columns></DataGrid></Grid>
+                <Grid Margin="0,12,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Button Grid.Row="0"
+                            Content="↺ Actualizar procesos"
+                            Command="{Binding RefreshProcessesCommand}"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            HorizontalAlignment="Right"
+                            Margin="0,0,0,10"/>
+
+                    <DataGrid Grid.Row="1"
+                              ItemsSource="{Binding Processes}"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False"
+                              IsReadOnly="True"
+                              Background="Transparent"
+                              Foreground="{DynamicResource TextPrimaryBrush}"
+                              GridLinesVisibility="Horizontal"
+                              HeadersVisibility="Column">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Proceso"   Binding="{Binding Name}"                                         Width="*"/>
+                            <DataGridTextColumn Header="RAM (MB)"  Binding="{Binding WorkingSetMb, StringFormat={}{0:F1}}"          Width="110"/>
+                            <DataGridTextColumn Header="PID"       Binding="{Binding Pid}"                                         Width="80"/>
+                            <DataGridTextColumn Header="Crítico"   Binding="{Binding IsCritical}"                                  Width="80"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
             </TabItem>
+
+            <!-- ── Pestaña 5: Almacenamiento (redirige) ──────────────── -->
+            <TabItem Header="Almacenamiento">
+                <StackPanel Margin="0,20" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <TextBlock Text="Gestión detallada de limpieza"
+                               FontSize="20"
+                               Foreground="{DynamicResource TextPrimaryBrush}"
+                               HorizontalAlignment="Center"/>
+                    <TextBlock Text="El análisis completo de archivos grandes está en el módulo &quot;Liberar espacio&quot;."
+                               Foreground="{DynamicResource TextSecondaryBrush}"
+                               HorizontalAlignment="Center"
+                               Margin="0,8,0,20"
+                               TextWrapping="Wrap"
+                               MaxWidth="400"/>
+                    <Button Content="Abrir Liberar espacio"
+                            Command="{Binding NavigateCommand}"
+                            CommandParameter="Almacenamiento"
+                            Style="{StaticResource PrimaryButtonStyle}"
+                            HorizontalAlignment="Center"/>
+                </StackPanel>
+            </TabItem>
+
         </TabControl>
     </Grid>
 </UserControl>
