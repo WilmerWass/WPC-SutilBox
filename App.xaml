@@ -34,6 +34,7 @@
             <core:IntToVisibilityConverter x:Key="IntToVisibilityConverter"/>
             <core:InvertedIntToVisibilityConverter x:Key="InvertedIntToVisibilityConverter"/>
             <core:StringToColorConverter x:Key="StringToColorConverter"/>
+            <core:InverseBooleanConverter x:Key="InverseBoolConverter"/>
 
             <!-- Estilo para ToggleSwitch Moderno -->
             <Style x:Key="ToggleSwitchStyle" TargetType="{x:Type ToggleButton}">

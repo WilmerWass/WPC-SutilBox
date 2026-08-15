@@ -30,6 +30,7 @@ namespace Wpc_SutilBox.ViewModels
         private readonly IDiskHealthService    _diskHealthService;
         private readonly IDriverService        _driverService;
         private readonly IMonitoringService    _monitoringService;
+        private readonly ITemperatureMonitorService _temperatureMonitorService;
 
         // ─── Caché ligera (TTL = 5 min) ──────────────────────────────────────────
         private const int CacheTtlMinutes = 5;
@@ -172,9 +173,16 @@ namespace Wpc_SutilBox.ViewModels
                 CpuUsage = usage.CpuUsage;
                 RamUsage = usage.RamUsage;
 
-                try
+                try {
+                    var temperature = await _temperatureMonitorService.GetCpuTemperatureCAsync();
+                    
+                    if (temperature.HasValue)
+                    CpuTempC = temperature.Value;
+                }
+                catch (Exception ex)
                 {
-                    var temperatuer
+                    Debug.WriteLine(
+                        $"[PcReviewViewModel] Error obteniendo temperatura: {ex.Message}");
                 }
 
                 // ── Datos WMI con caché ──────────────────────────────────────────
@@ -251,6 +259,7 @@ namespace Wpc_SutilBox.ViewModels
         private void StartLiveMonitoring()
         {
             StopLiveMonitoring();
+            
             _liveCts = new CancellationTokenSource();
             var token = _liveCts.Token;
 
