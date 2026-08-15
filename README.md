@@ -1,280 +1,393 @@
-# 🖥️ WPC SUTILBOX
+# 🖥️ WPC-SutilBox
 
-### Sistema avanzado de control, optimización y mantenimiento para Windows
+### Suite de mantenimiento, diagnóstico, optimización y control para Windows
 
-**WPC SUTILBOX** es una utilidad de escritorio para Windows diseñada para centralizar **mantenimiento, diagnóstico, rendimiento, configuración y administración del sistema** en una interfaz WPF moderna, organizada y fácil de usar.
-
-> 🚧 **Proyecto en desarrollo — Beta 1**
->
-> La nueva generación de WPC SUTILBOX está evolucionando hacia el estándar principal de la suite.
+<p align="center">
+  <strong>Transparente · Ligero · Reversible · Sin placebo</strong>
+</p>
 
 <p align="center">
 
-[![.NET 8](https://img.shields.io/badge/.NET-8-512BD4?style=for-the-badge\&logo=dotnet\&logoColor=white)](https://dotnet.microsoft.com/)
-[![Windows 10/11](https://img.shields.io/badge/Windows-10%20%2F%2011-0078D4?style=for-the-badge\&logo=windows\&logoColor=white)](https://www.microsoft.com/windows)
+[![.NET 8](https://img.shields.io/badge/.NET-8-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
+[![C# 12](https://img.shields.io/badge/C%23-12-239120?style=for-the-badge&logo=csharp&logoColor=white)](https://learn.microsoft.com/dotnet/csharp/)
 [![WPF](https://img.shields.io/badge/UI-WPF-68217A?style=for-the-badge)](https://learn.microsoft.com/dotnet/desktop/wpf/)
-[![C#](https://img.shields.io/badge/C%23-12-239120?style=for-the-badge\&logo=csharp\&logoColor=white)](https://learn.microsoft.com/dotnet/csharp/)
-[![Status](https://img.shields.io/badge/Status-Beta%201-orange?style=for-the-badge)](https://github.com/WilmerWass/WPC-SutilBox/releases)
+[![Windows](https://img.shields.io/badge/Windows-10%20%2F%2011-0078D4?style=for-the-badge&logo=windows&logoColor=white)](https://www.microsoft.com/windows)
+[![Status](https://img.shields.io/badge/Status-Beta%201-F59E0B?style=for-the-badge)](https://github.com/WilmerWass/WPC-SutilBox/releases)
 
 </p>
-
-## Nombre de la entrega
-
-Esta entrega se publica como **WPC-SutilBox Beta-1**, un nuevo comienzo para la línea de producto. La futura versión estable se identificará como **WPC-SutilBox V1.0.0**.
 
 <p align="center">
 
-**[📥 Descargar](#-descarga-e-instalación)** •
-**[🚀 Características](#-características-principales)** •
-**[🏗️ Arquitectura](#️-arquitectura-técnica)** •
-**[📚 Documentación](#-documentación)** •
-**[🐛 Reportar error](https://github.com/WilmerWass/WPC-SutilBox/issues/new?labels=bug&template=bug_report.md)** •
-**[💡 Sugerir idea](https://github.com/WilmerWass/WPC-SutilBox/issues/new?labels=enhancement&template=feature_request.md)**
+**[📥 Releases](https://github.com/WilmerWass/WPC-SutilBox/releases)** ·
+**[🐛 Issues](https://github.com/WilmerWass/WPC-SutilBox/issues)** ·
+**[📚 Documentación](#-documentación)** ·
+**[🗺️ Plan de Betas](docs/PLAN_BETAS.md)**
 
 </p>
 
 ---
 
-## 📋 Tabla de contenidos
+## 📌 Estado del proyecto
 
-* [⚠️ Aviso de versiones y estabilidad](#️-aviso-de-versiones-y-estabilidad)
-* [🚀 Estado de Beta 1](#-estado-de-beta-1)
-* [✨ Características principales](#-características-principales)
-* [🧭 Navegación](#-navegación)
-* [📥 Descarga e instalación](#-descarga-e-instalación)
-* [🌑 Modo oscuro y modo claro](#-modo-oscuro-y-modo-claro)
-* [🏗️ Arquitectura técnica](#️-arquitectura-técnica)
-* [🛡️ Seguridad operativa](#️-seguridad-operativa)
-* [📚 Documentación](#-documentación)
-* [🗺️ Roadmap](#️-roadmap)
-* [🤝 Contribuir](#-contribuir)
-* [📄 Licencia](#-licencia)
+> 🟠 **WPC-SutilBox se encuentra actualmente en Beta 1.**
 
----
+Esta versión representa la nueva generación de la suite y se encuentra en una fase activa de **estabilización, verificación y corrección sobre hardware real**.
 
-## ⚠️ Aviso de versiones y estabilidad
+El objetivo inmediato no es añadir una gran cantidad de funciones nuevas, sino conseguir una base sólida:
 
-| Versión                 | Estado     | Uso recomendado         |
-| ----------------------- | ---------- | ----------------------- |
-| **WassControlSys 1.8**  | 🟢 Estable | Producción y uso diario |
-| **WPC SUTILBOX Beta 1** | 🟠 Beta    | Pruebas y evaluación    |
+- UI estable.
+- Operaciones asíncronas.
+- Diagnóstico confiable.
+- Manejo correcto de UAC.
+- Cero errores de compilación.
+- Cero advertencias relevantes.
+- Resultados verificables.
+- Acciones transparentes y controladas.
 
-**WassControlSys 1.8** continúa siendo la versión recomendada para entornos de producción diarios.
-
-La nueva **WPC SUTILBOX Beta 1** representa la evolución de la suite y está destinada a convertirse en el nuevo estándar oficial.
-
-> ⚠️ Las versiones Beta pueden contener errores o comportamientos que todavía estén siendo refinados.
+La documentación de desarrollo y planificación debe reflejar siempre el **estado real del código**, no únicamente las funciones previstas.
 
 ---
 
-# 🚀 Estado de Beta 1
+## 🧭 Filosofía Sutil
 
-La **Beta 1** cierra el flujo funcional principal de la nueva generación de WPC SUTILBOX.
+WPC-SutilBox no busca aplicar cientos de modificaciones simplemente por aplicar modificaciones.
 
-### ✅ Funcionalidades implementadas
+El proyecto sigue cuatro principios:
 
-* [x] Monitorización de CPU
-* [x] Monitorización de RAM
-* [x] Monitorización de temperatura
-* [x] Monitorización de batería
-* [x] Monitorización de red
-* [x] Monitorización de almacenamiento
-* [x] Botón central **Optimizar**
-* [x] Limpieza de archivos temporales
-* [x] Liberación de memoria
-* [x] Perfiles de rendimiento
-* [x] Puntos de restauración
-* [x] Gestión de aplicaciones de inicio
-* [x] Gestión de bloatware
-* [x] Actualizaciones mediante Winget
-* [x] Historial de logs de sesión
-* [x] Configuración persistente
-* [x] Modo oscuro
-* [x] Modo claro
-* [x] Color de acento
-* [x] Inicio con Windows
-* [x] Minimización a bandeja
-* [x] Optimización durante periodos de inactividad
+| Principio | Descripción |
+|---|---|
+| 🔎 **Transparente** | El usuario debe saber qué se va a modificar y por qué. |
+| 🛡️ **Seguro** | Las operaciones sensibles deben manejar correctamente permisos, errores y elevación UAC. |
+| ↩️ **Reversible** | Siempre que técnicamente sea posible, una modificación debe poder revertirse o restaurarse. |
+| ⚡ **Ligero** | La herramienta no debe convertirse en otra carga permanente para Windows. |
+
+### 🚫 Lo que WPC-SutilBox no pretende ser
+
+- ❌ Un antivirus.
+- ❌ Un limpiador milagroso.
+- ❌ Un "FPS booster" basado en placebo.
+- ❌ Un modificador irreversible del kernel.
+- ❌ Un ejecutor de scripts opacos.
+- ❌ Una aplicación que cambie configuraciones sin informar al usuario.
 
 ---
 
-# ✨ Características principales
+# 🚀 Beta 1
 
-## 📊 Monitorización avanzada
+Beta 1 está enfocada principalmente en **estabilización y consolidación de la base existente**.
 
-Consulta en tiempo real el estado del equipo:
+## 🟢 Áreas funcionales existentes
 
-* CPU
-* Memoria RAM
-* Temperaturas
-* Disco
-* Red
-* Batería
-* Procesos de alto consumo
+La aplicación cuenta actualmente con infraestructura para:
 
-La información se presenta de forma centralizada para facilitar el diagnóstico del sistema.
+- 🖥️ Monitorización del sistema.
+- 💾 Información de almacenamiento.
+- ⚙️ Herramientas de mantenimiento.
+- 🧹 Limpieza de archivos temporales.
+- 🛠️ Reparación mediante herramientas nativas de Windows.
+- 🔄 Creación de puntos de restauración.
+- 📦 Gestión básica de aplicaciones.
+- 🚀 Gestión de aplicaciones de inicio.
+- ⚙️ Gestión de procesos.
+- 🔧 Gestión de servicios.
+- 📜 Registro e historial de operaciones.
+- 🎨 Temas claro y oscuro.
+- ⚙️ Configuración de la aplicación.
 
----
-
-## ⚡ Perfiles de rendimiento
-
-WPC SUTILBOX incluye perfiles preparados para diferentes escenarios:
-
-| Perfil               | Objetivo                    |
-| -------------------- | --------------------------- |
-| ⚖️ **Equilibrado**   | Uso diario                  |
-| 🎮 **Gaming**        | Priorizar rendimiento       |
-| 💼 **Productividad** | Trabajo y multitarea        |
-| 💻 **Desarrollo**    | Entornos de programación    |
-| ⚙️ **A tu medida**   | Configuración personalizada |
-
-Antes de realizar modificaciones importantes, el sistema puede crear automáticamente un **punto de restauración**.
+> ⚠️ **Importante:** que un módulo exista en la aplicación no significa necesariamente que todas sus funciones estén completamente estabilizadas. Beta 1 se encarga precisamente de verificar y corregir esas diferencias.
 
 ---
 
-## 🧹 Optimización rápida
+# 🔍 Diagnóstico del sistema
 
-El botón central **Optimizar** permite ejecutar acciones de mantenimiento desde un único lugar.
+WPC-SutilBox centraliza información del equipo para facilitar el diagnóstico.
 
-Puede incluir:
+Entre las áreas contempladas se encuentran:
 
-* Limpieza de temporales
-* Liberación de memoria
-* Aplicación del perfil seleccionado
-* Tareas de mantenimiento configuradas
+- CPU.
+- RAM.
+- GPU.
+- Almacenamiento.
+- Red.
+- Batería.
+- Temperaturas.
+- Procesos y consumo de recursos.
 
----
+La información procede de las APIs disponibles de Windows, WMI y otros mecanismos del sistema según el módulo.
 
-## 📦 Gestión de software
+### 🧪 Verificación en hardware real
 
-La aplicación integra herramientas para administrar el software instalado:
+Una parte importante del trabajo de Beta 1 procede de pruebas realizadas directamente sobre equipos físicos.
 
-* Aplicaciones de inicio
-* Bloatware
-* Desinstalación
-* Actualizaciones mediante `winget`
-* Consulta de paquetes disponibles
+Los resultados de esas pruebas se conservan como evidencia técnica dentro de:
 
----
+```text
+ANOSUBIR/
+└── BETA_1/
+    └── 1.2_PC_REVIEW/
+```
 
-# 🧭 Navegación
-
-## 🏠 Inicio
-
-Panel principal con:
-
-* Botón **Optimizar**
-* Perfil de rendimiento activo
-* Estado general del equipo
-* Resumen de utilización de recursos
+Estos registros tienen prioridad sobre documentación antigua cuando existe una discrepancia entre lo documentado y el comportamiento real.
 
 ---
 
-## 🔍 Revisar mi PC
+# 🧹 Mantenimiento
 
-Área dedicada al diagnóstico del equipo.
+La aplicación proporciona herramientas para tareas habituales de mantenimiento de Windows.
 
-### Resumen de salud
+### Limpieza
 
-Estado general de los principales componentes.
+Entre las operaciones disponibles se encuentran:
 
-### 💾 Espacio y almacenamiento
+- Archivos temporales.
+- Carpetas de mantenimiento.
+- Papelera de reciclaje.
+- Otras tareas de limpieza controlada.
 
-Información sobre discos y espacio disponible.
+### Reparación
 
-### 🖥️ Hardware y temperaturas
+Se contemplan herramientas nativas como:
 
-Información del hardware y temperaturas detectadas.
+```text
+SFC /scannow
+DISM
+```
 
-### 📈 Procesos de alto consumo
-
-Identificación de procesos que utilizan una cantidad elevada de recursos.
-
----
-
-## 🧹 Liberar espacio
-
-Herramientas para recuperar espacio:
-
-* Limpieza básica
-* Análisis de archivos grandes
-* Gestión de Descargas
-* Herramientas nativas de Windows
+Las operaciones potencialmente sensibles deben ejecutarse respetando los permisos requeridos por Windows.
 
 ---
 
-## 📦 Aplicaciones
+# 🛠️ Herramientas del sistema
 
-Centro de administración de software:
+WPC-SutilBox integra diferentes utilidades para facilitar tareas técnicas.
 
-* Aplicaciones de inicio
-* Bloatware
-* Desinstalación
-* Winget
+### Procesos
 
----
+Permite consultar procesos activos y trabajar con su estado y consumo de recursos.
 
-## 🛠️ Herramientas avanzadas
+### Servicios
 
-Incluye herramientas orientadas a usuarios que necesitan mayor control:
+Permite consultar y administrar servicios de Windows cuando la operación y los permisos lo permiten.
 
-* Reparación de Windows
-* Procesos
-* Servicios
-* Perfiles
-* Utilidades nativas
+### Restauración
+
+La aplicación dispone de integración con los mecanismos de restauración de Windows.
+
+> ⚠️ La creación de un punto de restauración depende del estado de los servicios de restauración de Windows y de los permisos disponibles en el sistema.
 
 ---
 
-## 📜 Historial y seguridad
+# 🎨 Interfaz
 
-Permite consultar los eventos registrados durante la sesión.
+WPC-SutilBox utiliza una interfaz **WPF/XAML** organizada alrededor de una arquitectura MVVM.
 
-También permite acceder a la carpeta completa de logs para facilitar:
+La interfaz contempla:
 
-* Auditoría
-* Diagnóstico
-* Investigación de errores
-* Revisión de operaciones
+- 🏠 Dashboard / Inicio.
+- 📊 Información del sistema.
+- 🧹 Limpieza.
+- 📦 Aplicaciones.
+- ⚙️ Herramientas.
+- 🔧 Procesos y servicios.
+- 🎨 Configuración.
+- 📜 Historial.
 
----
+## 🌗 Tema visual
 
-## ⚙️ Ajustes
+La aplicación dispone de:
 
-La configuración permite controlar:
+- 🌑 Modo oscuro.
+- ☀️ Modo claro.
 
-* 🌐 Idioma
-* 🎨 Apariencia
-* 🖌️ Color de acento
-* 🚀 Inicio con Windows
-* 📥 Minimización a bandeja
-* ⚡ Optimización automática en periodos de inactividad
+Los recursos visuales se gestionan mediante recursos XAML y un sistema de temas centralizado.
 
----
-
-# 📥 Descarga e instalación
-
-## 💻 Requisitos
-
-| Requisito         | Información                                 |
-| ----------------- | ------------------------------------------- |
-| Sistema operativo | Windows 10 / Windows 11                     |
-| Arquitectura      | x64                                         |
-| Runtime           | .NET 8 Desktop Runtime                      |
-| Privilegios       | Administrador para determinadas operaciones |
-| Winget            | Recomendado para gestión de aplicaciones    |
-
-### 📦 Descargar versión publicada
-
-Consulta las versiones disponibles en:
-
-**[➡️ Releases de WPC SUTILBOX](https://github.com/WilmerWass/WPC-SutilBox/releases)**
-
-> 💡 Se recomienda utilizar la versión marcada como **Latest** para obtener la versión estable más reciente.
+El objetivo de Beta 1 es consolidar estos recursos y eliminar inconsistencias entre los distintos temas.
 
 ---
 
-## 🧑‍💻 Instalación desde código fuente
+# 🏗️ Arquitectura
+
+WPC-SutilBox está construido sobre:
+
+| Componente | Tecnología |
+|---|---|
+| Lenguaje | C# 12 |
+| Framework | .NET 8 |
+| Interfaz | WPF / XAML |
+| Arquitectura | MVVM |
+| Configuración | JSON |
+| Diagnóstico | Windows APIs / WMI |
+| Automatización | PowerShell / herramientas nativas |
+| Gestión de paquetes | Winget |
+| Logging | Logs locales |
+
+## 📐 Estructura conceptual
+
+```text
+WPC-SutilBox
+│
+├── Views
+│   └── WPF / XAML
+│
+├── ViewModels
+│   └── MVVM
+│
+├── Models
+│
+├── Core
+│   └── Services
+│       ├── System Monitor
+│       ├── Processes
+│       ├── Windows Services
+│       ├── Cleanup
+│       ├── System Restore
+│       ├── Winget
+│       ├── Theme Manager
+│       └── Logger
+│
+└── Windows
+    ├── WMI
+    ├── Registry
+    ├── PowerShell
+    └── Windows APIs
+```
+
+### 🔄 Flujo de una operación
+
+```text
+Usuario
+   │
+   ▼
+View
+   │
+   ▼
+ViewModel
+   │
+   ▼
+Core / Service
+   │
+   ▼
+Windows API / WMI / Registry / PowerShell
+   │
+   ▼
+Resultado
+   │
+   ▼
+Log + UI
+```
+
+---
+
+# ⚡ Asincronía y estabilidad
+
+Una prioridad fundamental de Beta 1 es evitar bloqueos de la interfaz.
+
+Las operaciones potencialmente pesadas deben utilizar mecanismos asíncronos apropiados:
+
+```text
+UI
+ │
+ ├── operación rápida ───────────────► ejecución directa
+ │
+ └── operación pesada
+        │
+        ▼
+     async/await
+        │
+        ▼
+    Service / Worker
+        │
+        ▼
+    Resultado
+        │
+        ▼
+     UI Thread
+```
+
+Especial atención requiere el uso de:
+
+- WMI.
+- PowerShell.
+- Acceso a disco.
+- Procesos externos.
+- Operaciones administrativas.
+- Consultas de hardware.
+
+---
+
+# 🛡️ Seguridad operativa
+
+Las operaciones administrativas deben respetar el modelo de seguridad de Windows.
+
+## 🔐 UAC
+
+Cuando una operación requiere privilegios elevados, WPC-SutilBox debe:
+
+1. Detectar la necesidad de elevación.
+2. Solicitar permisos mediante UAC.
+3. Ejecutar la operación elevada.
+4. Capturar errores.
+5. Informar del resultado.
+
+No se deben ocultar errores de permisos detrás de resultados aparentemente exitosos.
+
+---
+
+## ↩️ Restauración y reversibilidad
+
+Cuando una operación pueda modificar configuraciones importantes del sistema, se debe considerar:
+
+- Punto de restauración.
+- Estado previo.
+- Rollback.
+- Confirmación explícita.
+- Registro de la operación.
+
+La reversibilidad exacta depende de la naturaleza de cada modificación.
+
+---
+
+# 📜 Logs
+
+Las operaciones relevantes se registran para facilitar:
+
+- Diagnóstico.
+- Auditoría.
+- Reproducción de errores.
+- Soporte.
+- Verificación de resultados.
+
+La configuración y los logs se almacenan en el perfil local del usuario.
+
+```text
+%LOCALAPPDATA%\Wpc_SutilBox\
+```
+
+Ejemplo:
+
+```text
+%LOCALAPPDATA%\Wpc_SutilBox\
+├── settings.json
+└── logs\
+    └── session_*.log
+```
+
+---
+
+# 📦 Requisitos
+
+| Requisito | Valor |
+|---|---|
+| Sistema operativo | Windows 10 / Windows 11 |
+| Arquitectura | x64 |
+| Framework | .NET 8 |
+| Interfaz | WPF |
+| Privilegios | Administrador para determinadas operaciones |
+| Winget | Requerido únicamente por las funciones que lo utilizan |
+
+---
+
+# 🧑‍💻 Compilar desde código fuente
 
 Clonar el repositorio:
 
@@ -301,218 +414,110 @@ Ejecutar:
 dotnet run -c Release
 ```
 
----
-
-## 📦 Publicar para Windows x64
-
-Para generar una publicación Windows x64:
+### Publicar para Windows x64
 
 ```powershell
 dotnet publish -c Release -r win-x64 --self-contained false
 ```
 
-Los archivos generados estarán disponibles dentro de:
+La salida se genera dentro del directorio correspondiente de:
 
 ```text
-bin\Release\net8.0-windows\win-x64\publish\
+bin\Release\
 ```
-
----
-
-# 🌑 Modo oscuro y modo claro
-
-WPC SUTILBOX utiliza un **Design System basado en tokens** para mantener consistencia visual entre los diferentes modos.
-
-Los tokens incluyen:
-
-* Background
-* Surface
-* Elevated Surface
-* Hover
-* Primary Text
-* Secondary Text
-* Borders
-* Estados semánticos
-* Color de acento
-
-El usuario puede cambiar la apariencia desde:
-
-**Ajustes → Apariencia y Estilo**
-
-El cambio se aplica dinámicamente sin necesidad de reiniciar la aplicación.
-
----
-
-# 🏗️ Arquitectura técnica
-
-## Stack
-
-| Componente          | Tecnología                              |
-| ------------------- | --------------------------------------- |
-| Lenguaje            | **C#**                                  |
-| Framework           | **.NET 8**                              |
-| UI                  | **WPF / XAML**                          |
-| Arquitectura        | **MVVM**                                |
-| Configuración       | **JSON**                                |
-| Monitorización      | PerformanceCounter / WMI / APIs Windows |
-| Gestión de paquetes | Winget                                  |
-| Logging             | Logs locales de sesión                  |
-
----
-
-## 📐 Arquitectura
-
-```text
-WPC SUTILBOX
-│
-├── UI
-│   └── WPF / XAML
-│
-├── ViewModels
-│   └── MVVM
-│
-├── Services
-│   ├── Performance
-│   ├── Battery
-│   ├── Restore Point
-│   ├── Profiles
-│   ├── Processes
-│   ├── Startup
-│   ├── Bloatware
-│   ├── Winget
-│   ├── Settings
-│   └── Logging
-│
-└── Windows APIs
-    ├── PerformanceCounter
-    ├── GlobalMemoryStatusEx
-    ├── WMI
-    └── PowerStatus
-```
-
-### ViewModel principal
-
-```text
-MainViewModel
-```
-
-### Configuración
-
-```text
-%LOCALAPPDATA%\Wpc_SutilBox\settings.json
-```
-
-### Logs
-
-```text
-%LOCALAPPDATA%\Wpc_SutilBox\logs\session_*.log
-```
-
----
-
-# 🛡️ Seguridad operativa
-
-WPC SUTILBOX está diseñado para que las operaciones administrativas o potencialmente destructivas sean **explícitas y controladas**.
-
-### Restauración
-
-Los perfiles pueden crear un **punto de restauración** antes de modificar:
-
-* Planes de energía
-* Servicios
-* Configuración del sistema
-
-### 🔐 Privilegios elevados
-
-Las operaciones que requieren permisos administrativos utilizan el mecanismo **UAC de Windows**.
-
-El usuario mantiene el control sobre la elevación de privilegios.
-
-> ⚠️ Algunas herramientas pueden modificar configuraciones importantes de Windows. Se recomienda revisar la acción antes de ejecutarla.
 
 ---
 
 # 📚 Documentación
 
-La documentación técnica del proyecto se encuentra dentro de `/docs`.
+La documentación del proyecto se está reorganizando bajo el principio de **Fuente Única de Verdad**.
 
-### 📐 Arquitectura
-
-[**ARCHITECTURE.md →**](https://github.com/WilmerWass/WPC-SutilBox/blob/main/docs/ARCHITECTURE.md)
-
-Descripción de la arquitectura interna y organización técnica.
-
-### 🧪 Plan Beta 1
-
-[**PLAN_WPC_SUTILBOX_BETA1.md →**](https://github.com/WilmerWass/WPC-SutilBox/blob/main/docs/PLAN_WPC_SUTILBOX_BETA1.md)
-
-Plan de implementación y evolución de la Beta 1.
-
-### 📘 Blueprint del producto
-
-[**PRODUCT_BLUEPRINT_ES.md →**](https://github.com/WilmerWass/WPC-SutilBox/blob/main/docs/PRODUCT_BLUEPRINT_ES.md)
-
-Definición funcional y conceptual del producto.
-
-### 🗺️ Roadmap
-
-[**ROADMAP_V1.1.8_Y_SIGUIENTES.md →**](https://github.com/WilmerWass/WPC-SutilBox/blob/main/docs/ROADMAP_V1.1.8_Y_SIGUIENTES.md)
-
-Historial y planificación de futuras versiones.
-
----
-
-# 🗺️ Roadmap
-
-El desarrollo de WPC SUTILBOX se organiza progresivamente por versiones.
+La estructura objetivo es:
 
 ```text
-WassControlSys 1.8
-       │
-       ▼
-WPC SUTILBOX
-       │
-       ▼
-   Beta 1
-       │
-       ▼
-   Estabilización
-       │
-       ▼
-   Release
-       │
-       ▼
- Nuevas versiones
+docs/
+├── PRODUCT.md
+├── ARCHITECTURE.md
+├── PLAN_BETAS.md
+├── DEVELOPMENT.md
+└── CHANGELOG.md
 ```
 
-Consulta el **[Roadmap completo](https://github.com/WilmerWass/WPC-SutilBox/blob/main/docs/ROADMAP_V1.1.8_Y_SIGUIENTES.md)** para conocer las próximas etapas.
+## 📘 Documentos principales
+
+| Documento | Contenido |
+|---|---|
+| [`PRODUCT.md`](docs/PRODUCT.md) | Identidad, propósito, filosofía y límites del producto. |
+| [`ARCHITECTURE.md`](docs/ARCHITECTURE.md) | Arquitectura, MVVM, servicios y reglas técnicas. |
+| [`PLAN_BETAS.md`](docs/PLAN_BETAS.md) | Plan maestro de Beta 1, Beta 2, Beta 3 y etapas posteriores. |
+| [`DEVELOPMENT.md`](docs/DEVELOPMENT.md) | Normas de desarrollo, compilación, asincronía y verificación. |
+| [`CHANGELOG.md`](docs/CHANGELOG.md) | Historial de cambios confirmados. |
+
+> 📌 Los documentos históricos de pruebas de hardware no sustituyen la documentación principal. Se mantienen como **evidencia técnica** y referencia de campo.
 
 ---
 
-# 🐛 Reportar errores
+# 🧪 Evidencia de Beta 1
 
-¿Encontraste un problema?
+Los análisis y pruebas realizadas durante la estabilización se conservan en:
 
-Utiliza el sistema de Issues de GitHub:
+```text
+ANOSUBIR/
+└── BETA_1/
+    └── 1.2_PC_REVIEW/
+```
 
-**[🐛 Reportar un error](https://github.com/WilmerWass/WPC-SutilBox/issues/new?labels=bug&template=bug_report.md)**
+Entre los materiales de referencia se encuentran:
 
-Al reportarlo, intenta incluir:
+```text
+ANALISIS_AUDITORIA_INTEGRAL_WPC.md
+ANALISIS_PREVIEW_HTML_PROTOTYPE.md
+LOG_CORRECCIONES_PC2.md
+NOTES_TESTING_PC1.txt
+WPC-SutilBox_Dashboard_EJEMPLO.html
+```
 
-* Versión de WPC SUTILBOX
-* Versión de Windows
-* Descripción del problema
-* Pasos para reproducirlo
-* Capturas de pantalla, si son relevantes
-* Logs relacionados
+Estos archivos documentan pruebas, errores, correcciones y prototipos específicos de la fase Beta 1.
 
 ---
 
-# 💡 Sugerir una característica
+# 🗺️ Evolución del proyecto
 
-¿Tienes una idea para mejorar WPC SUTILBOX?
+La evolución de WPC-SutilBox se organizará por Betas.
 
-**[💡 Crear una propuesta](https://github.com/WilmerWass/WPC-SutilBox/issues/new?labels=enhancement&template=feature_request.md)**
+```text
+WassControlSys
+      │
+      ▼
+WPC-SutilBox
+      │
+      ▼
+   ┌─────────┐
+   │ Beta 1  │
+   │Estabil. │
+   └────┬────┘
+        │
+        ▼
+   ┌─────────┐
+   │ Beta 2  │
+   │ Evoluc. │
+   └────┬────┘
+        │
+        ▼
+   ┌─────────┐
+   │ Beta 3  │
+   │ Avance  │
+   └────┬────┘
+        │
+        ▼
+    V1.0.0
+```
+
+El detalle de cada etapa se mantiene exclusivamente en:
+
+**[`docs/PLAN_BETAS.md`](docs/PLAN_BETAS.md)**
+
+Las nuevas funcionalidades no deben añadirse directamente al README si pertenecen al futuro. Primero deben clasificarse en el plan correspondiente y posteriormente reflejarse aquí cuando estén realmente implementadas.
 
 ---
 
@@ -520,20 +525,73 @@ Al reportarlo, intenta incluir:
 
 Las contribuciones son bienvenidas.
 
-1. Haz un fork del repositorio.
-2. Crea una rama para tu cambio.
-3. Implementa y prueba la modificación.
-4. Realiza un commit descriptivo.
-5. Abre un Pull Request.
+Flujo recomendado:
 
-```bash
+```powershell
 git checkout -b feature/nueva-funcionalidad
+
 git add .
+
 git commit -m "feat: añadir nueva funcionalidad"
+
 git push origin feature/nueva-funcionalidad
 ```
 
-Después puedes abrir un **Pull Request** desde GitHub.
+Después puede abrirse un Pull Request desde GitHub.
+
+Antes de enviar cambios importantes se recomienda comprobar:
+
+```powershell
+dotnet restore
+dotnet build -c Release
+```
+
+Y verificar que no se introduzcan regresiones en las operaciones del sistema.
+
+---
+
+# 🐛 Reportar un error
+
+Si encuentras un problema, abre un Issue:
+
+**[🐛 Reportar un error](https://github.com/WilmerWass/WPC-SutilBox/issues)**
+
+Incluye, cuando sea posible:
+
+- Versión de WPC-SutilBox.
+- Versión de Windows.
+- Hardware relevante.
+- Descripción del problema.
+- Pasos para reproducirlo.
+- Capturas de pantalla.
+- Logs relacionados.
+
+Los errores reproducidos sobre hardware real tienen especial valor durante Beta 1.
+
+---
+
+# 💡 Proponer una funcionalidad
+
+Las nuevas funcionalidades deben evaluarse primero dentro del plan de Betas.
+
+Antes de implementar una idea se recomienda determinar:
+
+```text
+¿Está implementada?
+       │
+       ├── Sí ──► Documentar estado real
+       │
+       └── No
+           │
+           ▼
+       ¿Es necesaria para Beta actual?
+           │
+           ├── Sí ──► PLAN_BETAS
+           │
+           └── No ──► Backlog / Beta futura
+```
+
+Esto evita volver a mezclar funcionalidades futuras con tareas de estabilización.
 
 ---
 
@@ -541,10 +599,10 @@ Después puedes abrir un **Pull Request** desde GitHub.
 
 <p align="center">
 
-**[⭐ Dar una estrella](https://github.com/WilmerWass/WPC-SutilBox)** •
-**[📦 Releases](https://github.com/WilmerWass/WPC-SutilBox/releases)** •
-**[🐛 Issues](https://github.com/WilmerWass/WPC-SutilBox/issues)** •
-**[🔀 Pull Requests](https://github.com/WilmerWass/WPC-SutilBox/pulls)**
+⭐ **[Star en GitHub](https://github.com/WilmerWass/WPC-SutilBox)** ·
+📦 **[Releases](https://github.com/WilmerWass/WPC-SutilBox/releases)** ·
+🐛 **[Issues](https://github.com/WilmerWass/WPC-SutilBox/issues)** ·
+🔀 **[Pull Requests](https://github.com/WilmerWass/WPC-SutilBox/pulls)**
 
 </p>
 
@@ -552,15 +610,21 @@ Después puedes abrir un **Pull Request** desde GitHub.
 
 # 📄 Licencia
 
-Consulta el archivo [`LICENSE`](https://github.com/WilmerWass/WPC-SutilBox/blob/main/LICENSE) para conocer los términos de distribución y uso del proyecto.
+La licencia definitiva del proyecto se documentará en el archivo:
+
+```text
+LICENSE
+```
+
+Hasta que la licencia sea definida formalmente, no debe asumirse una licencia específica únicamente por referencias presentes en documentación histórica.
 
 ---
 
 <p align="center">
 
-### 🖥️ WPC SUTILBOX
+### 🖥️ WPC-SutilBox
 
-**Controla. Optimiza. Mantén.**
+**Controla. Comprende. Optimiza. Mantén.**
 
 Desarrollado por **WilmerWass**
 
