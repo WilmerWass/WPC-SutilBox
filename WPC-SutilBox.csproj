@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -7,20 +7,21 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
+    <RootNamespace>Wpc_SutilBox</RootNamespace>
     
     <!-- Version Information -->
-    <Version>1.1.7</Version>
-    <AssemblyVersion>1.1.7.0</AssemblyVersion>
-    <FileVersion>1.1.7.0</FileVersion>
+    <Version>1.1.0</Version>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
+    <FileVersion>1.1.0.0</FileVersion>
     
     <!-- Application Information -->
     <Company>WilmerWass</Company>
     <AssemblyName>SutilBox</AssemblyName>
     <ApplicationIcon>Resources\img\logo_WCS.ico</ApplicationIcon>
-    <Product>SutilBox</Product>
-    <AssemblyTitle>SutilBox</AssemblyTitle>
-    <Description>Sistema de Control y Optimización para Windows</Description>
-    <Copyright>Copyright © 2025 WilmerWass</Copyright>
+    <Product>WPC-SutilBox</Product>
+    <AssemblyTitle>WPC-SutilBox</AssemblyTitle>
+    <Description>Sistema Integral de Control, Diagnóstico y Optimización para Windows</Description>
+    <Copyright>Copyright © 2025-2026 WilmerWass</Copyright>
     
     <!-- Build Configuration -->
     <PublishSingleFile>true</PublishSingleFile>

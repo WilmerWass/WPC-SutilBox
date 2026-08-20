@@ -1,6 +1,6 @@
-# Contribuir a WassControlSys
+# Contribuir a WPC-SutilBox
 
-¡Gracias por tu interés en contribuir a WassControlSys! Este documento proporciona pautas para contribuir al proyecto.
+¡Gracias por tu interés en contribuir a WPC-SutilBox! Este documento proporciona pautas para contribuir al proyecto.
 
 ## 📋 Tabla de Contenidos
 
@@ -35,8 +35,8 @@ Este proyecto se adhiere a un código de conducta. Al participar, se espera que 
 ```bash
 # Haz fork del repositorio en GitHub
 # Luego clona tu fork
-git clone https://github.com/WilmerWass/WassControlSys.git
-cd WassControlSys
+git clone https://github.com/WilmerWass/WPC-SutilBox.git
+cd WPC-SutilBox
 ```
 
 ### 2. Crear una Rama
@@ -115,7 +115,7 @@ Si encuentras un bug, por favor crea un issue con:
 La aplicación se cierra al intentar limpiar archivos temporales.
 
 **Pasos para Reproducir**
-1. Abrir WassControlSys
+1. Abrir WPC-SutilBox
 2. Ir a sección "Limpieza"
 3. Click en "Iniciar Limpieza"
 4. La aplicación se cierra
@@ -125,7 +125,7 @@ La limpieza debería completarse sin errores.
 
 **Sistema**
 - Windows 11 Pro 64-bit
-- WassControlSys v1.1.4
+- WPC-SutilBox v1.1.4
 - .NET 8.0
 
 **Logs**
@@ -222,8 +222,8 @@ public class MiClase
 
 ```bash
 # 1. Clonar el repositorio
-git clone https://github.com/WilmerWass/WassControlSys.git
-cd WassControlSys
+git clone https://github.com/WilmerWass/WPC-SutilBox.git
+cd WPC-SutilBox
 
 # 2. Restaurar paquetes NuGet
 dotnet restore
@@ -280,8 +280,8 @@ Todos los contribuidores serán reconocidos en:
 
 ## 📝 Licencia
 
-Al contribuir a WassControlSys, aceptas que tus contribuciones se licenciarán bajo la misma licencia MIT del proyecto.
+Al contribuir a WPC-SutilBox, aceptas que tus contribuciones se licenciarán bajo la misma licencia MIT del proyecto.
 
 ---
 
-**¡Gracias por contribuir a WassControlSys!** 🚀
+**¡Gracias por contribuir a WPC-SutilBox!** 🚀
