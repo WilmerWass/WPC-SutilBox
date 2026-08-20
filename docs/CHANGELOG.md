@@ -1,24 +1,21 @@
 # Historial de Cambios — WPC-SutilBox
 
-## [Unreleased] - Beta 1 (Fase de Estabilización)
-### En Proceso
-* Reestructuración completa de la documentación técnica hacia el modelo de Fuente Única de Verdad.
-* Corrección de bindings en la UI del Dashboard y optimización del hilo principal (UI Thread).
-* Aislamiento de llamadas WMI en servicios asíncronos.
-
----
-
-## [0.2.0-beta.1] - 2026-03 (⚠️ PENDIENTE DE VERIFICACIÓN HISTÓRICA)
+## [1.1.1-beta] - 2026-08-20 (Beta 1.1.1 Renacimiento)
 ### Añadido
-* Prototipo inicial de Dashboard en WPF con métricas básicas de CPU y RAM.
-* Estructura modular de servicios para lectura de Registro.
-* Módulo preliminar de análisis de componentes de hardware.
+* **Nuevo Dashboard Principal:** Tarjeta de Salud y Optimización con diagnóstico no destructivo y botón "Analizar y optimizar".
+* **Monitoreo Global en Tiempo Real:** Módulos visuales modernos para CPU %, RAM %, Temperatura CPU y Batería.
+* **Selector de Modos de Rendimiento:** Cards interactivas para modos Equilibrado, Gaming, Productividad y Desarrollo.
+* **Centro de Actualizaciones Unificado:** Fusión de actualizaciones de aplicaciones (Winget) y parches del SO (Windows Update) en una sola vista con pestañas.
+* **Confirmación de Actualización Global:** Cuadro de diálogo modal que solicita consentimiento antes de ejecutar actualizaciones masivas en Winget.
 
-### Corregido
-* Excepciones al intentar consultar claves de Registro restringidas sin elevación UAC.
+### Mejorado & Corregido
+* **WingetService:** Eliminación de bloqueos infinitos en búsquedas mediante flags `--accept-source-agreements --include-unknown` y timeout de seguridad de 35s.
+* **Navegación Lateral (Sidebar):** Limpieza de sub-botones redundantes bajo "Revisar mi PC", trasladando la interacción limpia al `TabControl` interno.
+* **Compilación y Metadatos:** Actualización de identidad a WPC-SutilBox, manifiesto UAC v1.1.1.0 y compilación limpia con 0 advertencias y 0 errores.
+* **Publicación:** Paquete **Autocontenido (Self-Contained Single-File)** para Windows x64.
 
 ---
 
-## [0.1.0-alpha] - Versión Inicial
-* Creación de la solución base en C# / WPF.
-* Definición de la arquitectura MVVM inicial.
+## [1.1.0-beta] - 2026-08-20
+### Cambiado
+* Metamorfosis inicial del proyecto a `WPC-SutilBox` y RootNamespace `Wpc_SutilBox`.
