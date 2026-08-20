@@ -394,7 +394,31 @@ namespace Wpc_SutilBox.ViewModels
         private async Task UpdateAllAppsAsync()
         {
             if (_wingetService == null) return;
-            IsBusy = true; try { await _wingetService.UpdateAllAppsAsync(); } finally { IsBusy = false; }
+            if (UpdatableApps.Count == 0)
+            {
+                MessageBox.Show("No hay actualizaciones pendientes para instalar.", "WPC-SutilBox", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            var result = MessageBox.Show(
+                $"Se van a actualizar {UpdatableApps.Count} aplicaciones mediante Winget en segundo plano.\n\n¿Deseas continuar con la actualización?",
+                "Confirmar Actualización Global",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (result != MessageBoxResult.Yes) return;
+
+            IsBusy = true;
+            try
+            {
+                GeneralStatusMessage = "Actualizando todas las aplicaciones...";
+                await _wingetService.UpdateAllAppsAsync();
+                await RefreshUpdatableAppsAsync();
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
         private async Task UpdateAppAsync(object? parameter)

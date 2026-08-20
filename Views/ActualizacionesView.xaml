@@ -1,80 +1,154 @@
-﻿<UserControl x:Class="Wpc_SutilBox.Views.ActualizacionesView"
+<UserControl x:Class="Wpc_SutilBox.Views.ActualizacionesView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-        <StackPanel>
-            <TextBlock Text="Actualizaciones de Software" Style="{StaticResource HeaderTextStyle}"/>
-            <TextBlock Text="Gestione las actualizaciones de sus aplicaciones instaladas mediante Winget." Style="{StaticResource SubHeaderTextStyle}" Margin="0,0,0,20"/>
+             d:DesignHeight="600" d:DesignWidth="900">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-            <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
-                <Button Content="Buscar Actualizaciones" Command="{Binding RefreshUpdatableAppsCommand}" Style="{StaticResource PrimaryButtonStyle}" Margin="0,0,10,0"/>
-                <Button Content="Actualizar Todo" Command="{Binding UpdateAllAppsCommand}" Style="{StaticResource SecondaryButtonStyle}"/>
-            </StackPanel>
+        <!-- Cabecera del Centro de Actualizaciones -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,16">
+            <TextBlock Text="Centro de Actualizaciones" Style="{StaticResource HeaderTextStyle}"/>
+            <TextBlock Text="Gestión unificada de software instalado (Winget) y parches del sistema operativo (Windows Update)." 
+                       Style="{StaticResource SubHeaderTextStyle}" Margin="0,5,0,0"/>
+        </StackPanel>
 
-            <Border Background="{StaticResource SurfaceBrush}" CornerRadius="8" Padding="15">
-                <DataGrid ItemsSource="{Binding UpdatableApps}" AutoGenerateColumns="False" Background="Transparent" Foreground="White" BorderThickness="0" CanUserAddRows="False">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Nombre" Binding="{Binding Name}" Width="*"/>
-                        <DataGridTextColumn Header="Versión Actual" Binding="{Binding CurrentVersion}" Width="150"/>
-                        <DataGridTextColumn Header="Nueva Versión" Binding="{Binding AvailableVersion}" Width="150"/>
-                        <DataGridTemplateColumn Header="Acción" Width="150">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Grid>
-                                        <Button Content="Actualizar" Command="{Binding DataContext.UpdateAppCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" CommandParameter="{Binding Id}" Padding="5,2">
-                                            <Button.Style>
-                                                <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding IsUpdating}" Value="True">
-                                                            <Setter Property="Visibility" Value="Collapsed"/>
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </Button.Style>
-                                        </Button>
-                                        <StackPanel VerticalAlignment="Center">
-                                            <StackPanel.Style>
-                                                <Style TargetType="StackPanel">
-                                                    <Setter Property="Visibility" Value="Collapsed"/>
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding IsUpdating}" Value="True">
-                                                            <Setter Property="Visibility" Value="Visible"/>
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </StackPanel.Style>
+        <!-- Pestañas Unificadas -->
+        <TabControl Grid.Row="1" Background="Transparent" BorderThickness="0">
+            
+            <!-- PESTAÑA 1: APLICACIONES WINGET -->
+            <TabItem Header="📦   Aplicaciones (Winget)">
+                <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="0,12,12,12" Padding="20" Margin="0,10,0,0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <StackPanel Grid.Row="0" Margin="0,0,0,15">
+                            <WrapPanel Orientation="Horizontal">
+                                <Button Content="🔍   Buscar Actualizaciones" 
+                                        Command="{Binding RefreshUpdatableAppsCommand}" 
+                                        Style="{StaticResource PrimaryButtonStyle}" 
+                                        Margin="0,0,10,0"/>
+                                
+                                <Button Content="⚡   Actualizar Todo" 
+                                        Command="{Binding UpdateAllAppsCommand}" 
+                                        Style="{StaticResource SecondaryButtonStyle}" 
+                                        Margin="0,0,10,0"/>
+                            </WrapPanel>
+
+                            <!-- Indicador de búsqueda en progreso -->
+                            <Border Margin="0,12,0,0" 
+                                    Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}" 
+                                    Background="{DynamicResource SurfaceElevatedBrush}" 
+                                    Padding="12" CornerRadius="8">
+                                <StackPanel>
+                                    <TextBlock Text="Consultando repositorios de paquetes de Winget..." 
+                                               Foreground="{DynamicResource TextPrimaryBrush}" FontSize="12" Margin="0,0,0,6"/>
+                                    <ProgressBar IsIndeterminate="True" Height="4" BorderThickness="0" Background="Transparent"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+
+                        <!-- Tabla de Aplicaciones -->
+                        <DataGrid Grid.Row="1" ItemsSource="{Binding UpdatableApps}" 
+                                  AutoGenerateColumns="False" Background="Transparent" 
+                                  Foreground="{DynamicResource TextPrimaryBrush}" 
+                                  BorderThickness="0" CanUserAddRows="False"
+                                  VirtualizingStackPanel.IsVirtualizing="True" 
+                                  VirtualizingStackPanel.VirtualizationMode="Recycling">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Aplicación" Binding="{Binding Name}" Width="*"/>
+                                <DataGridTextColumn Header="Id del Paquete" Binding="{Binding Id}" Width="200"/>
+                                <DataGridTextColumn Header="Versión Actual" Binding="{Binding CurrentVersion}" Width="130"/>
+                                <DataGridTextColumn Header="Nueva Versión" Binding="{Binding AvailableVersion}" Width="130"/>
+                                <DataGridTemplateColumn Header="Acción" Width="160">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
                                             <Grid>
-                                                <TextBlock Text="{Binding UpdateStatusMessage}" FontSize="10" Foreground="{DynamicResource SecondaryTextBrush}" VerticalAlignment="Center"/>
-                                                <Button Content="✕" 
-                                                        Command="{Binding DataContext.CancelAppUpdateCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" 
-                                                        CommandParameter="{Binding Id}"
-                                                        HorizontalAlignment="Right"
-                                                        Background="Transparent" BorderThickness="0" Foreground="#888" Cursor="Hand"
-                                                        FontSize="10" Padding="2,0" Margin="0,0,-5,0">
+                                                <Button Content="Actualizar" 
+                                                        Command="{Binding DataContext.UpdateAppCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" 
+                                                        CommandParameter="{Binding Id}" 
+                                                        Padding="10,4">
                                                     <Button.Style>
-                                                        <Style TargetType="Button">
+                                                        <Style TargetType="Button" BasedOn="{StaticResource SecondaryButtonStyle}">
                                                             <Style.Triggers>
-                                                                <Trigger Property="IsMouseOver" Value="True">
-                                                                    <Setter Property="Foreground" Value="Red"/>
-                                                                </Trigger>
+                                                                <DataTrigger Binding="{Binding IsUpdating}" Value="True">
+                                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                                </DataTrigger>
                                                             </Style.Triggers>
                                                         </Style>
                                                     </Button.Style>
                                                 </Button>
+
+                                                <StackPanel VerticalAlignment="Center">
+                                                    <StackPanel.Style>
+                                                        <Style TargetType="StackPanel">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsUpdating}" Value="True">
+                                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </StackPanel.Style>
+                                                    <TextBlock Text="{Binding UpdateStatusMessage}" FontSize="10" 
+                                                               Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,2"/>
+                                                    <ProgressBar Value="{Binding UpdateProgress}" Maximum="100" Height="6" 
+                                                                 BorderThickness="0" Background="#222"/>
+                                                </StackPanel>
                                             </Grid>
-                                            <ProgressBar Value="{Binding UpdateProgress}" Maximum="100" Height="6" Margin="0,2,0,0"/>
-                                        </StackPanel>
-                                    </Grid>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                    </DataGrid.Columns>
-                </DataGrid>
-            </Border>
-        </StackPanel>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </Border>
+            </TabItem>
+
+            <!-- PESTAÑA 2: WINDOWS UPDATE -->
+            <TabItem Header="🪟   Windows Update">
+                <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="0,12,12,12" Padding="20" Margin="0,10,0,0">
+                    <StackPanel>
+                        <TextBlock Text="Actualizaciones del Sistema Operativo" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,6"/>
+                        <TextBlock Text="Verifique y administre los parches de seguridad y controladores oficiales entregados por Microsoft." 
+                                   Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" Margin="0,0,0,14"/>
+
+                        <WrapPanel Orientation="Horizontal" Margin="0,10,0,0">
+                            <Button Content="🔍   Abrir Windows Update" 
+                                    Command="{Binding OpenWindowsUpdateCommand}" 
+                                    Style="{StaticResource PrimaryButtonStyle}" 
+                                    Margin="0,0,10,10"/>
+                            
+                            <Button Content="⏸️   Pausar Actualizaciones (7 días)" 
+                                    Command="{Binding PauseWindowsUpdatesCommand}" 
+                                    Style="{StaticResource SecondaryButtonStyle}" 
+                                    Margin="0,0,10,10"/>
+                            
+                            <Button Content="▶️   Reanudar Actualizaciones" 
+                                    Command="{Binding ResumeWindowsUpdatesCommand}" 
+                                    Style="{StaticResource SecondaryButtonStyle}" 
+                                    Margin="0,0,10,10"/>
+                        </WrapPanel>
+
+                        <Border Background="{DynamicResource SurfaceElevatedBrush}" Padding="16" CornerRadius="8" Margin="0,10,0,0">
+                            <StackPanel>
+                                <TextBlock Text="💡 Consejo de Estabilidad" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,4"/>
+                                <TextBlock Text="WPC-SutilBox le permite controlar cuándo se descargan parches grandes para evitar ralentizaciones durante partidas de juego o trabajo intensivo." 
+                                           Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" FontSize="11"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Border>
+            </TabItem>
+
+        </TabControl>
     </Grid>
 </UserControl>

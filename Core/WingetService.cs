@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
@@ -21,11 +21,16 @@ namespace Wpc_SutilBox.Core
             return await Task.Run(async () =>
             {
                 var apps = new List<WingetApp>();
+                using var cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+                cts.CancelAfter(TimeSpan.FromSeconds(35));
+                var token = cts.Token;
+
                 try
                 {
-                    var psi = new ProcessStartInfo("winget", "upgrade")
+                    var psi = new ProcessStartInfo("winget", "upgrade --accept-source-agreements --include-unknown --disable-interactivity")
                     {
                         RedirectStandardOutput = true,
+                        RedirectStandardError = true,
                         UseShellExecute = false,
                         CreateNoWindow = true,
                         StandardOutputEncoding = System.Text.Encoding.UTF8
@@ -35,12 +40,12 @@ namespace Wpc_SutilBox.Core
                     {
                         if (process == null) return apps;
                         string output = "";
-                        using (ct.Register(() => { try { process.Kill(); } catch { } }))
+                        using (token.Register(() => { try { process.Kill(); } catch { } }))
                         {
-                            output = await process.StandardOutput.ReadToEndAsync(ct);
-                            await process.WaitForExitAsync(ct);
+                            output = await process.StandardOutput.ReadToEndAsync(token);
+                            await process.WaitForExitAsync(token);
 
-                            if (ct.IsCancellationRequested) return apps;
+                            if (token.IsCancellationRequested) return apps;
                         }
 
                         var lines = output.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);

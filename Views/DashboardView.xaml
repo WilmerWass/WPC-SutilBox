@@ -4,256 +4,343 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="700" d:DesignWidth="920">
+
     <Grid Style="{StaticResource AnimatedViewStyle}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- Encabezado con sutil SlideDown -->
-        <StackPanel Grid.Row="0" Margin="0,0,0,10">
-            <TextBlock Text="Inicio Principal" Style="{StaticResource HeaderTextStyle}"/>
-            <TextBlock Text="{Binding WelcomeMessage}" Style="{StaticResource SubHeaderTextStyle}" Margin="0,5,0,0"/>
-        </StackPanel>
+        <!-- TOP BAR / SUBHEADER -->
+        <Border Grid.Row="0" Margin="0,0,0,16" Padding="0,0,0,12" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="0,0,0,1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-        <!-- Área de Contenido -->
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-            <StackPanel Margin="0,0,20,0">
-                <!-- PANEL PRINCIPAL DE SALUD (HEALTH CHECK) -->
-                <Border Style="{StaticResource AnimatedCardStyle}" Margin="0,0,0,20" BorderBrush="{DynamicResource PrimaryBrush}" BorderThickness="0,0,0,4">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        
-                        <!-- Cabecera de Salud -->
-                        <Grid Grid.Row="0" Margin="0,0,0,20">
-                            <StackPanel>
-                                <TextBlock Text="Comprobación de Salud del Sistema" FontSize="20" FontWeight="Bold" Foreground="White"/>
-                                <TextBlock Text="{Binding GeneralStatusMessage}" FontSize="14" Foreground="#AAA" Margin="0,5,0,0"/>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="WPC-SutilBox" Foreground="{DynamicResource TextMutedBrush}" FontSize="12"/>
+                    <TextBlock Text=" / " Foreground="{DynamicResource TextMutedBrush}" FontSize="12" Margin="4,0"/>
+                    <TextBlock Text="Inicio" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="12"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Border Background="#1A6366F1" BorderBrush="#336366F1" BorderThickness="1" CornerRadius="12" Padding="8,4" Margin="0,0,10,0">
+                        <StackPanel Orientation="Horizontal">
+                            <Ellipse Width="6" Height="6" Fill="#6366F1" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                            <TextBlock Text="Beta 1.1 · Sistema Activo" FontSize="11" Foreground="#A5B4FC" FontWeight="Medium"/>
+                        </StackPanel>
+                    </Border>
+                    <Button Content="↺  Punto de Restauración" 
+                            Command="{Binding CreateRestorePointCommand}" 
+                            Style="{StaticResource SecondaryButtonStyle}" 
+                            Padding="12,4" FontSize="11"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- CONTENIDO PRINCIPAL SCROLLABLE -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Margin="0,0,12,20">
+
+                <!-- FILA 1: COMPROBACIÓN DE SALUD + MONITOREO GLOBAL -->
+                <Grid Margin="0,0,0,18">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="320"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- TARJETA PRINCIPAL: SALUD Y OPTIMIZACIÓN -->
+                    <Border Grid.Column="0" 
+                            Background="{DynamicResource SurfaceBrush}" 
+                            BorderBrush="{DynamicResource PrimaryBrush}" 
+                            BorderThickness="1,1,1,3" 
+                            CornerRadius="16" 
+                            Padding="22" 
+                            Margin="0,0,16,0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="220"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0" Margin="0,0,16,0">
+                                <TextBlock Text="Comprobación de Salud y Optimización" 
+                                           FontSize="19" FontWeight="Bold" 
+                                           Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                
+                                <TextBlock Text="ℹ️  Analiza componentes del sistema y aplica optimizaciones no destructivas." 
+                                           FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" 
+                                           Margin="0,6,0,14"/>
+
+                                <UniformGrid Columns="2" Margin="0,0,0,10">
+                                    <StackPanel Orientation="Horizontal" Margin="0,4">
+                                        <TextBlock Text="✓" Foreground="{DynamicResource PrimaryBrush}" FontWeight="Bold" Margin="0,0,8,0"/>
+                                        <TextBlock Text="Revisar SysMain (Carga)" FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" Margin="0,4">
+                                        <TextBlock Text="✓" Foreground="{DynamicResource PrimaryBrush}" FontWeight="Bold" Margin="0,0,8,0"/>
+                                        <TextBlock Text="Revisar Windows Search" FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" Margin="0,4">
+                                        <TextBlock Text="✓" Foreground="{DynamicResource PrimaryBrush}" FontWeight="Bold" Margin="0,0,8,0"/>
+                                        <TextBlock Text="Liberar Caché y Temp" FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" Margin="0,4">
+                                        <TextBlock Text="✓" Foreground="{DynamicResource PrimaryBrush}" FontWeight="Bold" Margin="0,0,8,0"/>
+                                        <TextBlock Text="Estado de Actualizaciones" FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                    </StackPanel>
+                                </UniformGrid>
                             </StackPanel>
-                            <Ellipse Width="12" Height="12" Fill="{DynamicResource PrimaryBrush}" HorizontalAlignment="Right" VerticalAlignment="Top" Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                <Ellipse.Triggers>
-                                    <EventTrigger RoutedEvent="FrameworkElement.Loaded">
-                                        <BeginStoryboard>
-                                            <Storyboard RepeatBehavior="Forever">
-                                                <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1" To="0.2" Duration="0:0:0.8" AutoReverse="True"/>
-                                            </Storyboard>
-                                        </BeginStoryboard>
-                                    </EventTrigger>
-                                </Ellipse.Triggers>
-                            </Ellipse>
+
+                            <!-- ACCIÓN Y RESUMEN -->
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <Button Command="{Binding QuickOptimizeCommand}" 
+                                        Style="{StaticResource PrimaryButtonStyle}" 
+                                        Height="44" 
+                                        HorizontalAlignment="Stretch" 
+                                        Margin="0,0,0,14">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="⚡   Analizar y optimizar" FontWeight="Bold" FontSize="13"/>
+                                    </StackPanel>
+                                </Button>
+
+                                <UniformGrid Columns="3">
+                                    <!-- Limpieza -->
+                                    <StackPanel HorizontalAlignment="Center" Cursor="Hand">
+                                        <StackPanel.InputBindings>
+                                            <MouseBinding MouseAction="LeftClick" Command="{Binding NavigateCommand}" CommandParameter="Almacenamiento"/>
+                                        </StackPanel.InputBindings>
+                                        <TextBlock Text="🧹" FontSize="16" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="Limpieza" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="Por revisar" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Center"/>
+                                    </StackPanel>
+
+                                    <!-- Seguridad -->
+                                    <StackPanel HorizontalAlignment="Center" Cursor="Hand">
+                                        <StackPanel.InputBindings>
+                                            <MouseBinding MouseAction="LeftClick" Command="{Binding NavigateCommand}" CommandParameter="Proteccion"/>
+                                        </StackPanel.InputBindings>
+                                        <TextBlock Text="🛡️" FontSize="16" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="Seguridad" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource SuccessBrush}" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="Al día" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Center"/>
+                                    </StackPanel>
+
+                                    <!-- Inicio -->
+                                    <StackPanel HorizontalAlignment="Center" Cursor="Hand">
+                                        <StackPanel.InputBindings>
+                                            <MouseBinding MouseAction="LeftClick" Command="{Binding NavigateCommand}" CommandParameter="Aplicaciones"/>
+                                        </StackPanel.InputBindings>
+                                        <TextBlock Text="📦" FontSize="16" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="Inicio" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding StartupItems.Count, StringFormat='{}{0} Apps'}" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </UniformGrid>
+                            </StackPanel>
                         </Grid>
+                    </Border>
 
-                        <!-- Botón Principal: Optimización rápida -->
-                        <Button Grid.Row="1" Command="{Binding QuickOptimizeCommand}" Style="{StaticResource PrimaryButtonStyle}" Height="48" HorizontalAlignment="Stretch">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="⚡   Optimizar" FontWeight="SemiBold" FontSize="14" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                                <TextBlock Text="(temporales, RAM y perfil activo)" FontSize="12" VerticalAlignment="Center" Opacity="0.8"/>
+                    <!-- MONITOREO GLOBAL (GAUGES & METRICS) -->
+                    <Border Grid.Column="1" 
+                            Background="{DynamicResource SurfaceBrush}" 
+                            BorderBrush="{DynamicResource BorderSubtleBrush}" 
+                            BorderThickness="1" 
+                            CornerRadius="16" 
+                            Padding="18">
+                        <StackPanel>
+                            <TextBlock Text="Monitoreo Global" FontSize="14" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,12"/>
+
+                            <!-- Anillos / Métricas circulares -->
+                            <UniformGrid Columns="3" Margin="0,0,0,12">
+                                <!-- CPU -->
+                                <Border Background="{DynamicResource SurfaceElevatedBrush}" CornerRadius="12" Padding="8,10" Margin="3">
+                                    <StackPanel HorizontalAlignment="Center">
+                                        <TextBlock Text="{Binding CpuUsage, Mode=OneWay, StringFormat={}{0:F0}%}" 
+                                                   FontSize="16" FontWeight="Bold" Foreground="#60A5FA" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="CPU" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- RAM -->
+                                <Border Background="{DynamicResource SurfaceElevatedBrush}" CornerRadius="12" Padding="8,10" Margin="3">
+                                    <StackPanel HorizontalAlignment="Center">
+                                        <TextBlock Text="{Binding RamUsage, Mode=OneWay, StringFormat={}{0:F0}%}" 
+                                                   FontSize="16" FontWeight="Bold" Foreground="#C084FC" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="RAM" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- TEMP -->
+                                <Border Background="{DynamicResource SurfaceElevatedBrush}" CornerRadius="12" Padding="8,10" Margin="3">
+                                    <StackPanel HorizontalAlignment="Center">
+                                        <TextBlock Text="{Binding CpuTempC, Mode=OneWay, StringFormat={}{0:F0}°C}" 
+                                                   FontSize="16" FontWeight="Bold" Foreground="#FBBF24" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="TEMP" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                </Border>
+                            </UniformGrid>
+
+                            <!-- Barras de temperatura y batería -->
+                            <StackPanel Margin="2,4,2,0">
+                                <Grid Margin="0,0,0,4">
+                                    <TextBlock Text="Temperatura CPU" FontSize="10" Foreground="{DynamicResource TextMutedBrush}"/>
+                                    <TextBlock Text="{Binding CpuTempC, Mode=OneWay, StringFormat={}{0:F0}°C}" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" HorizontalAlignment="Right"/>
+                                </Grid>
+                                <ProgressBar Value="{Binding CpuTempC, Mode=OneWay}" Maximum="100" Height="4" BorderThickness="0" Background="#222" Foreground="#F59E0B" Margin="0,0,0,8"/>
+
+                                <StackPanel Visibility="{Binding BatteryInfo.IsPresent, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <Grid Margin="0,0,0,4">
+                                        <TextBlock Text="Batería" FontSize="10" Foreground="{DynamicResource TextMutedBrush}"/>
+                                        <TextBlock Text="{Binding BatteryInfo.EstimatedChargeRemaining, StringFormat={}{0}%}" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource SuccessBrush}" HorizontalAlignment="Right"/>
+                                    </Grid>
+                                    <ProgressBar Value="{Binding BatteryInfo.EstimatedChargeRemaining}" Maximum="100" Height="4" BorderThickness="0" Background="#222" Foreground="#10B981"/>
+                                </StackPanel>
                             </StackPanel>
-                        </Button>
+                        </StackPanel>
+                    </Border>
+                </Grid>
 
-                        <!-- Tarjetas de Resumen -->
-                        <UniformGrid Grid.Row="2" Columns="3" Margin="0,15,0,0">
-                            <!-- Limpieza -->
-                            <Border BorderBrush="#333" BorderThickness="0,0,1,0" Margin="5" Cursor="Hand">
-                                <Border.InputBindings>
-                                    <MouseBinding MouseAction="LeftClick" Command="{Binding NavigateCommand}" CommandParameter="Almacenamiento"/>
-                                </Border.InputBindings>
-                                <StackPanel HorizontalAlignment="Center">
-                                    <TextBlock Text="Limpieza" FontSize="12" Foreground="#888" HorizontalAlignment="Center"/>
-                                    <TextBlock Text="Optimizable" FontSize="16" FontWeight="Bold" Foreground="White" Margin="0,5" HorizontalAlignment="Center"/>
-                                    <TextBlock Text="Archivos temp." FontSize="11" Foreground="#444" HorizontalAlignment="Center"/>
-                                </StackPanel>
-                            </Border>
+                <!-- FILA 2: MODO DE RENDIMIENTO -->
+                <Border Background="{DynamicResource SurfaceBrush}" 
+                        BorderBrush="{DynamicResource BorderSubtleBrush}" 
+                        BorderThickness="1" 
+                        CornerRadius="16" 
+                        Padding="20" 
+                        Margin="0,0,0,18">
+                    <StackPanel>
+                        <TextBlock Text="Modo de Rendimiento" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,12"/>
 
-                            <!-- Seguridad -->
-                            <Border BorderBrush="#333" BorderThickness="0,0,1,0" Margin="5" Cursor="Hand">
-                                <Border.InputBindings>
-                                    <MouseBinding MouseAction="LeftClick" Command="{Binding NavigateCommand}" CommandParameter="Proteccion"/>
-                                </Border.InputBindings>
-                                <StackPanel HorizontalAlignment="Center">
-                                    <TextBlock Text="Seguridad" FontSize="12" Foreground="#888" HorizontalAlignment="Center"/>
-                                    <TextBlock Text="Protegido" FontSize="16" FontWeight="Bold" Foreground="#10B981" Margin="0,5" HorizontalAlignment="Center"/>
-                                    <TextBlock Text="Windows Update OK" FontSize="11" Foreground="#444" HorizontalAlignment="Center"/>
-                                </StackPanel>
-                            </Border>
+                        <UniformGrid Columns="4">
+                            <UniformGrid.Resources>
+                                <Style TargetType="RadioButton">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="RadioButton">
+                                                <Border x:Name="CardBorder" 
+                                                        Background="{DynamicResource SurfaceElevatedBrush}" 
+                                                        BorderBrush="{DynamicResource BorderSubtleBrush}" 
+                                                        BorderThickness="1" 
+                                                        CornerRadius="12" 
+                                                        Padding="16,14" 
+                                                        Margin="4" 
+                                                        Cursor="Hand">
+                                                    <StackPanel HorizontalAlignment="Center">
+                                                        <TextBlock Text="{TemplateBinding Tag}" FontSize="22" HorizontalAlignment="Center" Margin="0,0,0,6"/>
+                                                        <TextBlock Text="{TemplateBinding Content}" FontSize="13" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" HorizontalAlignment="Center"/>
+                                                        <TextBlock Text="{TemplateBinding ToolTip}" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" TextAlignment="Center" Margin="0,4,0,0"/>
+                                                    </StackPanel>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter TargetName="CardBorder" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsChecked" Value="True">
+                                                        <Setter TargetName="CardBorder" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                                                        <Setter TargetName="CardBorder" Property="Background" Value="#1A6366F1"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </UniformGrid.Resources>
 
-                            <!-- Apps de Inicio -->
-                            <Border Margin="5" Cursor="Hand">
-                                <Border.InputBindings>
-                                    <MouseBinding MouseAction="LeftClick" Command="{Binding NavigateCommand}" CommandParameter="Aplicaciones"/>
-                                </Border.InputBindings>
-                                <StackPanel HorizontalAlignment="Center">
-                                    <TextBlock Text="Inicio" FontSize="12" Foreground="#888" HorizontalAlignment="Center"/>
-                                    <TextBlock Text="{Binding StartupItems.Count, StringFormat='{}{0} Aplicaciones'}" FontSize="16" FontWeight="Bold" Foreground="White" Margin="0,5" HorizontalAlignment="Center"/>
-                                    <TextBlock Text="Impacto detectado" FontSize="11" Foreground="#444" HorizontalAlignment="Center"/>
-                                </StackPanel>
-                            </Border>
+                            <RadioButton Content="Equilibrado" Tag="⚖️" ToolTip="Equilibrio automático de recursos."
+                                         IsChecked="{Binding CurrentMode, Mode=OneWay, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=General}" 
+                                         Command="{Binding ApplyPerformanceModeCommand}" CommandParameter="General"/>
+
+                            <RadioButton Content="Gaming" Tag="🎮" ToolTip="Prioriza la experiencia de juego."
+                                         IsChecked="{Binding CurrentMode, Mode=OneWay, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Gamer}" 
+                                         Command="{Binding ApplyPerformanceModeCommand}" CommandParameter="Gamer"/>
+
+                            <RadioButton Content="Productividad" Tag="📊" ToolTip="Optimiza multitarea y oficina."
+                                         IsChecked="{Binding CurrentMode, Mode=OneWay, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Oficina}" 
+                                         Command="{Binding ApplyPerformanceModeCommand}" CommandParameter="Oficina"/>
+
+                            <RadioButton Content="Desarrollo" Tag="👨‍💻" ToolTip="Favorece compiladores y contenedores."
+                                         IsChecked="{Binding CurrentMode, Mode=OneWay, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Dev}" 
+                                         Command="{Binding ApplyPerformanceModeCommand}" CommandParameter="Dev"/>
                         </UniformGrid>
-                    </Grid>
+                    </StackPanel>
                 </Border>
 
-                <!-- SEGUNDA FILA: RENDIMIENTO Y MONITOR -->
+                <!-- FILA 3: ACCIONES RÁPIDAS Y GESTOR DE SERVICIOS -->
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="320"/>
                     </Grid.ColumnDefinitions>
 
-                    <!-- Acciones Rápidas y Perfiles -->
-                    <StackPanel Grid.Column="0" Margin="0,0,20,0">
-                         <Border Style="{StaticResource AnimatedCardStyle}" Margin="0,0,0,15">
-                            <StackPanel>
-                                <TextBlock Text="Modo de Rendimiento" FontSize="18" FontWeight="SemiBold" Foreground="White" Margin="0,0,0,10"/>
-                                <!-- Selector de Modos de Rendimiento (Tarjetas Interactivas) -->
-                                <UniformGrid Columns="5" Margin="0,5,0,0">
-                                    <UniformGrid.Resources>
-                                        <Style TargetType="RadioButton" BasedOn="{StaticResource {x:Type ToggleButton}}">
-                                            <Setter Property="Template">
-                                                <Setter.Value>
-                                                    <ControlTemplate TargetType="RadioButton">
-                                                        <Border x:Name="CardBorder" 
-                                                                Background="{DynamicResource SurfaceBrush}" 
-                                                                BorderBrush="Transparent" 
-                                                                BorderThickness="2" 
-                                                                CornerRadius="8" 
-                                                                Padding="10" 
-                                                                Margin="4"
-                                                                Cursor="Hand">
-                                                            <StackPanel HorizontalAlignment="Center">
-                                                                <!-- Icono (Emoji por ahora) -->
-                                                                <TextBlock x:Name="Icon" Text="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}" 
-                                                                           FontSize="20" HorizontalAlignment="Center" Margin="0,0,0,5"
-                                                                           Opacity="0.5"/>
-                                                                
-                                                                <TextBlock x:Name="Text" Text="{TemplateBinding Content}" 
-                                                                           FontSize="12" FontWeight="SemiBold" 
-                                                                           Foreground="{DynamicResource SecondaryTextBrush}" 
-                                                                           HorizontalAlignment="Center"/>
-                                                            </StackPanel>
-                                                            
-                                                            </Border>
-                                                            <ControlTemplate.Triggers>
-                                                                <Trigger Property="IsMouseOver" Value="True">
-                                                                    <Setter TargetName="CardBorder" Property="Background" Value="{DynamicResource SurfaceHoverBrush}"/>
-                                                                </Trigger>
-                                                                <Trigger Property="IsChecked" Value="True">
-                                                                    <Setter TargetName="CardBorder" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
-                                                                    <Setter TargetName="Text" Property="Foreground" Value="{DynamicResource PrimaryBrush}"/>
-                                                                    <Setter TargetName="Icon" Property="Opacity" Value="1"/>
-                                                                    <Setter TargetName="CardBorder" Property="Background">
-                                                                        <Setter.Value>
-                                                                            <SolidColorBrush Color="{DynamicResource PrimaryColor}" Opacity="0.1"/>
-                                                                        </Setter.Value>
-                                                                    </Setter>
-                                                                </Trigger>
-                                                            </ControlTemplate.Triggers>
-                                                    </ControlTemplate>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </Style>
-                                    </UniformGrid.Resources>
-
-                                    <RadioButton Content="Equilibrado" Tag="⚖️" IsChecked="{Binding CurrentMode, Mode=OneWay, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=General}" Command="{Binding ApplyPerformanceModeCommand}" CommandParameter="General" ToolTip="Una configuración pensada para el uso diario."/>
-                                    <RadioButton Content="Gaming" Tag="🎮" IsChecked="{Binding CurrentMode, Mode=OneWay, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Gamer}" Command="{Binding ApplyPerformanceModeCommand}" CommandParameter="Gamer" ToolTip="Prioriza tu experiencia de juego de forma reversible."/>
-                                    <RadioButton Content="Productividad" Tag="📊" IsChecked="{Binding CurrentMode, Mode=OneWay, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Oficina}" Command="{Binding ApplyPerformanceModeCommand}" CommandParameter="Oficina" ToolTip="Enfocado en trabajo, estudio y estabilidad."/>
-                                    <RadioButton Content="Desarrollo" Tag="👨‍💻" IsChecked="{Binding CurrentMode, Mode=OneWay, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Dev}" Command="{Binding ApplyPerformanceModeCommand}" CommandParameter="Dev" ToolTip="Prepara el entorno para programar y desarrollar."/>
-                                    <RadioButton Content="A tu medida" Tag="⚙️" IsChecked="{Binding CurrentMode, Mode=OneWay, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Personalizado}" Command="{Binding ApplyPerformanceModeCommand}" CommandParameter="Personalizado" ToolTip="Elige exactamente qué acciones quieres aplicar."/>
-                                </UniformGrid>
-                            </StackPanel>
-                        </Border>
-
-                        <Border Style="{StaticResource AnimatedCardStyle}">
-                            <StackPanel>
-                                <TextBlock Text="Acciones Rápidas" FontSize="18" FontWeight="SemiBold" Foreground="White" Margin="0,0,0,10"/>
-                                <UniformGrid Columns="2">
-                                    <Button Content="Limpiar RAM" Command="{Binding OptimizeRamCommand}" Style="{StaticResource SecondaryButtonStyle}" Margin="5"/>
-                                    <Button Content="Punto Restauración" Command="{Binding CreateRestorePointCommand}" Style="{StaticResource SecondaryButtonStyle}" Margin="5"/>
-                                </UniformGrid>
-                            </StackPanel>
-                        </Border>
-                    </StackPanel>
-
-                    <!-- Monitoreo en Tiempo Real -->
-                    <Border Grid.Column="1" Style="{StaticResource AnimatedCardStyle}">
+                    <!-- ACCIONES RÁPIDAS -->
+                    <Border Grid.Column="0" 
+                            Background="{DynamicResource SurfaceBrush}" 
+                            BorderBrush="{DynamicResource BorderSubtleBrush}" 
+                            BorderThickness="1" 
+                            CornerRadius="16" 
+                            Padding="20" 
+                            Margin="0,0,16,0">
                         <StackPanel>
-                            <TextBlock Text="Uso del Sistema" FontSize="18" FontWeight="SemiBold" Foreground="White" Margin="0,0,0,20"/>
-                            
-                            <!-- CPU -->
-                            <Grid Margin="0,0,0,15">
-                                <StackPanel>
-                                    <Grid>
-                                        <TextBlock Text="CPU" Foreground="#888" FontSize="12"/>
-                                        <TextBlock Text="{Binding CpuUsage, Mode=OneWay, StringFormat={}{0:F0}%}" Foreground="White" HorizontalAlignment="Right" FontSize="12" FontWeight="Bold"/>
-                                    </Grid>
-                                    <ProgressBar Value="{Binding CpuUsage, Mode=OneWay}" Maximum="100" Height="4" Margin="0,5,0,0" Foreground="{DynamicResource PrimaryBrush}"/>
-                                </StackPanel>
-                            </Grid>
+                            <TextBlock Text="Acciones Rápidas del Sistema" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,14"/>
+                            <UniformGrid Columns="2">
+                                <Button Content="🧹   Limpiar Memoria RAM" 
+                                        Command="{Binding OptimizeRamCommand}" 
+                                        Style="{StaticResource SecondaryButtonStyle}" 
+                                        Height="42" Margin="4"/>
+                                <Button Content="🛡️   Crear Punto de Restauración" 
+                                        Command="{Binding CreateRestorePointCommand}" 
+                                        Style="{StaticResource PrimaryButtonStyle}" 
+                                        Height="42" Margin="4"/>
+                            </UniformGrid>
+                        </StackPanel>
+                    </Border>
 
-                            <!-- RAM -->
-                            <Grid Margin="0,0,0,15">
-                                <StackPanel>
-                                    <Grid>
-                                        <TextBlock Text="RAM" Foreground="#888" FontSize="12"/>
-                                        <TextBlock Text="{Binding RamUsage, Mode=OneWay, StringFormat={}{0:F0}%}" Foreground="White" HorizontalAlignment="Right" FontSize="12" FontWeight="Bold"/>
-                                    </Grid>
-                                    <ProgressBar Value="{Binding RamUsage, Mode=OneWay}" Maximum="100" Height="4" Margin="0,5,0,0" Foreground="#A855F7"/>
-                                </StackPanel>
-                            </Grid>
+                    <!-- GESTOR DE SERVICIOS / APPS DE IMPACTO -->
+                    <Border Grid.Column="1" 
+                            Background="{DynamicResource SurfaceBrush}" 
+                            BorderBrush="{DynamicResource BorderSubtleBrush}" 
+                            BorderThickness="1" 
+                            CornerRadius="16" 
+                            Padding="18">
+                        <StackPanel>
+                            <TextBlock Text="Servicios y Apps de Impacto" FontSize="14" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,6"/>
+                            <TextBlock Text="Estado de servicios clave" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,12"/>
 
-                            <!-- Monitor de Temperatura -->
-                            <Grid Margin="0,0,0,15">
-                                <StackPanel>
-                                    <Grid>
-                                        <TextBlock Text="Temperatura CPU" Foreground="#888" FontSize="12"/>
-                                        <TextBlock Text="{Binding CpuTempC, Mode=OneWay, StringFormat={}{0:F0}°C}" Foreground="White" HorizontalAlignment="Right" FontSize="12" FontWeight="Bold"/>
-                                    </Grid>
-                                    <TextBlock Text="{Binding CpuTemperatureStatus}" Foreground="#888" FontSize="10" Margin="0,2,0,0"/>
-                                    <ProgressBar Value="{Binding CpuTempC, Mode=OneWay}" Maximum="100" Height="4" Margin="0,5,0,0" Foreground="#F59E0B"/>
-                                </StackPanel>
-                            </Grid>
-
-                            <!-- Batería -->
-                            <StackPanel Visibility="{Binding BatteryInfo.IsPresent, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                <Separator Background="#222" Margin="0,5,0,15"/>
-                                <Grid>
-                                    <TextBlock Text="Batería" Foreground="#888" FontSize="12"/>
-                                    <TextBlock Text="{Binding BatteryInfo.EstimatedChargeRemaining, StringFormat={}{0}%}" Foreground="White" HorizontalAlignment="Right" FontSize="12" FontWeight="Bold"/>
+                            <StackPanel>
+                                <Grid Margin="0,0,0,8">
+                                    <TextBlock Text="SecurityHealth (Defender)" FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                    <Ellipse Width="8" Height="8" Fill="{DynamicResource SuccessBrush}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                                 </Grid>
-                                <ProgressBar Value="{Binding BatteryInfo.EstimatedChargeRemaining}" Maximum="100" Height="4" Margin="0,5,0,0" Foreground="#10B981"/>
+                                <Grid Margin="0,0,0,8">
+                                    <TextBlock Text="Windows Search" FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                    <Ellipse Width="8" Height="8" Fill="#60A5FA" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                </Grid>
+                                <Grid Margin="0,0,0,8">
+                                    <TextBlock Text="SysMain (Superfetch)" FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                    <Ellipse Width="8" Height="8" Fill="#FBBF24" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                </Grid>
                             </StackPanel>
+
+                            <Button Content="Ver Rendimiento Completo" 
+                                    Command="{Binding NavigateCommand}" 
+                                    CommandParameter="Rendimiento" 
+                                    Style="{StaticResource SecondaryButtonStyle}" 
+                                    Margin="0,14,0,0" Padding="8,4" FontSize="11"/>
                         </StackPanel>
                     </Border>
                 </Grid>
+
             </StackPanel>
         </ScrollViewer>
-        <!-- Overlay de Carga Moderno -->
+
+        <!-- OVERLAY DE CARGA / BUSY SPINNER -->
         <Grid Grid.RowSpan="2" Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}" Panel.ZIndex="1000">
-            <Border Background="#CC111111" CornerRadius="0">
+            <Border Background="#CC0A0B0E" CornerRadius="0">
                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                    <Grid Width="60" Height="60" Margin="0,0,0,20">
-                        <Ellipse Stroke="{DynamicResource PrimaryBrush}" StrokeThickness="4" StrokeDashArray="4 2" RenderTransformOrigin="0.5,0.5">
-                            <Ellipse.RenderTransform>
-                                <RotateTransform x:Name="RotateSpinner"/>
-                            </Ellipse.RenderTransform>
-                            <Ellipse.Triggers>
-                                <EventTrigger RoutedEvent="FrameworkElement.Loaded">
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetName="RotateSpinner" Storyboard.TargetProperty="Angle" From="0" To="360" Duration="0:0:1" RepeatBehavior="Forever"/>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </EventTrigger>
-                            </Ellipse.Triggers>
-                        </Ellipse>
-                        <TextBlock Text="🚀" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Grid>
-                    <TextBlock Text="{Binding StatusMessage}" Foreground="White" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
-                    <TextBlock Text="Ajustando el sistema para el máximo rendimiento..." Foreground="#888" FontSize="12" Margin="0,10,0,0" HorizontalAlignment="Center"/>
+                    <ProgressBar IsIndeterminate="True" Width="220" Height="4" BorderThickness="0" Background="Transparent" Foreground="{DynamicResource PrimaryBrush}" Margin="0,0,0,16"/>
+                    <TextBlock Text="{Binding StatusMessage}" Foreground="White" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Aplicando cambios en segundo plano..." Foreground="#888" FontSize="11" Margin="0,6,0,0" HorizontalAlignment="Center"/>
                 </StackPanel>
             </Border>
         </Grid>
