@@ -35,8 +35,10 @@ namespace Wpc_SutilBox.ViewModels
         private readonly ISettingsService? _settingsService;
         private readonly ILogService? _logService;
         private readonly ILocalizationService? _localizationService;
+        private readonly IDriverService? _driverService;
         private readonly ProfileEditorViewModel? _profileEditorViewModel;
         private CancellationTokenSource? _monitoringCts;
+        private CancellationTokenSource? _driverExportCts;
         private Task? _monitoringTask;
         private bool _settingsReady;
         private DateTime _lastIdleOptimization = DateTime.MinValue;
@@ -69,6 +71,9 @@ namespace Wpc_SutilBox.ViewModels
         private string _processSearchText = string.Empty;
         private double _netRecvMbps;
         private double _diskWritesPerSec;
+        private bool _isExportingDrivers;
+        private int _driverExportProgress;
+        private string _driverExportStatusMessage = string.Empty;
 
         private object? _currentView;
         public object? CurrentView
@@ -110,6 +115,9 @@ namespace Wpc_SutilBox.ViewModels
         public string AccentColor { get => _accentColor; private set => SetProperty(ref _accentColor, value); }
         public double NetRecvMbps { get => _netRecvMbps; private set => SetProperty(ref _netRecvMbps, value); }
         public double DiskWritesPerSec { get => _diskWritesPerSec; private set => SetProperty(ref _diskWritesPerSec, value); }
+        public bool IsExportingDrivers { get => _isExportingDrivers; private set => SetProperty(ref _isExportingDrivers, value); }
+        public int DriverExportProgress { get => _driverExportProgress; private set => SetProperty(ref _driverExportProgress, value); }
+        public string DriverExportStatusMessage { get => _driverExportStatusMessage; private set => SetProperty(ref _driverExportStatusMessage, value); }
         public ProfileEditorViewModel? ProfileEditorViewModel => _profileEditorViewModel;
 
         public ObservableCollection<StartupItem> StartupItems { get; } = new();
@@ -236,6 +244,8 @@ namespace Wpc_SutilBox.ViewModels
         public ICommand RefreshProcessesCommand { get; }
         public ICommand KillProcessCommand { get; }
         public ICommand ClearProcessSearchCommand { get; }
+        public ICommand ExportDriversCommand { get; }
+        public ICommand CancelDriverExportCommand { get; }
 
         // ==========================================
         // 4. CONSTRUCTOR PRINCIPAL
@@ -254,7 +264,8 @@ namespace Wpc_SutilBox.ViewModels
             ISettingsService? settingsService = null,
             ILogService? logService = null,
             ProfileEditorViewModel? profileEditorViewModel = null,
-            ILocalizationService? localizationService = null)
+            ILocalizationService? localizationService = null,
+            IDriverService? driverService = null)
         {
             _temperatureMonitorService = temperatureMonitorService;
             _diskHealthService = diskHealthService;
@@ -270,6 +281,7 @@ namespace Wpc_SutilBox.ViewModels
             _logService = logService;
             _profileEditorViewModel = profileEditorViewModel;
             _localizationService = localizationService;
+            _driverService = driverService;
 
             ApplicationTitle = "WPC-SutilBox";
             SystemStatus = "WPC-SutilBox - Listo";
@@ -301,6 +313,8 @@ namespace Wpc_SutilBox.ViewModels
             RefreshProcessesCommand = new AsyncRelayCommand(RefreshProcessesAsync);
             KillProcessCommand = new AsyncRelayCommand(KillProcessAsync);
             ClearProcessSearchCommand = new RelayCommand(_ => ProcessSearchText = string.Empty);
+            ExportDriversCommand = new AsyncRelayCommand(ExportDriversAsync);
+            CancelDriverExportCommand = new RelayCommand(_ => _driverExportCts?.Cancel());
             _ = LoadSettingsAsync();
 
             NavigateCommand = new RelayCommand(param =>
@@ -578,6 +592,56 @@ namespace Wpc_SutilBox.ViewModels
             }
             catch (Exception ex) { GeneralStatusMessage = "No se pudo crear el punto de restauración."; WriteLog("Error creando punto de restauración", ex); }
             finally { await Task.Delay(1500); StatusMessage = string.Empty; IsBusy = false; }
+        }
+
+        private async Task ExportDriversAsync()
+        {
+            if (_driverService == null || IsExportingDrivers) return;
+
+            var desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+            var destinationPath = Path.Combine(desktopPath, "WPC-SutilBox Backups", "Drivers", DateTime.Now.ToString("yyyyMMdd_HHmmss"));
+            var confirmation = MessageBox.Show(
+                $"Se exportarán los controladores de terceros mediante DISM.\n\nDestino:\n{destinationPath}\n\n¿Deseas continuar?",
+                "Confirmar copia de seguridad de controladores",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (confirmation != MessageBoxResult.Yes) return;
+
+            _driverExportCts = new CancellationTokenSource();
+            IsExportingDrivers = true;
+            DriverExportProgress = 0;
+            DriverExportStatusMessage = "Preparando exportación de controladores...";
+
+            try
+            {
+                var progress = new Progress<(int Percentage, string Message)>(update =>
+                {
+                    DriverExportProgress = update.Percentage;
+                    DriverExportStatusMessage = update.Message;
+                });
+
+                var result = await _driverService.ExportDriversAsync(destinationPath, progress, _driverExportCts.Token);
+                DriverExportStatusMessage = result.Success
+                    ? $"Copia creada en: {destinationPath}"
+                    : result.Message;
+                GeneralStatusMessage = result.Success
+                    ? "Copia de seguridad de controladores completada."
+                    : result.Message;
+                WriteLog($"Backup de drivers: {GeneralStatusMessage}");
+            }
+            catch (Exception ex)
+            {
+                DriverExportStatusMessage = "No se pudo exportar la copia de seguridad.";
+                GeneralStatusMessage = DriverExportStatusMessage;
+                WriteLog("Error exportando backup de drivers", ex);
+            }
+            finally
+            {
+                _driverExportCts.Dispose();
+                _driverExportCts = null;
+                IsExportingDrivers = false;
+            }
         }
 
         private async Task ExecuteApplyPerformanceModeAsync(object? parameter)
