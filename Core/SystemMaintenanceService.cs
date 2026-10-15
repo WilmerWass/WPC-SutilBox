@@ -5,7 +5,9 @@ using System.IO;
 using System.Linq;
 using System.Security.Principal;
 using System.Threading.Tasks;
+using System.Threading;
 using System.Runtime.InteropServices; // Interopservices
+using System.IO.Enumeration;
 using Wpc_SutilBox.Models;
 
 namespace Wpc_SutilBox.Core
@@ -44,61 +46,195 @@ namespace Wpc_SutilBox.Core
 
         public async Task<CleanResult> CleanTemporaryFilesAsync(CleaningOptions options)
         {
+            ArgumentNullException.ThrowIfNull(options);
             return await Task.Run(() => CleanTemporaryFiles(options));
         }
 
         public CleanResult CleanTemporaryFiles(CleaningOptions options)
         {
-            var result = new CleanResult();
+            ArgumentNullException.ThrowIfNull(options);
+            var candidates = PreviewTemporaryFiles(options);
+            return CleanTemporaryFiles(candidates);
+        }
+
+        public async Task<IReadOnlyList<CleanupCandidate>> PreviewTemporaryFilesAsync(
+            CleaningOptions options,
+            CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(options);
+            return await Task.Run(() => PreviewTemporaryFiles(options, cancellationToken), cancellationToken);
+        }
+
+        public IReadOnlyList<CleanupCandidate> PreviewTemporaryFiles(
+            CleaningOptions options,
+            CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(options);
+            var candidates = new List<CleanupCandidate>();
             var visited = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-            // Limpieza condicional basada en opciones
-            if (options.CleanSystemTemp)
+            foreach (var directory in GetCandidateDirectories(options))
             {
-                foreach (var baseDir in TempDirectories)
-                {
-                    if (string.IsNullOrWhiteSpace(baseDir) || !Directory.Exists(baseDir)) continue;
-                    if (!visited.Add(baseDir)) continue;
+                cancellationToken.ThrowIfCancellationRequested();
+                if (!IsSafeCandidateDirectory(directory) || !Directory.Exists(directory) || !visited.Add(directory))
+                    continue;
 
+                foreach (var file in SafeEnumerateTemporaryFiles(directory))
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
                     try
                     {
-                        result = Aggregate(result, CleanDirectory(baseDir));
+                        var info = new FileInfo(file);
+                        if (!TempFilePatterns.Any(pattern => FileSystemName.MatchesSimpleExpression(pattern, info.Name, ignoreCase: true)))
+                            continue;
+                        if (info.Exists && !IsReparsePoint(info))
+                            candidates.Add(new CleanupCandidate(info.FullName, info.Length));
                     }
-                    catch
-                    {
-                        // ignorar errores por directorio para continuar
-                    }
-                }
-
-                // También intentar directorios temporales recientes por usuario bajo perfiles de usuario
-                var usersDir = Path.Combine(Path.GetPathRoot(Environment.SystemDirectory) ?? "C:\\", "Users");
-                if (Directory.Exists(usersDir))
-                {
-                    foreach (var user in Directory.GetDirectories(usersDir))
-                    {
-                        foreach (var suffix in new[] { "AppData\\Local\\Temp", "AppData\\Local\\Microsoft\\Windows\\INetCache", "AppData\\Local\\Microsoft\\Windows\\INetCookies" })
-                        {
-                            var dir = Path.Combine(user, suffix);
-                            if (Directory.Exists(dir) && visited.Add(dir))
-                            {
-                                try { result = Aggregate(result, CleanDirectory(dir)); } catch { }
-                            }
-                        }
-                    }
+                    catch (IOException) { }
+                    catch (UnauthorizedAccessException) { }
                 }
             }
 
-            if (options.CleanRecycleBin)
+            return candidates
+                .GroupBy(candidate => candidate.Path, StringComparer.OrdinalIgnoreCase)
+                .Select(group => group.First())
+                .ToArray();
+        }
+
+        public async Task<CleanResult> CleanTemporaryFilesAsync(
+            IReadOnlyCollection<CleanupCandidate> candidates,
+            CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(candidates);
+            return await Task.Run(() => CleanTemporaryFiles(candidates, cancellationToken), cancellationToken);
+        }
+
+        public CleanResult CleanTemporaryFiles(
+            IReadOnlyCollection<CleanupCandidate> candidates,
+            CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(candidates);
+            var result = new CleanResult();
+
+            foreach (var candidate in candidates)
             {
-                result = Aggregate(result, CleanRecycleBin()); // Clean Recycle Bin
+                cancellationToken.ThrowIfCancellationRequested();
+                if (candidate == null || !IsSafeCandidateFile(candidate.Path))
+                {
+                    result.FilesFailed++;
+                    continue;
+                }
+
+                try
+                {
+                    var info = new FileInfo(candidate.Path);
+                    if (!info.Exists || IsReparsePoint(info))
+                        continue;
+
+                    long size = info.Length;
+                    File.Delete(info.FullName);
+                    result.FilesDeleted++;
+                    result.BytesFreed += size;
+                }
+                catch (IOException) { result.FilesFailed++; }
+                catch (UnauthorizedAccessException) { result.FilesFailed++; }
             }
 
-            // Para la caché del navegador, necesitamos ser más específicos. Los directorios temporales actuales incluyen algunos,
-            // pero una limpieza más exhaustiva implicaría rutas más específicas y, potencialmente, detener los navegadores.
-            // Por ahora, asumimos que la limpieza general de directorios temporales cubre parte de la caché del navegador.
-            // Un método dedicado a la limpieza de la caché del navegador podría añadirse más tarde.
             return result;
         }
+
+        private static IEnumerable<string> GetCandidateDirectories(CleaningOptions options)
+        {
+            if (!options.CleanSystemTemp)
+                yield break;
+
+            foreach (var directory in TempDirectories.Take(4))
+                yield return directory;
+
+            var usersDir = Path.Combine(Path.GetPathRoot(Environment.SystemDirectory) ?? "C:\\", "Users");
+            if (!Directory.Exists(usersDir))
+                yield break;
+
+            foreach (var user in Directory.GetDirectories(usersDir))
+            {
+                yield return Path.Combine(user, "AppData\\Local\\Temp");
+                yield return Path.Combine(user, "AppData\\Local\\Microsoft\\Windows\\INetCache");
+            }
+        }
+
+        private static IEnumerable<string> SafeEnumerateTemporaryFiles(string root)
+        {
+            var pending = new Stack<string>();
+            pending.Push(root);
+            while (pending.Count > 0)
+            {
+                var current = pending.Pop();
+                IEnumerable<string> files;
+                try { files = Directory.EnumerateFiles(current); }
+                catch { continue; }
+
+                foreach (var file in files)
+                {
+                    if (TempFilePatterns.Any(pattern => FileSystemName.MatchesSimpleExpression(pattern, Path.GetFileName(file), ignoreCase: true)))
+                        yield return file;
+                }
+
+                IEnumerable<string> directories;
+                try { directories = Directory.EnumerateDirectories(current); }
+                catch { continue; }
+
+                foreach (var directory in directories)
+                {
+                    try
+                    {
+                        var info = new DirectoryInfo(directory);
+                        if (!IsReparsePoint(info)) pending.Push(directory);
+                    }
+                    catch (IOException) { }
+                    catch (UnauthorizedAccessException) { }
+                }
+            }
+        }
+
+        private static bool IsSafeCandidateDirectory(string directory)
+        {
+            if (string.IsNullOrWhiteSpace(directory)) return false;
+            string fullPath;
+            try { fullPath = Path.GetFullPath(directory).TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar; }
+            catch { return false; }
+
+            var windowsDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
+            if (string.IsNullOrWhiteSpace(windowsDirectory)) return false;
+            string windows = Path.GetFullPath(windowsDirectory).TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar;
+            string users = Path.GetFullPath(Path.Combine(Path.GetPathRoot(Environment.SystemDirectory) ?? "C:\\", "Users")).TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar;
+            string currentTemp = Path.GetFullPath(Path.GetTempPath()).TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar;
+            var allowedRoots = new List<string> { currentTemp, Path.Combine(windows, "Temp") + Path.DirectorySeparatorChar };
+            if (Directory.Exists(users.TrimEnd(Path.DirectorySeparatorChar)))
+            {
+                foreach (var profile in Directory.GetDirectories(users.TrimEnd(Path.DirectorySeparatorChar)))
+                {
+                    allowedRoots.Add(Path.Combine(profile, "AppData", "Local", "Temp") + Path.DirectorySeparatorChar);
+                    allowedRoots.Add(Path.Combine(profile, "AppData", "Local", "Microsoft", "Windows", "INetCache") + Path.DirectorySeparatorChar);
+                }
+            }
+            return allowedRoots.Any(root => fullPath.StartsWith(root, StringComparison.OrdinalIgnoreCase));
+        }
+
+        private static bool IsSafeCandidateFile(string filePath)
+        {
+            if (string.IsNullOrWhiteSpace(filePath)) return false;
+            try
+            {
+                var fullPath = Path.GetFullPath(filePath);
+                var directory = Path.GetDirectoryName(fullPath);
+                return directory != null && IsSafeCandidateDirectory(directory) &&
+                       TempFilePatterns.Any(pattern => FileSystemName.MatchesSimpleExpression(pattern, Path.GetFileName(fullPath), ignoreCase: true));
+            }
+            catch { return false; }
+        }
+
+        private static bool IsReparsePoint(FileSystemInfo info) =>
+            (info.Attributes & FileAttributes.ReparsePoint) != 0;
 
         private CleanResult CleanRecycleBin()
         {
