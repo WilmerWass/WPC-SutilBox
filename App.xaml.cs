@@ -91,7 +91,9 @@ namespace Wpc_SutilBox
             services.AddSingleton<IWingetService, WingetService>();
             services.AddSingleton<IDriverService, DriverService>();
             services.AddSingleton<IDiskAnalyzerService, DiskAnalyzerService>();
+            services.AddSingleton<IStorageScanService, StorageScanService>();
 
+            services.AddTransient<StorageViewModel>();
             services.AddTransient<ProfileEditorViewModel>();
             services.AddTransient<PcReviewViewModel>();   // Beta 1.2 — Revisar mi PC
 

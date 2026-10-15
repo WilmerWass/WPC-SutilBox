@@ -111,7 +111,7 @@
                                     <!-- Limpieza -->
                                     <StackPanel HorizontalAlignment="Center" Cursor="Hand">
                                         <StackPanel.InputBindings>
-                                            <MouseBinding MouseAction="LeftClick" Command="{Binding NavigateCommand}" CommandParameter="Almacenamiento"/>
+                                            <MouseBinding MouseAction="LeftClick" Command="{Binding NavigateCommand}" CommandParameter="Almacenamiento" />
                                         </StackPanel.InputBindings>
                                         <TextBlock Text="🧹" FontSize="16" HorizontalAlignment="Center"/>
                                         <TextBlock Text="Limpieza" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" HorizontalAlignment="Center"/>

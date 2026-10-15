@@ -53,7 +53,7 @@ namespace Wpc_SutilBox.ViewModels
         private int _activeTcpConnections;
         private string _systemStatus = string.Empty;
         private string _applicationTitle = string.Empty;
-        private string _currentSection = "Dashboard";
+        private AppSection _currentSection = AppSection.Dashboard;
         private double _cpuUsage;
         private double _ramUsage;
         private double? _cpuTempC;
@@ -169,7 +169,7 @@ namespace Wpc_SutilBox.ViewModels
             set => SetProperty(ref _applicationTitle, value);
         }
 
-        public string CurrentSection
+        public AppSection CurrentSection
         {
             get => _currentSection;
             set => SetProperty(ref _currentSection, value);
@@ -246,6 +246,7 @@ namespace Wpc_SutilBox.ViewModels
         public ICommand ClearProcessSearchCommand { get; }
         public ICommand ExportDriversCommand { get; }
         public ICommand CancelDriverExportCommand { get; }
+        public StorageViewModel? StorageViewModel { get; }
 
         // ==========================================
         // 4. CONSTRUCTOR PRINCIPAL
@@ -265,8 +266,10 @@ namespace Wpc_SutilBox.ViewModels
             ILogService? logService = null,
             ProfileEditorViewModel? profileEditorViewModel = null,
             ILocalizationService? localizationService = null,
-            IDriverService? driverService = null)
+            IDriverService? driverService = null,
+            StorageViewModel? storageViewModel = null)
         {
+            StorageViewModel = storageViewModel;
             _temperatureMonitorService = temperatureMonitorService;
             _diskHealthService = diskHealthService;
             _monitoringService = monitoringService;
@@ -321,14 +324,20 @@ namespace Wpc_SutilBox.ViewModels
             {
                 if (param is string section && !string.IsNullOrWhiteSpace(section))
                 {
-                    CurrentSection = section;
-                    WriteLog($"Navegando a la sección: {section}");
-                    if (section == "Aplicaciones")
+                    if (!Enum.TryParse(section, ignoreCase: true, out AppSection targetSection))
+                    {
+                        WriteLog($"Sección desconocida: {section}");
+                        return;
+                    }
+
+                    CurrentSection = targetSection;
+                    WriteLog($"Navegando a la sección: {targetSection}");
+                    if (targetSection == AppSection.Aplicaciones)
                     {
                         _ = RefreshStartupItemsAsync();
                         _ = RefreshBloatwareAppsAsync();
                     }
-                    else if (section == "Historial") RefreshLogs();
+                    else if (targetSection == AppSection.Historial) RefreshLogs();
                 }
             });
 
