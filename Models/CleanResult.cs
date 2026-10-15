@@ -5,6 +5,7 @@
         public int FilesDeleted { get; set; }
         public int FoldersDeleted { get; set; }
         public int FilesFailed { get; set; }
+        public int FilesSkipped { get; set; }
         public int FoldersFailed { get; set; }
         public long BytesFreed { get; set; }
         public string? Notes { get; set; }
@@ -12,7 +13,7 @@
         public override string ToString()
         {
             string freed = BytesFreed > 0 ? FormatBytes(BytesFreed) : "0 B";
-            return $"Eliminados: {FilesDeleted} archivos, {FoldersDeleted} carpetas. Fallidos: {FilesFailed} archivos, {FoldersFailed} carpetas. Espacio liberado: {freed}.";
+            return $"Eliminados: {FilesDeleted} archivos, {FoldersDeleted} carpetas. Omitidos: {FilesSkipped} archivos. Fallidos: {FilesFailed} archivos, {FoldersFailed} carpetas. Tamaño estimado eliminado: {freed}.";
         }
 
         private static string FormatBytes(long bytes)

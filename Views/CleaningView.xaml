@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Wpc_SutilBox.Views.CleaningView"
+<UserControl x:Class="Wpc_SutilBox.Views.CleaningView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -51,7 +51,9 @@
                         <Button Content="Analizar" Command="{Binding ScanCommand}"
                                 Style="{StaticResource PrimaryButtonStyle}" HorizontalAlignment="Stretch" Margin="0,0,0,8"/>
                         <Button Content="Cancelar" Command="{Binding CancelCommand}"
-                                Style="{StaticResource SecondaryButtonStyle}" HorizontalAlignment="Stretch"/>
+                                Style="{StaticResource SecondaryButtonStyle}" HorizontalAlignment="Stretch" Margin="0,0,0,8"/>
+                        <Button Content="🗺️   Mapa de espacio" Command="{Binding DataContext.OpenSpaceMapCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                Style="{StaticResource SecondaryButtonStyle}" HorizontalAlignment="Stretch" ToolTip="Visualiza el mapa jerárquico de espacio en disco"/>
                     </StackPanel>
 
                     <Border Grid.Row="5" Background="{DynamicResource SurfaceBrush}" CornerRadius="8" Padding="12" Margin="0,16,0,0">

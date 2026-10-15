@@ -52,22 +52,30 @@ namespace Wpc_SutilBox.Core
 
         public async Task<ApplyProfileResult> ApplyProfileAsync(PerformanceMode mode)
         {
+            if (!Enum.IsDefined(mode))
+            {
+                return new ApplyProfileResult { Success = false, Message = "El perfil seleccionado no es válido." };
+            }
+
             if (mode == PerformanceMode.General)
             {
                 return await RestoreOriginalStateAsync();
             }
 
             var settings = await _settings.LoadAsync();
+            settings.PerformanceProfiles ??= new Dictionary<string, ProfileConfig>();
             string modeKey = mode.ToString();
 
-            if (_restorePointService != null)
+            if (_restorePointService == null)
             {
-                var restorePoint = await _restorePointService.CreateRestorePointAsync($"WPC-SutilBox - perfil {mode} - {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
-                if (!restorePoint.Success)
-                {
-                    _log?.Warn($"Perfil {mode} cancelado: no se pudo crear el punto de restauración.");
-                    return new ApplyProfileResult { Success = false, Message = $"Perfil cancelado: {restorePoint.Message}" };
-                }
+                return new ApplyProfileResult { Success = false, Message = "El perfil no se aplicó porque el servicio de puntos de restauración no está disponible." };
+            }
+
+            var restorePoint = await _restorePointService.CreateRestorePointAsync($"WPC-SutilBox - perfil {mode} - {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
+            if (!restorePoint.Success)
+            {
+                _log?.Warn($"Perfil {mode} cancelado: no se pudo crear el punto de restauración.");
+                return new ApplyProfileResult { Success = false, Message = $"Perfil cancelado: {restorePoint.Message}" };
             }
             
             if (!settings.PerformanceProfiles.TryGetValue(modeKey, out var config))
@@ -91,7 +99,11 @@ namespace Wpc_SutilBox.Core
             }
 
             var power = await Task.Run(() => TrySetPowerPlan(mode, config.PowerPlanGuid));
-            
+            if (!power.Success)
+            {
+                return power;
+            }
+
             try
             {
                 // Aplicar prioridad de procesos
@@ -106,7 +118,7 @@ namespace Wpc_SutilBox.Core
                     var allServices = await _serviceOptimizer.GetWindowsServicesAsync();
                     bool settingsChanged = false;
 
-                    foreach (var serviceName in config.ServicesToStop)
+                    foreach (var serviceName in config.ServicesToStop.Distinct(StringComparer.OrdinalIgnoreCase))
                     {
                         var svcInfo = allServices.FirstOrDefault(s => s.Name.Equals(serviceName, StringComparison.OrdinalIgnoreCase));
                         if (svcInfo != null)
@@ -166,9 +178,18 @@ namespace Wpc_SutilBox.Core
             catch (Exception ex)
             {
                 _log?.Warn($"Acciones adicionales de perfil fallaron: {ex.Message}");
+                return new ApplyProfileResult
+                {
+                    Success = false,
+                    Message = $"El plan de energía se aplicó, pero algunas acciones del perfil fallaron: {ex.Message}"
+                };
             }
 
-            return power;
+            return new ApplyProfileResult
+            {
+                Success = true,
+                Message = $"Perfil {mode} aplicado. Plan de energía y acciones solicitadas completados."
+            };
         }
 
         public async Task<ApplyProfileResult> RestoreOriginalStateAsync()
@@ -178,25 +199,33 @@ namespace Wpc_SutilBox.Core
             try
             {
                 var settings = await _settings.LoadAsync();
-                if (settings.OriginalSystemSnapshot == null) return new ApplyProfileResult { Success = true };
+                if (settings.OriginalSystemSnapshot == null) return new ApplyProfileResult { Success = true, Message = "No hay un estado original guardado para restaurar." };
 
                 // 1. Restaurar Plan de Energía
                 if (settings.OriginalSystemSnapshot.OriginalPowerPlan != null)
                 {
-                    TrySetPowerPlan(PerformanceMode.General, settings.OriginalSystemSnapshot.OriginalPowerPlan);
+                    var powerRestore = TrySetPowerPlan(PerformanceMode.General, settings.OriginalSystemSnapshot.OriginalPowerPlan);
+                    if (!powerRestore.Success) return powerRestore;
                 }
  
                 // 2. Restaurar Servicios
                 if (_serviceOptimizer != null && settings.OriginalSystemSnapshot.Services.Count > 0)
                 {
+                    bool restoreFailed = false;
                     foreach (var state in settings.OriginalSystemSnapshot.Services.Values)
                     {
                         if (Enum.TryParse<ServiceStartType>(state.StartType, out var startType))
                         {
                             _log?.Info($"Restaurando servicio: {state.Name} a {startType}");
-                            await _serviceOptimizer.SetServiceStartTypeAsync(state.Name, startType);
-                            if (state.WasRunning) await _serviceOptimizer.StartServiceAsync(state.Name);
+                            bool startTypeRestored = await _serviceOptimizer.SetServiceStartTypeAsync(state.Name, startType);
+                            bool runningStateRestored = !state.WasRunning || await _serviceOptimizer.StartServiceAsync(state.Name);
+                            restoreFailed |= !startTypeRestored || !runningStateRestored;
                         }
+                    }
+
+                    if (restoreFailed)
+                    {
+                        return new ApplyProfileResult { Success = false, Message = "No se pudieron restaurar todos los servicios; se conservó la captura para volver a intentarlo." };
                     }
                 }
 

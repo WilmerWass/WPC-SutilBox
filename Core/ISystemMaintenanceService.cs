@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 using Wpc_SutilBox.Models;
 
 namespace Wpc_SutilBox.Core
@@ -6,6 +8,8 @@ namespace Wpc_SutilBox.Core
     public interface ISystemMaintenanceService
     {
         Task<CleanResult> CleanTemporaryFilesAsync(CleaningOptions options);
+        Task<IReadOnlyList<CleanupCandidate>> PreviewTemporaryFilesAsync(CleaningOptions options, CancellationToken cancellationToken = default);
+        Task<CleanResult> CleanTemporaryFilesAsync(IReadOnlyCollection<CleanupCandidate> candidates, CancellationToken cancellationToken = default);
         Task<CleanResult> OptimizeMemoryAsync();
         bool IsAdministrator();
         Task<ProcessLaunchResult> LaunchSystemFileCheckerAsync();

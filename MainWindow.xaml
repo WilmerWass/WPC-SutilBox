@@ -1,4 +1,4 @@
-﻿<Window x:Class="Wpc_SutilBox.MainWindow"
+<Window x:Class="Wpc_SutilBox.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -347,6 +347,9 @@
 
                     <views:CleaningView Grid.Row="0" Grid.Column="0"
                         Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Almacenamiento}}"/>
+
+                    <views:SpaceMapView Grid.Row="0" Grid.Column="0"
+                        Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.MapaEspacio}}"/>
 
                     <views:AplicacionesView Grid.Row="0" Grid.Column="0"
                         Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Aplicaciones}}"/>

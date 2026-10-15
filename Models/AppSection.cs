@@ -1,10 +1,11 @@
-﻿namespace Wpc_SutilBox.Models
+namespace Wpc_SutilBox.Models
 {
     public enum AppSection
     {
         Dashboard,
         RevisarPC,
         Almacenamiento,
+        MapaEspacio,
         Aplicaciones,
         Juegos,
         Rendimiento,

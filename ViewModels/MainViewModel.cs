@@ -24,6 +24,12 @@ namespace Wpc_SutilBox.ViewModels
         // ==========================================
         private readonly ITemperatureMonitorService? _temperatureMonitorService;
         private readonly IDiskHealthService? _diskHealthService;
+        private readonly ISystemMaintenanceService? _systemMaintenanceService;
+        private readonly IDialogService? _dialogService;
+        private IReadOnlyList<CleanupCandidate> _cleanupCandidates = Array.Empty<CleanupCandidate>();
+        private bool _cleanSystemTemp = true;
+        private bool _cleanRecycleBin;
+        private bool _cleanBrowserCache;
         private readonly IMonitoringService? _monitoringService;
         private readonly IBatteryService? _batteryService;
         private readonly IProcessManagerService? _processManagerService;
@@ -125,6 +131,16 @@ namespace Wpc_SutilBox.ViewModels
         public ObservableCollection<WingetApp> UpdatableApps { get; } = new();
         public ObservableCollection<string> RecentLogEntries { get; } = new();
         public ObservableCollection<CpuCoreMetric> CpuPerCore { get; } = new();
+        public bool CleanSystemTemp { get => _cleanSystemTemp; set => SetProperty(ref _cleanSystemTemp, value); }
+        public bool CleanRecycleBin { get => _cleanRecycleBin; set => SetProperty(ref _cleanRecycleBin, value); }
+        public bool CleanBrowserCache { get => _cleanBrowserCache; set => SetProperty(ref _cleanBrowserCache, value); }
+        public IReadOnlyList<CleanupCandidate> CleanupCandidates
+        {
+            get => _cleanupCandidates;
+            private set => SetProperty(ref _cleanupCandidates, value);
+        }
+        public int CleanupCandidateCount => CleanupCandidates.Count;
+        public long CleanupEstimatedBytes => CleanupCandidates.Sum(candidate => candidate.SizeBytes);
         public ObservableCollection<ProcessInfoDto> Processes { get; } = new();
         public string ProcessSearchText { get => _processSearchText; set => SetProperty(ref _processSearchText, value); }
         // Nuevos Perfiles de Rendimiento
@@ -172,7 +188,14 @@ namespace Wpc_SutilBox.ViewModels
         public AppSection CurrentSection
         {
             get => _currentSection;
-            set => SetProperty(ref _currentSection, value);
+            set
+            {
+                if (SetProperty(ref _currentSection, value))
+                {
+                    _logService?.Info($"[Navegación] CurrentSection cambió a: {value}");
+                    WriteLog($"[Navegación] Sección activa: {value}");
+                }
+            }
         }
 
         public int ActiveTcpConnections
@@ -218,6 +241,8 @@ namespace Wpc_SutilBox.ViewModels
         public ICommand OpenDiscordCommand { get; }
         public ICommand OpenCleanmgrCommand { get; }
         public ICommand CleanTempFilesCommand { get; }
+        public ICommand PreviewCleanupCommand { get; }
+        public ICommand OpenSpaceMapCommand { get; }
         public ICommand OpenLogFolderCommand { get; }
         public ICommand NavigateCommand { get; }
         public ICommand RunToolCommand { get; }
@@ -254,6 +279,8 @@ namespace Wpc_SutilBox.ViewModels
         public MainViewModel(
             ITemperatureMonitorService? temperatureMonitorService = null,
             IDiskHealthService? diskHealthService = null,
+            ISystemMaintenanceService? systemMaintenanceService = null,
+            IDialogService? dialogService = null,
             IMonitoringService? monitoringService = null,
             IBatteryService? batteryService = null,
             IProcessManagerService? processManagerService = null,
@@ -272,6 +299,8 @@ namespace Wpc_SutilBox.ViewModels
             StorageViewModel = storageViewModel;
             _temperatureMonitorService = temperatureMonitorService;
             _diskHealthService = diskHealthService;
+            _systemMaintenanceService = systemMaintenanceService;
+            _dialogService = dialogService;
             _monitoringService = monitoringService;
             _batteryService = batteryService;
             _processManagerService = processManagerService;
@@ -292,7 +321,9 @@ namespace Wpc_SutilBox.ViewModels
             CurrentView = this;
             OpenDiscordCommand = new RelayCommand(ExecuteOpenDiscord);
             OpenCleanmgrCommand = new RelayCommand(ExecuteOpenCleanmgr);
-            CleanTempFilesCommand = new AsyncRelayCommand(ExecuteCleanTempFilesAsync);
+            CleanTempFilesCommand = new AsyncRelayCommand(PreviewCleanupAsync);
+            PreviewCleanupCommand = new AsyncRelayCommand(PreviewCleanupAsync);
+            OpenSpaceMapCommand = new RelayCommand(_ => CurrentSection = AppSection.MapaEspacio);
             OpenLogFolderCommand = new RelayCommand(ExecuteOpenLogFolder);
             RunToolCommand = new RelayCommand(ExecuteRunTool);
             RunSfcCommand = new AsyncRelayCommand(ExecuteRunSfcAsync);
@@ -565,27 +596,87 @@ namespace Wpc_SutilBox.ViewModels
         private async Task ExecuteQuickOptimizeAsync()
         {
             if (IsBusy) return;
+            await PreviewCleanupAsync();
+        }
+
+        private async Task PreviewCleanupAsync()
+        {
+            if (IsBusy) return;
+            if (!CleanSystemTemp)
+            {
+                GeneralStatusMessage = "Activa Archivos Temporales para analizar la limpieza.";
+                return;
+            }
+            if (_systemMaintenanceService == null || _dialogService == null)
+            {
+                GeneralStatusMessage = "La limpieza controlada no está disponible.";
+                return;
+            }
+
             IsBusy = true;
-            StatusMessage = "Ejecutando optimización rápida...";
+            StatusMessage = "Analizando archivos temporales...";
             try
             {
-                await CleanTemporaryFilesCoreAsync();
-                if (_processManagerService != null) await _processManagerService.OptimizeRamAsync();
-                if (_performanceProfileService != null)
+                var options = new CleaningOptions
                 {
-                    var result = await _performanceProfileService.ApplyProfileAsync(CurrentMode);
-                    GeneralStatusMessage = result.Message ?? (result.Success ? "Optimización rápida completada." : "El perfil activo no pudo aplicarse.");
+                    CleanSystemTemp = CleanSystemTemp,
+                    CleanRecycleBin = false,
+                    CleanBrowserCache = false,
+                    CleanWindowsUpdate = false,
+                    CleanThumbnails = false,
+                    CleanEventLogs = false
+                };
+                CleanupCandidates = await _systemMaintenanceService.PreviewTemporaryFilesAsync(options);
+                OnPropertyChanged(nameof(CleanupCandidateCount));
+                OnPropertyChanged(nameof(CleanupEstimatedBytes));
+
+                if (CleanupCandidates.Count == 0)
+                {
+                    GeneralStatusMessage = "No se encontraron archivos temporales compatibles para limpiar.";
+                    WriteLog("Previsualización de limpieza: no se encontraron candidatos.");
+                    return;
                 }
-                else GeneralStatusMessage = "Optimización rápida completada.";
-                WriteLog("Optimización rápida completada: temporales, RAM y perfil activo.");
-                await UpdateSystemUsageAsync();
+
+                var candidateList = string.Join(
+                    Environment.NewLine,
+                    CleanupCandidates.Select(candidate => $"• {candidate.Path} ({FormatBytes(candidate.SizeBytes)})"));
+                var confirmation = await _dialogService.ShowConfirmation(
+                    $"Se encontraron {CleanupCandidateCount} archivos temporales (tamaño total estimado: {FormatBytes(CleanupEstimatedBytes)}).\n\nCandidatos que se intentarán eliminar:\n{candidateList}\n\nSolo se eliminarán estos archivos dentro de las carpetas temporales autorizadas. No se vaciará la Papelera ni se limpiarán cachés de navegador o Windows Update.\n\n¿Deseas continuar?",
+                    "Revisar limpieza temporal");
+                if (!confirmation)
+                {
+                    GeneralStatusMessage = "Limpieza cancelada; no se eliminaron archivos.";
+                    WriteLog("El usuario canceló la limpieza tras revisar la previsualización.");
+                    return;
+                }
+
+                StatusMessage = "Limpiando archivos temporales...";
+                var result = await _systemMaintenanceService.CleanTemporaryFilesAsync(CleanupCandidates);
+                GeneralStatusMessage = result.ToString();
+                WriteLog($"Limpieza controlada completada. {result}");
+                CleanupCandidates = Array.Empty<CleanupCandidate>();
+                OnPropertyChanged(nameof(CleanupCandidateCount));
+                OnPropertyChanged(nameof(CleanupEstimatedBytes));
             }
             catch (Exception ex)
             {
-                GeneralStatusMessage = "La optimización rápida terminó con errores.";
-                WriteLog("Error en la optimización rápida", ex);
+                GeneralStatusMessage = "No se pudo completar el análisis o limpieza temporal.";
+                WriteLog("Error en limpieza controlada", ex);
             }
-            finally { StatusMessage = string.Empty; IsBusy = false; }
+            finally
+            {
+                StatusMessage = string.Empty;
+                IsBusy = false;
+            }
+        }
+
+        private static string FormatBytes(long bytes)
+        {
+            string[] sizes = { "B", "KB", "MB", "GB", "TB" };
+            double value = bytes;
+            int unit = 0;
+            while (value >= 1024 && unit < sizes.Length - 1) { value /= 1024; unit++; }
+            return $"{value:0.##} {sizes[unit]}";
         }
 
         private async Task ExecuteCreateRestorePointAsync()
@@ -655,12 +746,21 @@ namespace Wpc_SutilBox.ViewModels
 
         private async Task ExecuteApplyPerformanceModeAsync(object? parameter)
         {
-            if (_performanceProfileService == null || parameter == null) return;
-            if (!Enum.TryParse<PerformanceMode>(parameter.ToString(), true, out var mode)) return;
+            if (_performanceProfileService == null || _dialogService == null || parameter == null) return;
+            if (!Enum.TryParse<PerformanceMode>(parameter.ToString(), true, out var mode) || !Enum.IsDefined(mode)) return;
+            var performanceProfileService = _performanceProfileService;
+            var dialogService = _dialogService;
+            var confirmed = await dialogService.ShowConfirmation(
+                mode == PerformanceMode.General
+                    ? "Se restaurarán los valores guardados en la captura del estado original. ¿Desea continuar?"
+                    : $"El perfil {GetModeName(mode)} puede cambiar el plan de energía y los servicios configurados. Se intentará crear un punto de restauración antes de aplicar los cambios. ¿Desea continuar?",
+                $"Confirmar perfil {GetModeName(mode)}");
+            if (!confirmed) return;
+
             IsBusy = true; StatusMessage = $"Aplicando perfil {GetModeName(mode)}...";
             try
             {
-                var result = await _performanceProfileService.ApplyProfileAsync(mode);
+                var result = await performanceProfileService.ApplyProfileAsync(mode);
                 if (result.Success) CurrentMode = mode;
                 GeneralStatusMessage = result.Message ?? (result.Success ? "Perfil aplicado." : "No se pudo aplicar el perfil.");
                 WriteLog($"Perfil {mode}: {GeneralStatusMessage}");
@@ -741,30 +841,6 @@ namespace Wpc_SutilBox.ViewModels
             {
                 MessageBox.Show($"No se pudo iniciar el Liberador de espacio: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-        }
-
-        private async Task ExecuteCleanTempFilesAsync()
-        {
-            await CleanTemporaryFilesCoreAsync();
-        }
-
-        private static async Task CleanTemporaryFilesCoreAsync()
-        {
-            await Task.Run(() =>
-            {
-                try
-                {
-                    string tempPath = Path.GetTempPath();
-                    foreach (var file in Directory.GetFiles(tempPath))
-                    {
-                        try { File.Delete(file); } catch { }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"Error limpiando temporales: {ex.Message}");
-                }
-            });
         }
 
         private void ExecuteOpenLogFolder()

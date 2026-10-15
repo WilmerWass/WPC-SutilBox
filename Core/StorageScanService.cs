@@ -65,6 +65,7 @@ public sealed class StorageScanService : IStorageScanService
             }
             catch (Exception ex) when (IsExpectedFileSystemError(ex))
             {
+                _log.Warn($"[StorageScan] Bloqueo o incidencia de E/S en carpeta '{current}': {ex.Message}");
                 errors.Add(Report(current, ex.Message));
                 continue;
             }
@@ -99,6 +100,7 @@ public sealed class StorageScanService : IStorageScanService
                 }
                 catch (Exception ex) when (IsExpectedFileSystemError(ex) || ex is ArgumentException or NotSupportedException or OverflowException)
                 {
+                    _log.Warn($"[StorageScan] Error o bloqueo de E/S en '{entry}': {ex.Message}");
                     errors.Add(Report(entry, ex.Message));
                 }
 
