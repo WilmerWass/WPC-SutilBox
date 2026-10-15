@@ -30,7 +30,7 @@
                     <Border Background="#1A6366F1" BorderBrush="#336366F1" BorderThickness="1" CornerRadius="12" Padding="8,4" Margin="0,0,10,0">
                         <StackPanel Orientation="Horizontal">
                             <Ellipse Width="6" Height="6" Fill="#6366F1" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                            <TextBlock Text="Beta 1.1.3 · Limpieza controlada" FontSize="11" Foreground="#A5B4FC" FontWeight="Medium"/>
+                            <TextBlock Text="Beta 1.1.4 · Perfiles de rendimiento" FontSize="11" Foreground="#A5B4FC" FontWeight="Medium"/>
                         </StackPanel>
                     </Border>
                     <Button Content="↺  Punto de Restauración" 

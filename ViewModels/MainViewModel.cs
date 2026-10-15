@@ -720,12 +720,21 @@ namespace Wpc_SutilBox.ViewModels
 
         private async Task ExecuteApplyPerformanceModeAsync(object? parameter)
         {
-            if (_performanceProfileService == null || parameter == null) return;
-            if (!Enum.TryParse<PerformanceMode>(parameter.ToString(), true, out var mode)) return;
+            if (_performanceProfileService == null || _dialogService == null || parameter == null) return;
+            if (!Enum.TryParse<PerformanceMode>(parameter.ToString(), true, out var mode) || !Enum.IsDefined(mode)) return;
+            var performanceProfileService = _performanceProfileService;
+            var dialogService = _dialogService;
+            var confirmed = await dialogService.ShowConfirmation(
+                mode == PerformanceMode.General
+                    ? "Se restaurarán los valores guardados en la captura del estado original. ¿Desea continuar?"
+                    : $"El perfil {GetModeName(mode)} puede cambiar el plan de energía y los servicios configurados. Se intentará crear un punto de restauración antes de aplicar los cambios. ¿Desea continuar?",
+                $"Confirmar perfil {GetModeName(mode)}");
+            if (!confirmed) return;
+
             IsBusy = true; StatusMessage = $"Aplicando perfil {GetModeName(mode)}...";
             try
             {
-                var result = await _performanceProfileService.ApplyProfileAsync(mode);
+                var result = await performanceProfileService.ApplyProfileAsync(mode);
                 if (result.Success) CurrentMode = mode;
                 GeneralStatusMessage = result.Message ?? (result.Success ? "Perfil aplicado." : "No se pudo aplicar el perfil.");
                 WriteLog($"Perfil {mode}: {GeneralStatusMessage}");
