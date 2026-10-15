@@ -26,6 +26,7 @@
             <!-- Convertidores -->
             <core:EnumToBooleanConverter x:Key="EnumToBooleanConverter"/>
             <core:EnumToVisibilityConverter x:Key="EnumToVisibilityConverter"/>
+            <core:BytesToHumanReadableConverter x:Key="BytesToHumanReadableConverter"/>
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
             <core:InvertedBooleanToVisibilityConverter x:Key="InvertedBooleanToVisibilityConverter"/>
             <core:BooleanToStringConverter x:Key="BooleanToStringConverter"/>

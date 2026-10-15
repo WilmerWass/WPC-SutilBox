@@ -3,14 +3,22 @@
     public enum AppSection
     {
         Dashboard,
-        Proteccion,
+        RevisarPC,
         Almacenamiento,
-        Rendimiento,
         Aplicaciones,
-        Hardware,
+        Juegos,
+        Rendimiento,
+        Proteccion,
+        Privacidad,
+        EditorPerfiles,
+        Actualizaciones,
+        Drivers,
+        Red,
+        Reparacion,
         Herramientas,
+        Historial,
         Configuracion,
-        EditorPerfiles
+        Hardware
     }
 }
 
