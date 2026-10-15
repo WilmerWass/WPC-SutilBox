@@ -1,40 +1,54 @@
-# Release Notes - WassControlSys v1.1.4 🚀
+﻿# Notas de versión — WPC-SutilBox Beta 1.1.4
 
-¡Hola! Estamos emocionados de presentar la versión 1.1.4 de **WassControlSys**, una actualización enfocada en ofrecerte un control aún más preciso y una experiencia de usuario más fluida e informativa.
+**Producto:** WPC-SutilBox  
+**Versión:** `1.1.4-beta`  
+**Ensamblado / archivo:** `1.1.4.0`  
+**Fecha:** 2026-10-15  
+**Plataforma:** Windows 10 / 11, x64  
+**Runtime:** .NET 8 Desktop Runtime (este paquete no es autocontenido)
 
-## ✨ Novedades Destacadas
+> Estas notas describen la Beta 1.1.4 del código actual. No deben confundirse con las notas históricas de WassControlSys que usaban el mismo número de versión.
 
-### 📊 Progreso de Tareas en Tiempo Real
+## Resumen
 
-*   Ahora podrás ver el progreso de tus operaciones directamente en la interfaz. Ya sea exportando tus drivers o actualizando aplicaciones con Winget, una barra de progreso te mantendrá informado, eliminando las molestas ventanas de terminal.
+La Beta 1.1.4 no añade perfiles nuevos. Hace explícito y verificable el flujo que ya existía en el Dashboard: el usuario confirma, el sistema intenta crear un punto de restauración y el perfil solo se comunica como aplicado si el flujo termina sin fallo.
 
-### 💾 Gestión Avanzada de Discos
+## Qué cambia
 
-*   La sección de "Discos" ha sido completamente renovada. Ahora detecta y muestra dinámicamente **todas las unidades de disco duro** de tu sistema, no solo las predefinidas.
-*   Hemos añadido un botón de **"Liberar Espacio"** que te permite lanzar la utilidad de limpieza de disco de Windows (`cleanmgr.exe`) para cualquier unidad seleccionada, ¡facilitando la optimización de tu almacenamiento!
+- Confirmación antes de aplicar Gaming, Productividad, Desarrollo, Personalizado o volver a Equilibrado.
+- Si el servicio de puntos de restauración no está disponible, o el punto no se crea, el perfil se cancela.
+- Una selección que no corresponda a `PerformanceMode` se rechaza.
+- El plan de energía se comprueba antes de continuar. Si falla o se cancela UAC, no se aplican servicios ni acciones secundarias.
+- El snapshot del estado original se toma solo antes del primer perfil y se conserva si la restauración del plan o de algún servicio falla.
+- Equilibrado restaura el plan de energía y los servicios guardados. No revierte todo el Registro ni cada ajuste secundario.
+- Los servicios duplicados se procesan una sola vez.
+- La etiqueta visible del perfil solo cambia tras un resultado correcto.
 
-### 🛡️ Detección de Seguridad Mejorada
+## Qué no promete esta versión
 
-*   Hemos optimizado la lógica para detectar el estado de tu **Antivirus y Firewall**. Ahora obtendrás una lectura más precisa y fiable del nivel de seguridad de tu sistema.
+- No es una transacción reversible completa.
+- `powercfg` se lanza elevado, pero no se espera ni se valida su código de salida.
+- Ajustes heredados de Windows Update, telemetría, indexación y throttling de red pueden no informar fielmente su resultado.
+- La prueba en un equipo Windows elevado (aplicar, cancelar UAC, restaurar e inspeccionar el sistema) sigue pendiente.
 
-### 🚀 Experiencia de Actualización de Apps Inteligente
+## Paquetes
 
-*   Las actualizaciones de aplicaciones obtenidas a través de Winget ahora son más inteligentes. Las apps de la Microsoft Store (`msstore`) se actualizan automáticamente para tu comodidad. Para el resto de aplicaciones, se te pedirá una confirmación antes de iniciar el proceso, dándote control total.
-*   Además, hemos mejorado los mensajes de error para que sean más claros si una actualización no puede completarse, ofreciéndote mejor orientación.
+| Elemento | Dependiente del runtime | Autocontenido (recomendado sin .NET) |
+|---|---|---|
+| Archivo | `WPC-SutilBox-1.1.4-beta-win-x64.zip` | `WPC-SutilBox-1.1.4-beta-selfcontained.zip` |
+| Ubicación | `bin/Release/` | `bin/Release/` |
+| Ejecutable | `SutilBox.exe` | `SutilBox.exe` (single-file) |
+| Tipo | Requiere .NET 8 Desktop Runtime | Incluye el runtime; no requiere instalar .NET |
+| Tamaño aprox. | ~1.5 MB | ~64 MB (zip) / ~156 MB (exe) |
+| Elevación | El manifiesto solicita administrador | Igual |
 
-### 🎨 Pulido Visual y Usabilidad
+## Comprobación de esta entrega
 
-*   Hemos solucionado un problema de contraste en el selector de idioma, asegurando que el texto sea siempre legible, sin importar el tema que elijas.
-*   También hemos actualizado y pulido nuestra página web de aterrizaje, añadiendo una nueva sección de novedades y animaciones visuales sutiles para una experiencia más moderna.
+- `dotnet build WPC-SutilBox.csproj -c Release`: 0 errores, 0 advertencias.
+- No hay proyecto de pruebas automatizadas en el repositorio.
 
----
+## Documentación relacionada
 
-## 🛠️ Cómo Actualizar / Usar
-
-1.  Descarga los archivos `.zip` de la sección de Releases de GitHub.
-2.  Descomprime la versión que prefieras (Normal o Autocontenida).
-3.  Ejecuta `WassControlSys.exe` (como administrador para acceso completo a todas las funciones).
-
----
-
-**¡Gracias por tu apoyo! Desarrollado con ❤️ por WilmerWass.**
+- [Beta 1.1.4](../docs/BETA_1.1.4.md)
+- [Historial de cambios](../docs/CHANGELOG.md)
+- [Cambios implementados](CAMBIOS_IMPLEMENTADOS_v1.1.4.md)

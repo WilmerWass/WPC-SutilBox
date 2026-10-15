@@ -26,3 +26,15 @@ No se deben actualizar estados a 🟢 IMPLEMENTADO basándose en ideas, mockups 
 1. Compilación limpia sin errores ni warnings.
 2. Verificar que los DataBindings XAML no reporten fallos en la ventana de Salida de Debugging.
 3. Actualizar `docs/PLAN_BETAS.md` y `docs/CHANGELOG.md` únicamente con los cambios verificados.
+
+## 6. Empaquetado Release (portable dependiente)
+
+El `.csproj` actual publica como `SelfContained=false` para `win-x64`. El paquete portable se genera así:
+
+```powershell
+dotnet build WPC-SutilBox.csproj -c Release
+Compress-Archive -Path .\bin\Release\net8.0-windows\win-x64\* `
+  -DestinationPath .\bin\Release\WPC-SutilBox-<versión>-beta-win-x64.zip
+```
+
+Incluir solo los archivos de salida (exe, dll, json, pdb). No embeber carpetas `publish` intermedias. El zip requiere .NET 8 Desktop Runtime. Documentar la versión en `docs/BETA_*.md`, `docs/CHANGELOG.md` y `release_versiones/RELEASE_NOTES_v*.md`.

@@ -16,7 +16,13 @@ Este documento es la **ÚNICA fuente oficial de planificación** de WPC-SutilBox
 ---
 
 ## ESTADO ACTUAL DEL PROYECTO
-Nos encontramos oficialmente en **BETA 1 (Fase de Estabilización y Calidad)**.
+Nos encontramos oficialmente en **BETA 1.1.4** (`1.1.4-beta` / ensamblado `1.1.4.0`), dentro de la fase de estabilización y calidad.
+
+La Beta 1.1.4 hace verificable el flujo de perfiles de rendimiento ya existente. No amplía el catálogo de ajustes. El detalle, los límites y la validación pendiente están en [BETA_1.1.4.md](BETA_1.1.4.md).
+
+* ⚠️ Confirmación, punto de restauración previo y resultado explícito del perfil: implementados; falta prueba en Windows elevado.
+* ⚠️ Restauración del snapshot (plan de energía y servicios capturados): implementada; no es una reversión universal.
+* 🟢 Compilación Release del 2026-10-15: 0 errores y 0 advertencias.
 
 ---
 

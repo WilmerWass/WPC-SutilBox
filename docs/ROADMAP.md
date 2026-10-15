@@ -1,6 +1,7 @@
 # WPC-SUTILBOX — Roadmap
 
 **Estado:** Documento de dirección y planificación de producto  
+**Versión actual:** Beta 1.1.4 (`1.1.4-beta`)  
 **Prioridad actual:** Estabilización de WPC-SutilBox General (Beta 1)
 
 ---

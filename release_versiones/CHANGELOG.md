@@ -5,6 +5,26 @@ Todas las mejoras notables de este proyecto serán documentadas en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/),
 y este proyecto se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+> **Aviso de archivo.** Las entradas `1.1.1` a `1.1.7` de este archivo describen la generación anterior WassControlSys (diciembre de 2025 y enero de 2026). No describen el binario actual de WPC-SutilBox. El historial vigente de las betas 1.1.1, 1.1.3 y 1.1.4 está en [`docs/CHANGELOG.md`](../docs/CHANGELOG.md). La nota vigente de esta entrega es [`RELEASE_NOTES_v1.1.4.md`](RELEASE_NOTES_v1.1.4.md).
+
+## [1.1.4-beta] - 2026-10-15 — WPC-SutilBox
+
+### Añadido
+
+- Confirmación previa, punto de restauración obligatorio y resultado explícito al aplicar o restaurar un perfil de rendimiento.
+
+### Cambiado
+
+- El modo visible solo cambia tras éxito. La restauración conserva el snapshot si falla el plan o un servicio.
+
+### Limitaciones
+
+- No es una reversión universal. Falta la validación manual en Windows elevado. Detalle en `docs/BETA_1.1.4.md`.
+
+---
+
+## Histórico WassControlSys (no corresponde al binario actual)
+
 ## [1.1.7] - 2026-01-02
 
 ### Añadido

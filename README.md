@@ -12,7 +12,7 @@
 [![C# 12](https://img.shields.io/badge/C%23-12-239120?style=for-the-badge&logo=csharp&logoColor=white)](https://learn.microsoft.com/dotnet/csharp/)
 [![WPF](https://img.shields.io/badge/UI-WPF-68217A?style=for-the-badge)](https://learn.microsoft.com/dotnet/desktop/wpf/)
 [![Windows](https://img.shields.io/badge/Windows-10%20%2F%2011-0078D4?style=for-the-badge&logo=windows&logoColor=white)](https://www.microsoft.com/windows)
-[![Status](https://img.shields.io/badge/Status-Beta%201-F59E0B?style=for-the-badge)](https://github.com/WilmerWass/WPC-SutilBox/releases)
+[![Status](https://img.shields.io/badge/Status-Beta%201.1.4-F59E0B?style=for-the-badge)](https://github.com/WilmerWass/WPC-SutilBox/releases)
 
 </p>
 
@@ -29,7 +29,7 @@
 
 ## 📌 Estado del proyecto
 
-> 🟠 **WPC-SutilBox se encuentra actualmente en Beta 1.**
+> 🟠 **WPC-SutilBox se encuentra en Beta 1.1.4** (`1.1.4-beta`, ensamblado `1.1.4.0`).
 
 Esta versión representa la nueva generación de la suite y se encuentra en una fase activa de **estabilización, verificación y corrección sobre hardware real**.
 
@@ -417,14 +417,21 @@ dotnet run -c Release
 ### Publicar para Windows x64
 
 ```powershell
+dotnet build -c Release
+# o, equivalente de publicación dependiente del runtime:
 dotnet publish -c Release -r win-x64 --self-contained false
 ```
 
-La salida se genera dentro del directorio correspondiente de:
+La salida se genera en `bin\Release\net8.0-windows\win-x64\`.
 
-```text
-bin\Release\
+Paquete zip portable (Beta 1.1.4):
+
+```powershell
+Compress-Archive -Path .\bin\Release\net8.0-windows\win-x64\* `
+  -DestinationPath .\bin\Release\WPC-SutilBox-1.1.4-beta-win-x64.zip
 ```
+
+Requiere **.NET 8 Desktop Runtime** en el equipo de destino. El manifiesto solicita ejecución como administrador.
 
 ---
 
@@ -432,14 +439,19 @@ bin\Release\
 
 La documentación del proyecto se está reorganizando bajo el principio de **Fuente Única de Verdad**.
 
-La estructura objetivo es:
+La estructura actual incluye:
 
 ```text
 docs/
-├── PRODUCT.md
+├── WPC-SUTILBOX_APP_IDENTITY.md
+├── PRODUCT.md / PRODUCT_BLUEPRINT_ES.md
 ├── ARCHITECTURE.md
 ├── PLAN_BETAS.md
+├── PLAN_WPC_SUTILBOX_BETA1.md
+├── BETA_1.1.3.md
+├── BETA_1.1.4.md
 ├── DEVELOPMENT.md
+├── ROADMAP.md
 └── CHANGELOG.md
 ```
 
@@ -450,8 +462,12 @@ docs/
 | [`PRODUCT.md`](docs/PRODUCT.md) | Identidad, propósito, filosofía y límites del producto. |
 | [`ARCHITECTURE.md`](docs/ARCHITECTURE.md) | Arquitectura, MVVM, servicios y reglas técnicas. |
 | [`PLAN_BETAS.md`](docs/PLAN_BETAS.md) | Plan maestro de Beta 1, Beta 2, Beta 3 y etapas posteriores. |
-| [`DEVELOPMENT.md`](docs/DEVELOPMENT.md) | Normas de desarrollo, compilación, asincronía y verificación. |
+| [`BETA_1.1.4.md`](docs/BETA_1.1.4.md) | Alcance, límites y validación de la Beta 1.1.4. |
+| [`DEVELOPMENT.md`](docs/DEVELOPMENT.md) | Normas de desarrollo, compilación, asincronía y empaquetado. |
 | [`CHANGELOG.md`](docs/CHANGELOG.md) | Historial de cambios confirmados. |
+| [`RELEASE_NOTES_v1.1.4.md`](release_versiones/RELEASE_NOTES_v1.1.4.md) | Notas de entrega del paquete 1.1.4-beta. |
+
+Paquete Release actual: `bin/Release/WPC-SutilBox-1.1.4-beta-win-x64.zip` (portable, requiere .NET 8 Desktop Runtime).
 
 > 📌 Los documentos históricos de pruebas de hardware no sustituyen la documentación principal. Se mantienen como **evidencia técnica** y referencia de campo.
 

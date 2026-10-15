@@ -5,7 +5,8 @@
 **Estado:** Borrador aprobado para revisión  
 **Producto:** WPC-SutilBox  
 **Prioridad actual:** SUTILBOX General  
-**Última actualización:** 2026-08-12
+**Última actualización:** 2026-10-15  
+**Versión de producto documentada:** Beta 1.1.4 (`1.1.4-beta`)
 
 ---
 

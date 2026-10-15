@@ -1,200 +1,76 @@
-# Cambios Implementados - WassControlSys
+﻿# Cambios implementados — WPC-SutilBox Beta 1.1.4
 
-## Fecha: 2025-12-20 (Actualización 1.1.4)
+**Fecha de cierre documental:** 2026-10-15  
+**Versión:** `1.1.4-beta` (`1.1.4.0`)  
+**Commit de implementación:** `9921711`  
+**Estado:** compilado en Release; validación manual en Windows pendiente
 
----
+Este documento sustituye la nota histórica de WassControlSys fechada en diciembre de 2025. Aquella nota describía otra generación del producto y no corresponde al código de esta beta.
 
-## ✅ CAMBIOS REALES IMPLEMENTADOS
+## Objetivo
 
-### 1. **Vista de Hardware** (`HardwareView.xaml`)
+Hacer verificable la aplicación de los perfiles de rendimiento existentes, sin ampliar la lista de ajustes del sistema.
 
-#### Pestaña "Discos" - Completamente Rediseñada
+## Comportamiento implementado
 
-**Sección Superior: Lista de Discos**
+1. `MainViewModel.ExecuteApplyPerformanceModeAsync` pide confirmación. Cancelar no modifica el sistema ni el modo visible.
+2. Solo se acepta un valor definido de `PerformanceMode`.
+3. `PerformanceProfileService.ApplyProfileAsync` exige `IRestorePointService` y un punto de restauración creado con éxito.
+4. El modo `General` (Equilibrado) llama a `RestoreOriginalStateAsync`.
+5. El snapshot guarda el plan de energía activo y, al detener servicios, su tipo de inicio y si estaban en ejecución. Solo se crea si aún no existe.
+6. Si `powercfg` no puede iniciarse o UAC devuelve la cancelación 1223, el flujo se detiene.
+7. Los nombres de `ServicesToStop` se deduplican sin distinguir mayúsculas.
+8. Una excepción en las acciones posteriores al plan devuelve fallo, aunque el plan ya se haya solicitado.
+9. La restauración no borra el snapshot si falla el plan o cualquier servicio. Lo borra solo cuando esas restauraciones reportan éxito.
+10. `CurrentMode` solo se actualiza cuando `ApplyProfileResult.Success` es verdadero.
 
-- ✅ DataGrid mejorado con información completa de discos
-- ✅ Columnas:
-  - **Disco**: Muestra el ID del dispositivo (ej: \\.\PHYSICALDRIVE0)
-  - **Modelo**: Muestra el modelo del disco
-  - **Capacidad**: Muestra la capacidad formateada
-  - **SMART**: Indicador visual con símbolos:
-    - ✓ OK (Verde #10B981) para discos saludables
-    - ✗ Error (Rojo #EF4444) para discos con problemas
-- ✅ Botón "Actualizar" alineado a la derecha para refrescar la información
-- ✅ Estilos mejorados con filas alternadas para mejor legibilidad
+## Archivos
 
-**Sección Inferior: Analizadores de Espacio**
+| Archivo | Cambio |
+|---|---|
+| `Core/PerformanceProfiles.cs` | Validación, punto de restauración, plan, snapshot, deduplicación y resultado explícito |
+| `Core/IPerformanceProfileService.cs` | Contrato `ApplyProfileResult` |
+| `ViewModels/MainViewModel.cs` | Confirmación, rechazo de selección inválida y estado visible condicionado al éxito |
+| `Views/DashboardView.xaml` | Etiqueta `Beta 1.1.4 · Perfiles de rendimiento` |
+| `WPC-SutilBox.csproj` | `1.1.4-beta`, `AssemblyVersion` y `FileVersion` `1.1.4.0` |
+| `app.manifest` | Identidad `1.1.4.0` y ejecución como administrador |
 
-- ✅ **DOS analizadores lado a lado** (C:\ y D:\)
-- ✅ Cada analizador tiene:
-  - Título "Analizador de Espacio"
-  - Botón para analizar el disco correspondiente
-  - Lista de carpetas con barras de progreso
-  - ScrollViewer con altura máxima de 300px
-- ✅ Diseño en dos columnas con separación de 20px
-- ✅ Fondo diferenciado (WindowBackgroundBrush) para distinguir cada analizador
+## Perfiles existentes que cubre el flujo
 
----
+| Perfil | `PerformanceMode` | Plan de energía predeterminado |
+|---|---|---|
+| Equilibrado | `General` | Restaura el GUID capturado |
+| Gaming | `Gamer` | Alto rendimiento |
+| Desarrollo | `Dev` | Equilibrado |
+| Productividad | `Oficina` | Equilibrado |
+| A tu medida | `Personalizado` | Configuración guardada o equilibrado |
 
-### 2. **Vista de Configuración** (`SettingsView.xaml`)
+Los ajustes concretos de cada perfil siguen saliendo de `ProfileConfig` y de la configuración persistida. Esta beta no redefine esa lista.
 
-#### Sección de Idioma Mejorada
+## Límites que el código deja abiertos
 
-- ✅ Diseño en dos columnas (Grid)
-- ✅ Columna izquierda:
-  - Título del idioma
-  - Texto explicativo en cursiva
-- ✅ Columna derecha:
-  - ComboBox con idiomas en MAYÚSCULAS:
-    - **ESPAÑOL**
-    - **INGLÉS**
-    - **PORTUGUÉS**
-- ✅ Estilos mejorados:
-  - Padding: 10,5
-  - FontWeight: SemiBold
-  - Background y Foreground adaptables al tema
+- `TrySetPowerPlan` inicia el proceso y no espera `WaitForExit` ni lee el código de salida.
+- `SetWindowsUpdateStatus`, `SetTelemetryStatus`, `SetIndexingStatus` y `SetNetworkThrottling` capturan errores sin devolver un resultado al flujo principal.
+- Esas acciones secundarias no forman parte del snapshot restaurable.
+- Un punto de restauración de Windows no equivale a revertir cada clave modificada por la aplicación.
 
-#### Modo Oscuro
+## Compilación
 
-- ✅ Toggle Switch ya implementado (☀️/🌙)
-- ✅ Funciona correctamente con binding a `IsDarkMode`
-
----
-
-### 3. **Vista de Rendimiento** (`RendimientoView.xaml`)
-
-#### Sección de Servicios Mejorada
-
-- ✅ Texto explicativo agregado arriba de la tabla
-- ✅ Botones de control inteligentes:
-  - **"Iniciar"** (SecondaryButtonStyle) - Solo visible cuando el servicio está detenido
-  - **"Detener"** (DangerButtonStyle - Rojo) - Solo visible cuando el servicio está activo
-- ✅ Uso de convertidores:
-  - `BooleanToVisibilityConverter` para botón "Detener"
-  - `InvertedBooleanToVisibilityConverter` para botón "Iniciar"
-
----
-
-## 🔧 CAMBIOS EN EL VIEWMODEL
-
-### Archivo: `MainViewModel.cs`
-
-#### Nueva Propiedad Agregada (Líneas 378-383)
-
-```csharp
-private ObservableCollection<FolderSizeInfo> _diskAnalysisResultD = new();
-public ObservableCollection<FolderSizeInfo> DiskAnalysisResultD
-{
-    get => _diskAnalysisResultD;
-    set { if (_diskAnalysisResultD != value) { _diskAnalysisResultD = value; OnPropertyChanged(); } }
-}
+```text
+dotnet build WPC-SutilBox.csproj -c Release
+Compilación correcta.
+0 Advertencia(s)
+0 Errores
 ```
 
-#### Método Modificado: `ExecuteAnalyzeDiskSpaceAsync` (Líneas 1599-1625)
+Salida: `bin/Release/net8.0-windows/win-x64/`.  
+Paquete: `bin/Release/WPC-SutilBox-1.1.4-beta-win-x64.zip`.
 
-```csharp
-private async Task ExecuteAnalyzeDiskSpaceAsync(string path)
-{
-    if (IsBusy) return;
-    if (string.IsNullOrEmpty(path)) path = "C:\\";
+## Prueba manual todavía pendiente
 
-    try
-    {
-        IsBusy = true;
-        StatusMessage = $"Analizando {path}...";
-        var items = await _diskAnalyzerService.AnalyzeDirectoryAsync(path);
-
-        // Actualizar la propiedad correcta según el disco
-        if (path.StartsWith("D:", StringComparison.OrdinalIgnoreCase))
-        {
-            DiskAnalysisResultD = new ObservableCollection<FolderSizeInfo>(items);
-        }
-        else
-        {
-            DiskAnalysisResult = new ObservableCollection<FolderSizeInfo>(items);
-        }
-    }
-    catch (Exception ex)
-    {
-        _log?.Error("Error analizando espacio", ex);
-        await _dialogService.ShowMessage(ex.Message, "Error");
-    }
-    finally { IsBusy = false; StatusMessage = ""; }
-}
-```
-
-**Cambio clave**: Ahora detecta si el disco es D:\ y actualiza la propiedad correspondiente (`DiskAnalysisResultD` o `DiskAnalysisResult`)
-
----
-
-## 📊 ESTADO DE COMPILACIÓN
-
-✅ **Compilación Exitosa**
-
-- 0 Advertencias
-- 0 Errores
-- Tiempo: 8.53 segundos
-
----
-
-## 📝 ARCHIVOS MODIFICADOS
-
-1. **`Views/HardwareView.xaml`** - Rediseño completo de la pestaña "Discos"
-2. **`Views/SettingsView.xaml`** - Mejora en la sección de idioma
-3. **`Views/RendimientoView.xaml`** - Mejora en la sección de servicios
-4. **`ViewModels/MainViewModel.cs`** - Agregada propiedad `DiskAnalysisResultD` y modificado método de análisis
-
----
-
-## 🎯 FUNCIONALIDADES IMPLEMENTADAS
-
-### Vista de Hardware
-
-1. ✅ Lista de discos con información completa (DeviceId, Model, Capacity, SMART)
-2. ✅ Indicadores SMART visuales con colores (Verde/Rojo)
-3. ✅ Botón "Actualizar" para refrescar información de discos
-4. ✅ Dos analizadores de espacio (C:\ y D:\) lado a lado
-5. ✅ Cada analizador independiente con su propia lista de resultados
-6. ✅ Barras de progreso para visualizar el uso de espacio
-
-### Vista de Configuración
-
-1. ✅ Selector de idioma mejorado con diseño de dos columnas
-2. ✅ Idiomas en mayúsculas para mejor visibilidad
-3. ✅ Texto explicativo en cursiva
-4. ✅ Estilos adaptables al tema (claro/oscuro)
-5. ✅ Toggle switch para modo oscuro (☀️/🌙)
-
-### Vista de Rendimiento
-
-1. ✅ Texto explicativo sobre el comportamiento de los botones
-2. ✅ Botones inteligentes que cambian según el estado del servicio
-3. ✅ Botón "Iniciar" verde para servicios detenidos
-4. ✅ Botón "Detener" rojo para servicios activos
-
----
-
-## 🚀 PRÓXIMOS PASOS
-
-1. **Ejecutar la aplicación** para verificar visualmente los cambios
-2. **Probar el analizador de discos** para C:\ y D:\
-3. **Verificar el cambio de idioma** en el selector
-4. **Probar los botones de servicios** (Iniciar/Detener)
-5. **Validar los indicadores SMART** de los discos
-
----
-
-## 📌 NOTAS IMPORTANTES
-
-- Los cambios están completamente implementados y compilados
-- No se agregaron textos descriptivos, se implementaron las funcionalidades REALES
-- La aplicación está lista para ejecutarse y probar
-- Todos los bindings están correctamente configurados
-- Los comandos ya existían en el ViewModel, solo se agregó la nueva propiedad
-
----
-
-**Desarrollador Original**: WilmerWass  
-**Implementación de Cambios**: Antigravity AI Assistant  
-**Proyecto**: WassControlSys v1.1.5  
-**Fecha**: 2025-12-22
+1. Registrar el plan activo y el estado de los servicios antes de aplicar.
+2. Cancelar el diálogo y comprobar que nada cambia.
+3. Aplicar un perfil elevado y confirmar que existe el punto de restauración.
+4. Cancelar UAC y comprobar que no continúan acciones secundarias.
+5. Volver a Equilibrado y comprobar solo los valores presentes en el snapshot.
+6. Forzar un servicio inexistente o denegado y comprobar que la interfaz no anuncia éxito.

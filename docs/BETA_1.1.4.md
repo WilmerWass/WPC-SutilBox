@@ -1,8 +1,9 @@
 # Beta 1.1.4 — Perfiles de rendimiento
 
-**Estado:** Implementación y compilación completadas; validación funcional en Windows pendiente.  
+**Estado:** Implementación y compilación Release completadas; validación funcional en Windows pendiente.  
 **Versión:** `1.1.4-beta` (`1.1.4.0`)  
-**Base:** commit local de Beta 1.1.3 `8b2735d`.
+**Fecha de empaquetado:** 2026-10-15  
+**Base:** commit de Beta 1.1.3 `8b2735d`; implementación en `9921711`.
 
 ## Objetivo
 
@@ -36,8 +37,10 @@ La creación de punto de restauración es un prerequisito en el servicio de perf
 
 ## Validación ejecutada
 
-- `dotnet build WPC-SutilBox.csproj -c Release --no-restore`: aprobado, 0 errores y 0 advertencias.
-- `dotnet test WPC-SutilBox.csproj -c Release --no-build`: no hay proyecto de pruebas automatizadas asociado; no se atribuyen pruebas funcionales.
+- `dotnet build WPC-SutilBox.csproj -c Release` (2026-10-15): aprobado, 0 errores y 0 advertencias.
+- No existe un proyecto de pruebas automatizadas; no se atribuyen pruebas funcionales.
+- Paquete portable dependiente del runtime: `bin/Release/WPC-SutilBox-1.1.4-beta-win-x64.zip` (requiere .NET 8 Desktop Runtime).
+- Paquete autocontenido (single-file): `bin/Release/WPC-SutilBox-1.1.4-beta-selfcontained.zip`. No requiere instalar .NET en el equipo de destino.
 - No se han ejecutado pruebas en un Windows interactivo elevado: aplicación de perfiles, creación de punto de restauración, cancelación UAC, inspección de cambios reales y restauración siguen pendientes de validación manual.
 
 ## Pruebas manuales pendientes
@@ -58,4 +61,4 @@ La creación de punto de restauración es un prerequisito en el servicio de perf
 
 ## Resultado
 
-Beta 1.1.4 deja más seguro y honesto el flujo de aplicación del perfil: solicita consentimiento, detiene el flujo ante prerequisitos/plan fallidos y no comunica éxito tras una excepción. No se declara completada la validación funcional del sistema ni restauración integral. Sin push; commit local por separado.
+Beta 1.1.4 deja más seguro y honesto el flujo de aplicación del perfil: solicita consentimiento, detiene el flujo ante prerequisitos o un plan fallido y no comunica éxito tras una excepción. No se declara completada la validación funcional del sistema ni la restauración integral.

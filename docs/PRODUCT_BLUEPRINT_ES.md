@@ -1,6 +1,6 @@
 # Blueprint de producto — WPC-SutilBox
 
-**Estado:** Beta / evolución activa  
+**Estado:** Beta 1.1.4 (`1.1.4-beta`) / evolución activa  
 **Producto prioritario:** WPC-SutilBox General
 
 > **Principio rector:** SUTILBOX debe explicar cada acción, evitar cambios aleatorios y dar al usuario control sobre lo que modifica.

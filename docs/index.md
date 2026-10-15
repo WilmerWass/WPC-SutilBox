@@ -11,6 +11,11 @@ Bienvenido a la documentación oficial del proyecto.
 - [Arquitectura](ARCHITECTURE.md) — cómo está construido técnicamente.
 - [Plan de Reinicio Beta 1](PLAN_WPC_SUTILBOX_BETA1.md) — qué estamos haciendo ahora y cuál es el estado de la Beta.
 - [Roadmap](ROADMAP.md) — dirección por etapas y versiones.
+- [Historial de cambios](CHANGELOG.md) — versiones publicadas y sus límites.
+- [Beta 1.1.4](BETA_1.1.4.md) — perfiles de rendimiento: alcance, validación y riesgos.
+- [Beta 1.1.3](BETA_1.1.3.md) — limpieza temporal controlada.
+- [Desarrollo](DEVELOPMENT.md) — normas de código y calidad.
+- [Plan de betas](PLAN_BETAS.md) — planificación por etapas.
 
 ## Orden recomendado de lectura
 
