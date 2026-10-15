@@ -4,72 +4,256 @@
              xmlns:models="clr-namespace:Wpc_SutilBox.Models"
              xmlns:core="clr-namespace:Wpc_SutilBox.Core"
              Background="{DynamicResource BackgroundBrush}">
-    <UserControl.Resources><ItemsPanelTemplate x:Key="TreemapItemsPanel"><core:SpaceTreemapPanel/></ItemsPanelTemplate></UserControl.Resources>
+    
+    <UserControl.Resources>
+        <ItemsPanelTemplate x:Key="TreemapItemsPanel">
+            <core:SpaceTreemapPanel/>
+        </ItemsPanelTemplate>
+    </UserControl.Resources>
+
     <Grid x:Name="RootLayout" Margin="20" MinWidth="0" MinHeight="0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0" Margin="0,0,0,12">
-            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+
+        <!-- HEADER -->
+        <Grid Grid.Row="0" Margin="0,0,0,14">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" Margin="0,0,12,0">
-                <TextBlock Text="Mapa de espacio" Style="{StaticResource HeaderTextStyle}" TextWrapping="Wrap"/>
-                <TextBlock Text="Explora el tamaño de tus carpetas y localiza archivos grandes o antiguos." Foreground="{DynamicResource SecondaryTextBrush}" TextWrapping="Wrap"/>
+                <TextBlock Text="Mapa de espacio" Style="{StaticResource HeaderTextStyle}" Margin="0,0,0,4"/>
+                <TextBlock Text="Visualiza la distribución proporcional de almacenamiento y localiza archivos grandes." 
+                           Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12"/>
             </StackPanel>
-            <Button Grid.Column="1" Content="← Volver" Command="{Binding BackCommand}" Style="{StaticResource SecondaryButtonStyle}" VerticalAlignment="Top"/>
+            <Button Grid.Column="1" Content="← Volver a Liberar espacio" Command="{Binding BackCommand}" 
+                    Style="{StaticResource SecondaryButtonStyle}" VerticalAlignment="Center" Padding="12,6"/>
         </Grid>
-        <Border Grid.Row="1" Style="{StaticResource AnimatedCardStyle}" Margin="0,0,0,12" Padding="12">
+
+        <!-- BARRA DE SELECCIÓN Y CONTROL -->
+        <Border Grid.Row="1" Style="{StaticResource AnimatedCardStyle}" Margin="0,0,0,14" Padding="14">
             <Grid>
-                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                <TextBox Grid.Column="0" MinWidth="0" Text="{Binding SelectedFolder, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center" Margin="0,0,8,0" ToolTip="Carpeta elegida para analizar"/>
-                <Button Grid.Column="1" Content="Elegir carpeta" Command="{Binding BrowseCommand}" Style="{StaticResource SecondaryButtonStyle}" Margin="0,0,8,0"/>
-                <Button Grid.Column="2" Content="Analizar" Command="{Binding AnalyzeCommand}" Style="{StaticResource PrimaryButtonStyle}" IsEnabled="{Binding IsScanning, Converter={StaticResource InverseBoolConverter}}" Margin="0,0,8,0"/>
-                <Button Grid.Column="3" Content="Cancelar" Command="{Binding CancelCommand}" Style="{StaticResource SecondaryButtonStyle}" IsEnabled="{Binding IsScanning}"/>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                
+                <TextBox Grid.Column="0" MinWidth="0" 
+                         Style="{StaticResource ModernTextBoxStyle}"
+                         Text="{Binding SelectedFolder, UpdateSourceTrigger=PropertyChanged}" 
+                         Margin="0,0,10,0" ToolTip="Ruta seleccionada para analizar"/>
+                
+                <Button Grid.Column="1" Content="📁   Elegir carpeta" Command="{Binding BrowseCommand}" 
+                        Style="{StaticResource SecondaryButtonStyle}" Margin="0,0,8,0" Padding="14,6"/>
+                
+                <Button Grid.Column="2" Content="⚡   Analizar" Command="{Binding AnalyzeCommand}" 
+                        Style="{StaticResource PrimaryButtonStyle}" 
+                        IsEnabled="{Binding IsScanning, Converter={StaticResource InverseBoolConverter}}" 
+                        Margin="0,0,8,0" Padding="18,6"/>
+                
+                <Button Grid.Column="3" Content="Cancelar" Command="{Binding CancelCommand}" 
+                        Style="{StaticResource SecondaryButtonStyle}" 
+                        IsEnabled="{Binding IsScanning}" Padding="14,6"/>
             </Grid>
         </Border>
+
+        <!-- CONTENIDO PRINCIPAL: MAPA (IZQ) Y TABLA (DER) -->
         <Grid Grid.Row="2" MinWidth="0" MinHeight="0">
-            <Grid.ColumnDefinitions><ColumnDefinition Width="1.1*"/><ColumnDefinition Width="1.4*"/></Grid.ColumnDefinitions>
-            <Grid Grid.Column="0" Margin="0,0,8,0" MinWidth="0" MinHeight="0">
-                <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
-                <TextBlock Grid.Row="0" Text="Mapa jerárquico · Archivos grandes y antiguos" FontSize="17" FontWeight="SemiBold" Foreground="White" Margin="2,0,2,10" TextWrapping="Wrap"/>
-                <Border Grid.Row="1" Style="{StaticResource AnimatedCardStyle}" Padding="8" MinWidth="0" MinHeight="0">
-                    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-                        <ItemsControl ItemsSource="{Binding Roots}">
-                            <ItemsControl.ItemTemplate><DataTemplate>
-                                <StackPanel Margin="0,0,0,10">
-                                    <TextBlock Text="{Binding Name}" ToolTip="{Binding Path}" Foreground="White" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
-                                    <TextBlock Text="{Binding FormattedSize}" Foreground="{DynamicResource PrimaryBrush}" Margin="0,0,0,6"/>
-                                    <ItemsControl ItemsSource="{Binding Children}" ItemsPanel="{StaticResource TreemapItemsPanel}">
-                                        <ItemsControl.ItemTemplate><DataTemplate>
-                                            <Border Background="{DynamicResource SurfaceElevatedBrush}" BorderBrush="{DynamicResource PrimaryBrush}" BorderThickness="1" CornerRadius="4" Margin="1" Padding="3" MinHeight="48" ToolTip="{Binding Path}">
-                                                <Grid><Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions><TextBlock Text="{Binding Name}" Foreground="White" TextTrimming="CharacterEllipsis" FontSize="10"/><TextBlock Grid.Row="1" Text="{Binding FormattedSize}" Foreground="{DynamicResource PrimaryBrush}" FontSize="9" TextTrimming="CharacterEllipsis"/></Grid>
-                                            </Border>
-                                        </DataTemplate></ItemsControl.ItemTemplate>
-                                    </ItemsControl>
-                                </StackPanel>
-                            </DataTemplate></ItemsControl.ItemTemplate>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1.1*"/>
+                <ColumnDefinition Width="1.3*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- COLUMNA IZQUIERDA: TREEMAP -->
+            <Grid Grid.Column="0" Margin="0,0,10,0" MinWidth="0" MinHeight="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Text="Mapa jerárquico de almacenamiento" 
+                           FontSize="15" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" 
+                           Margin="2,0,2,8"/>
+
+                <Border Grid.Row="1" Style="{StaticResource AnimatedCardStyle}" Padding="10" ClipToBounds="True">
+                    <Grid>
+                        <!-- Mensaje si no hay análisis -->
+                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"
+                                    Visibility="{Binding Roots.Count, Converter={StaticResource InvertedIntToVisibilityConverter}}">
+                            <TextBlock Text="🗺️" FontSize="36" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                            <TextBlock Text="Selecciona una carpeta y pulsa Analizar" 
+                                       Foreground="{DynamicResource TextSecondaryBrush}" 
+                                       FontWeight="SemiBold" FontSize="14" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Los bloques representarán visualmente los mayores consumidores de espacio." 
+                                       Foreground="{DynamicResource TextMutedBrush}" 
+                                       FontSize="11" HorizontalAlignment="Center" Margin="0,4,0,0" TextAlignment="Center"/>
+                        </StackPanel>
+
+                        <!-- Contenedor Treemap -->
+                        <ItemsControl ItemsSource="{Binding Roots}" 
+                                      Visibility="{Binding Roots.Count, Converter={StaticResource IntToVisibilityConverter}}"
+                                      ClipToBounds="True">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid ClipToBounds="True">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="*"/>
+                                        </Grid.RowDefinitions>
+
+                                        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="2,0,2,6">
+                                            <TextBlock Text="{Binding Name}" ToolTip="{Binding Path}" 
+                                                       Foreground="{DynamicResource TextPrimaryBrush}" FontWeight="Bold" FontSize="13" 
+                                                       TextTrimming="CharacterEllipsis"/>
+                                            <TextBlock Text=" · " Foreground="{DynamicResource TextMutedBrush}"/>
+                                            <TextBlock Text="{Binding FormattedSize}" Foreground="{DynamicResource PrimaryBrush}" 
+                                                       FontWeight="SemiBold" FontSize="12"/>
+                                        </StackPanel>
+
+                                        <!-- Panel de bloques 2D -->
+                                        <ItemsControl Grid.Row="1" ItemsSource="{Binding Children}" 
+                                                      ItemsPanel="{StaticResource TreemapItemsPanel}"
+                                                      ClipToBounds="True">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border Background="{Binding CategoryColor}"
+                                                            BorderBrush="#44FFFFFF"
+                                                            BorderThickness="1"
+                                                            CornerRadius="6"
+                                                            Padding="6,4"
+                                                            ClipToBounds="True"
+                                                            Cursor="Hand">
+                                                        <Border.ToolTip>
+                                                            <ToolTip Background="{DynamicResource SurfaceElevatedBrush}" 
+                                                                     BorderBrush="{DynamicResource BorderSubtleBrush}" 
+                                                                     Padding="10">
+                                                                <StackPanel>
+                                                                    <TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="White" FontSize="13"/>
+                                                                    <TextBlock Text="{Binding FormattedSize, StringFormat='Tamaño: {0}'}" 
+                                                                               Foreground="{DynamicResource PrimaryBrush}" FontWeight="SemiBold" FontSize="11" Margin="0,3"/>
+                                                                    <TextBlock Text="{Binding Category, StringFormat='Tipo: {0}'}" 
+                                                                               Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"/>
+                                                                    <TextBlock Text="{Binding Path}" Foreground="{DynamicResource TextMutedBrush}" 
+                                                                               FontSize="9" Margin="0,4,0,0" TextWrapping="Wrap" MaxWidth="350"/>
+                                                                </StackPanel>
+                                                            </ToolTip>
+                                                        </Border.ToolTip>
+
+                                                        <Grid ClipToBounds="True">
+                                                            <Grid.RowDefinitions>
+                                                                <RowDefinition Height="*"/>
+                                                                <RowDefinition Height="Auto"/>
+                                                            </Grid.RowDefinitions>
+                                                            <TextBlock Grid.Row="0" Text="{Binding Name}" Foreground="White" 
+                                                                       FontWeight="SemiBold" TextTrimming="CharacterEllipsis" FontSize="11"/>
+                                                            <TextBlock Grid.Row="1" Text="{Binding FormattedSize}" Foreground="#DDFFFFFF" 
+                                                                       FontSize="10" TextTrimming="CharacterEllipsis" Margin="0,2,0,0"/>
+                                                        </Grid>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
                         </ItemsControl>
-                    </ScrollViewer>
+                    </Grid>
                 </Border>
+
+                <!-- LEYENDA DE CATEGORÍAS -->
+                <WrapPanel Grid.Row="2" Margin="2,8,2,0">
+                    <StackPanel Orientation="Horizontal" Margin="0,2,10,2">
+                        <Border Width="10" Height="10" Background="#8B5CF6" CornerRadius="2" Margin="0,0,5,0"/>
+                        <TextBlock Text="Video" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,2,10,2">
+                        <Border Width="10" Height="10" Background="#3B82F6" CornerRadius="2" Margin="0,0,5,0"/>
+                        <TextBlock Text="Comprimido" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,2,10,2">
+                        <Border Width="10" Height="10" Background="#EF4444" CornerRadius="2" Margin="0,0,5,0"/>
+                        <TextBlock Text="Ejecutable" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,2,10,2">
+                        <Border Width="10" Height="10" Background="#10B981" CornerRadius="2" Margin="0,0,5,0"/>
+                        <TextBlock Text="Imagen" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,2,10,2">
+                        <Border Width="10" Height="10" Background="#14B8A6" CornerRadius="2" Margin="0,0,5,0"/>
+                        <TextBlock Text="Documento" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,2,10,2">
+                        <Border Width="10" Height="10" Background="#F59E0B" CornerRadius="2" Margin="0,0,5,0"/>
+                        <TextBlock Text="Temporal" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,2,10,2">
+                        <Border Width="10" Height="10" Background="#334155" CornerRadius="2" Margin="0,0,5,0"/>
+                        <TextBlock Text="Carpeta" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    </StackPanel>
+                </WrapPanel>
             </Grid>
-            <Grid Grid.Column="1" Margin="8,0,0,0" MinWidth="0" MinHeight="0">
-                <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-                <StackPanel Grid.Row="0" Margin="4,0,4,8"><TextBlock Text="Archivos encontrados" FontSize="17" FontWeight="SemiBold" Foreground="White" TextWrapping="Wrap"/><TextBlock Text="Ordena por tamaño o fecha; abre la ubicación o selecciona archivos." Foreground="{DynamicResource SecondaryTextBrush}" FontSize="12" TextWrapping="Wrap"/></StackPanel>
-                <DataGrid Grid.Row="1" MinWidth="0" ItemsSource="{Binding Files}" AutoGenerateColumns="False" IsReadOnly="False" CanUserSortColumns="True" SelectionMode="Extended" HeadersVisibility="Column" EnableRowVirtualization="True" VirtualizingPanel.IsVirtualizing="True" HorizontalScrollBarVisibility="Auto">
+
+            <!-- COLUMNA DERECHA: TABLA DE ARCHIVOS -->
+            <Grid Grid.Column="1" Margin="10,0,0,0" MinWidth="0" MinHeight="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0" Margin="2,0,2,8">
+                    <TextBlock Text="Archivos encontrados" FontSize="15" FontWeight="SemiBold" 
+                               Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    <TextBlock Text="Ordena por tamaño o fecha, abre su ubicación o selecciona para limpiar." 
+                               Foreground="{DynamicResource TextMutedBrush}" FontSize="11"/>
+                </StackPanel>
+
+                <DataGrid Grid.Row="1" MinWidth="0" ItemsSource="{Binding Files}" 
+                          AutoGenerateColumns="False" IsReadOnly="False" CanUserSortColumns="True" 
+                          SelectionMode="Extended" HeadersVisibility="Column" 
+                          EnableRowVirtualization="True" VirtualizingPanel.IsVirtualizing="True" 
+                          HorizontalScrollBarVisibility="Auto"
+                          Background="{DynamicResource SurfaceBrush}"
+                          BorderBrush="{DynamicResource BorderSubtleBrush}">
                     <DataGrid.Columns>
                         <DataGridCheckBoxColumn Header="✓" Binding="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" Width="36"/>
-                        <DataGridTextColumn Header="Nombre" Binding="{Binding Name}" Width="*" MinWidth="90" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="Nombre" Binding="{Binding Name}" Width="*" MinWidth="110" IsReadOnly="True"/>
                         <DataGridTextColumn Header="Categoría" Binding="{Binding Category}" Width="85" IsReadOnly="True"/>
-                        <DataGridTextColumn Header="Tamaño" Binding="{Binding FormattedSize}" Width="75" IsReadOnly="True"/>
-                        <DataGridTextColumn Header="Modificado" Binding="{Binding LastModified, StringFormat={}{0:yyyy-MM-dd}}" Width="90" IsReadOnly="True"/>
-                        <DataGridTemplateColumn Header="Ruta" Width="55"><DataGridTemplateColumn.CellTemplate><DataTemplate><Button Content="Abrir" Command="{Binding DataContext.OpenLocationCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Style="{StaticResource SecondaryButtonStyle}" Padding="3,2"/></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+                        <DataGridTextColumn Header="Tamaño" Binding="{Binding FormattedSize}" Width="80" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="Modificado" Binding="{Binding LastModified, StringFormat={}{0:yyyy-MM-dd}}" Width="95" IsReadOnly="True"/>
+                        <DataGridTemplateColumn Header="Acción" Width="65">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="Abrir" 
+                                            Command="{Binding DataContext.OpenLocationCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                                            CommandParameter="{Binding}" 
+                                            Style="{StaticResource SecondaryButtonStyle}" Padding="6,2" FontSize="11"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </DataGrid>
-                <Grid Grid.Row="2" Margin="0,8,0,0">
-                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" Text="{Binding Status}" Foreground="{DynamicResource SecondaryTextBrush}" VerticalAlignment="Center" TextWrapping="Wrap" Margin="0,0,8,0"/>
-                    <Button Grid.Column="1" Content="Borrar seleccionados" Command="{Binding DeleteSelectedCommand}" Style="{StaticResource SecondaryButtonStyle}" Background="#552222" Foreground="#FF9999" MaxWidth="170"/>
+
+                <!-- BARRA DE ACCIONES INFERIOR -->
+                <Grid Grid.Row="2" Margin="0,10,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="{Binding Status}" 
+                               Foreground="{DynamicResource TextSecondaryBrush}" 
+                               VerticalAlignment="Center" TextWrapping="Wrap" Margin="0,0,10,0" FontSize="11"/>
+                    <Button Grid.Column="1" Content="Borrar seleccionados" 
+                            Command="{Binding DeleteSelectedCommand}" 
+                            Style="{StaticResource SecondaryButtonStyle}" 
+                            Background="#451A1A" Foreground="#FF9999" BorderBrush="#663333"
+                            Padding="12,6"/>
                 </Grid>
             </Grid>
         </Grid>

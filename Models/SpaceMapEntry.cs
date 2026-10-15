@@ -15,6 +15,20 @@ public sealed class SpaceMapEntry : INotifyPropertyChanged
     public DateTime? LastModified { get; init; }
     public bool IsDirectory { get; init; }
     public string FormattedSize => FormatBytes(SizeBytes);
+    public string CategoryColor => Category switch
+    {
+        "Video" => "#8B5CF6",
+        "Audio" => "#0EA5E9",
+        "Imagen" => "#10B981",
+        "Ejecutable" => "#EF4444",
+        "Comprimido" => "#3B82F6",
+        "Imagen de disco" => "#F97316",
+        "Documento" => "#14B8A6",
+        "Temporal" => "#F59E0B",
+        "Código" => "#6366F1",
+        "Registro" => "#78716C",
+        _ => IsDirectory ? "#334155" : "#475569"
+    };
     public ObservableCollection<SpaceMapEntry> Children { get; } = new();
     public bool IsSelected { get => _isSelected; set { if (_isSelected == value) return; _isSelected = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsSelected))); } }
     public event PropertyChangedEventHandler? PropertyChanged;

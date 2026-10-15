@@ -47,7 +47,8 @@ public sealed class SpaceMapViewModel : ViewModelBase
     private async Task AnalyzeAsync()
     {
         if (IsScanning || IsDeleting) return;
-        var roots = new[] { SelectedFolder, System.IO.Path.GetTempPath(), System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "Temp") }.Where(path => !string.IsNullOrWhiteSpace(path)).Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
+        var folder = string.IsNullOrWhiteSpace(SelectedFolder) ? Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) : SelectedFolder;
+        var roots = new[] { folder }.Where(path => !string.IsNullOrWhiteSpace(path)).Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
         _scanCancellation = new CancellationTokenSource();
         IsScanning = true;
         Status = "Analizando carpetas…";

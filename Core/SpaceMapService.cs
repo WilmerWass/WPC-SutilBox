@@ -213,10 +213,16 @@ public sealed class SpaceMapService : ISpaceMapService
 
     private static string Categorize(string extension) => extension.ToLowerInvariant() switch
     {
-        ".tmp" or ".temp" => "Temporal",
+        ".mp4" or ".mkv" or ".avi" or ".mov" or ".wmv" or ".flv" or ".webm" => "Video",
+        ".mp3" or ".wav" or ".flac" or ".aac" or ".ogg" or ".m4a" => "Audio",
+        ".png" or ".jpg" or ".jpeg" or ".gif" or ".bmp" or ".webp" or ".svg" or ".jfif" or ".ico" => "Imagen",
+        ".exe" or ".msi" or ".msp" or ".bat" or ".cmd" or ".ps1" => "Ejecutable",
+        ".zip" or ".7z" or ".rar" or ".tar" or ".gz" or ".bz2" => "Comprimido",
+        ".iso" or ".img" or ".vmdk" or ".vhd" or ".vhdx" => "Imagen de disco",
+        ".pdf" or ".docx" or ".xlsx" or ".pptx" or ".txt" or ".csv" or ".doc" or ".xls" => "Documento",
+        ".tmp" or ".temp" or ".cache" or ".bak" or ".old" or ".dmp" => "Temporal",
+        ".cs" or ".js" or ".ts" or ".html" or ".css" or ".json" or ".xml" or ".py" or ".cpp" => "Código",
         ".log" => "Registro",
-        ".zip" or ".7z" or ".rar" => "Comprimido",
-        ".iso" or ".img" => "Imagen de disco",
         _ => "Archivo"
     };
 }

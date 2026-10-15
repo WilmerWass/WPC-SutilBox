@@ -6,11 +6,10 @@
              mc:Ignorable="d"
              d:DesignHeight="600" d:DesignWidth="1000"
              Background="{DynamicResource BackgroundBrush}">
-    <UserControl.DataContext>
-        <Binding Path="DataContext.StorageViewModel" RelativeSource="{RelativeSource AncestorType=Window}"/>
-    </UserControl.DataContext>
-
     <Grid Background="{DynamicResource BackgroundBrush}" ClipToBounds="True">
+        <Grid.DataContext>
+            <Binding Path="DataContext.StorageViewModel" RelativeSource="{RelativeSource AncestorType=Window}"/>
+        </Grid.DataContext>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -84,6 +83,7 @@
 
                 <DockPanel Grid.Row="0" Margin="0,0,0,10" LastChildFill="True">
                     <TextBox DockPanel.Dock="Right" Width="220" Margin="8,0,0,0" Padding="8,4"
+                             Style="{StaticResource ModernTextBoxStyle}"
                              Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" ToolTip="Filtrar por ruta"/>
                     <TextBlock Text="Archivos y carpetas encontrados" Style="{StaticResource HeaderTextStyle}"
                                FontSize="16" VerticalAlignment="Center"/>

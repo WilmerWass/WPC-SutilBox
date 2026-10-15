@@ -346,7 +346,7 @@
                         Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.RevisarPC}}"/>
 
                     <views:CleaningView Grid.Row="0" Grid.Column="0"
-                        Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Almacenamiento}}"/>
+                        Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Almacenamiento}}"/>
 
                     <views:SpaceMapView Grid.Row="0" Grid.Column="0"
                         Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.MapaEspacio}}"/>
