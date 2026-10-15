@@ -25,6 +25,7 @@ namespace Wpc_SutilBox
 
         private const int SW_RESTORE = 9;
         private readonly ServiceProvider? _serviceProvider;
+        public IServiceProvider Services => _serviceProvider!;
         private NotifyIcon? _notifyIcon;
         private System.Threading.Mutex? _instanceMutex;
         public bool IsShuttingDown { get; private set; }
@@ -91,6 +92,7 @@ namespace Wpc_SutilBox
             services.AddSingleton<IWingetService, WingetService>();
             services.AddSingleton<IDriverService, DriverService>();
             services.AddSingleton<IDiskAnalyzerService, DiskAnalyzerService>();
+            services.AddSingleton<ISpaceMapService, SpaceMapService>();
 
             services.AddTransient<ProfileEditorViewModel>();
             services.AddTransient<PcReviewViewModel>();   // Beta 1.2 — Revisar mi PC

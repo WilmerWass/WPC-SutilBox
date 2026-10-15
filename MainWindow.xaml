@@ -346,6 +346,9 @@
                     <views:CleaningView
                         Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Almacenamiento}"/>
 
+                    <views:SpaceMapView
+                        Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=MapaEspacio}"/>
+
                     <views:AplicacionesView
                         Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Aplicaciones}"/>
 

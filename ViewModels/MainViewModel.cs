@@ -235,6 +235,7 @@ namespace Wpc_SutilBox.ViewModels
         public ICommand OpenCleanmgrCommand { get; }
         public ICommand CleanTempFilesCommand { get; }
         public ICommand PreviewCleanupCommand { get; }
+        public ICommand OpenSpaceMapCommand { get; }
         public ICommand OpenLogFolderCommand { get; }
         public ICommand NavigateCommand { get; }
         public ICommand RunToolCommand { get; }
@@ -310,8 +311,9 @@ namespace Wpc_SutilBox.ViewModels
             CurrentView = this;
             OpenDiscordCommand = new RelayCommand(ExecuteOpenDiscord);
             OpenCleanmgrCommand = new RelayCommand(ExecuteOpenCleanmgr);
-            CleanTempFilesCommand = new AsyncRelayCommand(ExecuteCleanTempFilesAsync);
+            CleanTempFilesCommand = new AsyncRelayCommand(PreviewCleanupAsync);
             PreviewCleanupCommand = new AsyncRelayCommand(PreviewCleanupAsync);
+            OpenSpaceMapCommand = new RelayCommand(_ => CurrentSection = "MapaEspacio");
             OpenLogFolderCommand = new RelayCommand(ExecuteOpenLogFolder);
             RunToolCommand = new RelayCommand(ExecuteRunTool);
             RunSfcCommand = new AsyncRelayCommand(ExecuteRunSfcAsync);
@@ -584,6 +586,11 @@ namespace Wpc_SutilBox.ViewModels
         private async Task PreviewCleanupAsync()
         {
             if (IsBusy) return;
+            if (!CleanSystemTemp)
+            {
+                GeneralStatusMessage = "Activa Archivos Temporales para analizar la limpieza.";
+                return;
+            }
             if (_systemMaintenanceService == null || _dialogService == null)
             {
                 GeneralStatusMessage = "La limpieza controlada no está disponible.";
@@ -614,8 +621,11 @@ namespace Wpc_SutilBox.ViewModels
                     return;
                 }
 
+                var candidateList = string.Join(
+                    Environment.NewLine,
+                    CleanupCandidates.Select(candidate => $"• {candidate.Path} ({FormatBytes(candidate.SizeBytes)})"));
                 var confirmation = await _dialogService.ShowConfirmation(
-                    $"Se encontraron {CleanupCandidateCount} archivos temporales (aprox. {FormatBytes(CleanupEstimatedBytes)}).\n\nSolo se eliminarán los archivos enumerados en las carpetas temporales. No se vaciará la Papelera ni se limpiarán cachés de navegador o Windows Update.\n\n¿Deseas continuar?",
+                    $"Se encontraron {CleanupCandidateCount} archivos temporales (tamaño total estimado: {FormatBytes(CleanupEstimatedBytes)}).\n\nCandidatos que se intentarán eliminar:\n{candidateList}\n\nSolo se eliminarán estos archivos dentro de las carpetas temporales autorizadas. No se vaciará la Papelera ni se limpiarán cachés de navegador o Windows Update.\n\n¿Deseas continuar?",
                     "Revisar limpieza temporal");
                 if (!confirmation)
                 {
@@ -815,30 +825,6 @@ namespace Wpc_SutilBox.ViewModels
             {
                 MessageBox.Show($"No se pudo iniciar el Liberador de espacio: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-        }
-
-        private async Task ExecuteCleanTempFilesAsync()
-        {
-            await CleanTemporaryFilesCoreAsync();
-        }
-
-        private static async Task CleanTemporaryFilesCoreAsync()
-        {
-            await Task.Run(() =>
-            {
-                try
-                {
-                    string tempPath = Path.GetTempPath();
-                    foreach (var file in Directory.GetFiles(tempPath))
-                    {
-                        try { File.Delete(file); } catch { }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"Error limpiando temporales: {ex.Message}");
-                }
-            });
         }
 
         private void ExecuteOpenLogFolder()

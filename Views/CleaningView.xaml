@@ -32,11 +32,11 @@
                                     <CheckBox Content="Papelera de Reciclaje (no disponible en esta beta)" IsChecked="{Binding CleanRecycleBin}" IsEnabled="False" Foreground="White" Margin="0,5"/>
                                     <CheckBox Content="Caché de Navegadores (no disponible en esta beta)" IsChecked="{Binding CleanBrowserCache}" IsEnabled="False" Foreground="White" Margin="0,5"/>
                                     <CheckBox Content="Archivos Temporales" IsChecked="{Binding CleanSystemTemp}" Foreground="White" Margin="0,5"/>
-                                    <TextBlock Text="Se mostrará una previsualización y se pedirá confirmación antes de eliminar archivos." Foreground="#AAA" FontSize="11" TextWrapping="Wrap" Margin="0,8,0,12"/>
+                                    <TextBlock Text="Se analizarán los archivos temporales compatibles. Antes de eliminar, podrás revisar las rutas y tamaños estimados de cada candidato y confirmar la operación." Foreground="#AAA" FontSize="11" TextWrapping="Wrap" Margin="0,8,0,12"/>
                                 </StackPanel>
 
                                 <Button Content="LIMPIAR AHORA" Command="{Binding CleanTempFilesCommand}" Style="{StaticResource PrimaryButtonStyle}" Height="40" Margin="0,0,0,5"/>
-                                <Button Content="LIMPIEZA PROFUNDA (Sistema)" Command="{Binding CustomSpaceLiberatorCommand}" Style="{StaticResource SecondaryButtonStyle}" Height="35"/>
+                                <Button Content="Mapa de espacio" Command="{Binding OpenSpaceMapCommand}" Style="{StaticResource SecondaryButtonStyle}" Height="35" ToolTip="Visualiza el espacio ocupado y encuentra archivos grandes o antiguos."/>
                             </StackPanel>
                         </Border>
 

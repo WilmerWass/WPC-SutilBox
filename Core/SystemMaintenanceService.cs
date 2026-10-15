@@ -78,6 +78,13 @@ namespace Wpc_SutilBox.Core
                 cancellationToken.ThrowIfCancellationRequested();
                 if (!IsSafeCandidateDirectory(directory) || !Directory.Exists(directory) || !visited.Add(directory))
                     continue;
+                try
+                {
+                    if (IsReparsePoint(new DirectoryInfo(directory)))
+                        continue;
+                }
+                catch (IOException) { continue; }
+                catch (UnauthorizedAccessException) { continue; }
 
                 foreach (var file in SafeEnumerateTemporaryFiles(directory))
                 {
@@ -129,7 +136,17 @@ namespace Wpc_SutilBox.Core
                 {
                     var info = new FileInfo(candidate.Path);
                     if (!info.Exists || IsReparsePoint(info))
+                    {
+                        result.FilesSkipped++;
                         continue;
+                    }
+
+                    var directoryInfo = new DirectoryInfo(info.DirectoryName!);
+                    if (IsReparsePoint(directoryInfo))
+                    {
+                        result.FilesFailed++;
+                        continue;
+                    }
 
                     long size = info.Length;
                     File.Delete(info.FullName);
@@ -217,7 +234,11 @@ namespace Wpc_SutilBox.Core
                     allowedRoots.Add(Path.Combine(profile, "AppData", "Local", "Microsoft", "Windows", "INetCache") + Path.DirectorySeparatorChar);
                 }
             }
-            return allowedRoots.Any(root => fullPath.StartsWith(root, StringComparison.OrdinalIgnoreCase));
+            return allowedRoots.Any(root =>
+            {
+                string normalizedRoot = Path.GetFullPath(root).TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar;
+                return fullPath.StartsWith(normalizedRoot, StringComparison.OrdinalIgnoreCase);
+            });
         }
 
         private static bool IsSafeCandidateFile(string filePath)
@@ -316,6 +337,7 @@ namespace Wpc_SutilBox.Core
                 FoldersDeleted = r1.FoldersDeleted + r2.FoldersDeleted,
                 BytesFreed = r1.BytesFreed + r2.BytesFreed,
                 FilesFailed = r1.FilesFailed + r2.FilesFailed,
+                FilesSkipped = r1.FilesSkipped + r2.FilesSkipped,
                 FoldersFailed = r1.FoldersFailed + r2.FoldersFailed
             };
         }

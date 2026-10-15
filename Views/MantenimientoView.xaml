@@ -16,7 +16,7 @@
                         <StackPanel>
                             <TextBlock Text="Limpieza" FontSize="18" FontWeight="Bold" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,10"/>
                             <Button Content="Limpiar Temporales" Command="{Binding CleanTempFilesCommand}" Style="{StaticResource PrimaryButtonStyle}" Margin="0,0,0,5"
-                                    ToolTip="Elimina archivos temporales del sistema, papelera y caché del navegador para liberar espacio."/>
+                                    ToolTip="Analiza archivos temporales compatibles, muestra los candidatos y solicita confirmación antes de intentar eliminarlos."/>
                             <Button Content="Limpiar Prefetch" Command="{Binding CleanPrefetchCommand}" Style="{StaticResource SecondaryButtonStyle}" Margin="0,0,0,5"
                                     ToolTip="Borra los datos de pre-lectura de aplicaciones. Útil si alguna app no abre correctamente."/>
                             <Button Content="Limpiar DNS" Command="{Binding FlushDnsCommand}" Style="{StaticResource SecondaryButtonStyle}"
