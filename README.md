@@ -11,7 +11,10 @@
 [![.NET 8](https://img.shields.io/badge/.NET-8-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
 [![C# 12](https://img.shields.io/badge/C%23-12-239120?style=for-the-badge&logo=csharp&logoColor=white)](https://learn.microsoft.com/dotnet/csharp/)
 [![WPF](https://img.shields.io/badge/UI-WPF-68217A?style=for-the-badge)](https://learn.microsoft.com/dotnet/desktop/wpf/)
+[![CLI](https://img.shields.io/badge/CLI-Multiplatform-32CD32?style=for-the-badge&logo=terminal&logoColor=white)](CLI.md)
 [![Windows](https://img.shields.io/badge/Windows-10%20%2F%2011-0078D4?style=for-the-badge&logo=windows&logoColor=white)](https://www.microsoft.com/windows)
+[![Linux](https://img.shields.io/badge/Linux-CLI%20only-FCC624?style=for-the-badge&logo=linux&logoColor=black)](CLI.md)
+[![macOS](https://img.shields.io/badge/macOS-CLI%20only-555555?style=for-the-badge&logo=apple&logoColor=white)](CLI.md)
 [![Status](https://img.shields.io/badge/Status-Beta%201.1.4-F59E0B?style=for-the-badge)](https://github.com/WilmerWass/WPC-SutilBox/releases)
 
 </p>
@@ -21,6 +24,7 @@
 **[📥 Releases](https://github.com/WilmerWass/WPC-SutilBox/releases)** ·
 **[🐛 Issues](https://github.com/WilmerWass/WPC-SutilBox/issues)** ·
 **[📚 Documentación](#-documentación)** ·
+**[💻 CLI Multiplataforma](CLI.md)** ·
 **[🗺️ Plan de Betas](docs/PLAN_BETAS.md)**
 
 </p>
@@ -69,6 +73,32 @@ El proyecto sigue cuatro principios:
 - ❌ Un modificador irreversible del kernel.
 - ❌ Un ejecutor de scripts opacos.
 - ❌ Una aplicación que cambie configuraciones sin informar al usuario.
+
+---
+
+## 💻 SutilBox CLI — Versión multiplataforma
+
+Además de la interfaz gráfica para Windows, WPC-SutilBox incluye **SutilBox CLI** (`sbox`), una versión de línea de comandos que funciona en **Windows, Linux y macOS**.
+
+| Característica | WPF (Interfaz gráfica) | CLI (Terminal) |
+|---|---|---|
+| **Windows** | ✅ Completo | ✅ Completo |
+| **Linux** | ❌ No disponible | ✅ Completo |
+| **macOS** | ❌ No disponible | ✅ Completo |
+| **Escaneo completo** | ✅ | ✅ |
+| **Info del sistema** | ✅ | ✅ |
+| **Modo experto interactivo** | ✅ | ✅ |
+
+### Comandos principales
+
+```bash
+sbox scan              # Escaneo completo con score de salud
+sbox scan --expert     # Escaneo con modo experto interactivo
+sbox info              # Información del sistema (CPU, RAM, discos, red)
+sbox help              # Ayuda y uso
+```
+
+📖 **Guía completa del CLI:** [CLI.md](CLI.md)
 
 ---
 
