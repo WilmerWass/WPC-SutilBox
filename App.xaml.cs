@@ -94,11 +94,13 @@ namespace Wpc_SutilBox
             services.AddSingleton<IDiskAnalyzerService, DiskAnalyzerService>();
             services.AddSingleton<IStorageScanService, StorageScanService>();
             services.AddSingleton<ISpaceMapService, SpaceMapService>();
+            services.AddSingleton<ISystemScanService, SystemScanService>();
 
             services.AddTransient<StorageViewModel>();
             services.AddTransient<SpaceMapViewModel>();
             services.AddTransient<ProfileEditorViewModel>();
             services.AddTransient<PcReviewViewModel>();   // Beta 1.2 — Revisar mi PC
+            services.AddTransient<SmartScannerViewModel>(); // Escáner Inteligente
 
             services.AddSingleton<MainViewModel>();
             services.AddTransient<MainWindow>(s => new MainWindow(s.GetRequiredService<ILogService>()));

@@ -190,6 +190,18 @@
                                     CommandParameter="Historial"
                                     Style="{StaticResource NavButtonStyle}"/>
 
+                            <!-- ESCÁNER INTELIGENTE -->
+                            <TextBlock Text="DIAGNÓSTICO"
+                                       Margin="10,20,0,8"
+                                       FontSize="10"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextMutedBrush}"/>
+
+                            <Button Content="🔬   Escáner Inteligente"
+                                    Command="{Binding NavigateCommand}"
+                                    CommandParameter="Escaneo"
+                                    Style="{StaticResource NavButtonStyle}"/>
+
                         </StackPanel>
 
                     </ScrollViewer>
@@ -390,6 +402,9 @@
 
                     <views:SettingsView Grid.Row="0" Grid.Column="0"
                         Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Configuracion}}"/>
+
+                    <views:SmartScannerView Grid.Row="0" Grid.Column="0"
+                        Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Escaneo}}"/>
 
                 </Grid>
 

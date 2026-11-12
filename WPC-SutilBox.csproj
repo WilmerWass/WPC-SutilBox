@@ -7,6 +7,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
     <RootNamespace>Wpc_SutilBox</RootNamespace>
     
     <!-- Version Information -->
@@ -34,6 +35,13 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0" />
     <PackageReference Include="System.Management" Version="10.0.0" />
     <PackageReference Include="System.ServiceProcess.ServiceController" Version="10.0.0" />
+  </ItemGroup>
+
+  <!-- Exclude CLI project from WPF compilation -->
+  <ItemGroup>
+    <Compile Remove="SutilBox.CLI/**" />
+    <EmbeddedResource Remove="SutilBox.CLI/**" />
+    <None Include="SutilBox.CLI/**" />
   </ItemGroup>
 
   <ItemGroup>

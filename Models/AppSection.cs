@@ -19,7 +19,8 @@ namespace Wpc_SutilBox.Models
         Herramientas,
         Historial,
         Configuracion,
-        Hardware
+        Hardware,
+        Escaneo
     }
 }
 
