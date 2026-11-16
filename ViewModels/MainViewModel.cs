@@ -42,9 +42,13 @@ namespace Wpc_SutilBox.ViewModels
         private readonly ILogService? _logService;
         private readonly ILocalizationService? _localizationService;
         private readonly IDriverService? _driverService;
+        private readonly IBackupService? _backupService;
+        private readonly IRestoreService? _restoreService;
         private readonly ProfileEditorViewModel? _profileEditorViewModel;
         private CancellationTokenSource? _monitoringCts;
         private CancellationTokenSource? _driverExportCts;
+        private CancellationTokenSource? _backupCts;
+        private CancellationTokenSource? _restoreCts;
         private Task? _monitoringTask;
         private bool _settingsReady;
         private DateTime _lastIdleOptimization = DateTime.MinValue;
@@ -80,6 +84,37 @@ namespace Wpc_SutilBox.ViewModels
         private bool _isExportingDrivers;
         private int _driverExportProgress;
         private string _driverExportStatusMessage = string.Empty;
+
+        // Backup properties
+        private string _backupDestinationPath = string.Empty;
+        private bool _backupDrivers = true;
+        private bool _backupWifi = true;
+        private bool _backupSoftware = true;
+        private bool _backupUserSettings = true;
+        private bool _isBackupRunning;
+        private int _backupProgress;
+        private string _backupStatusMessage = string.Empty;
+        private string _backupProgressText = string.Empty;
+        private bool _backupCompleted;
+        private string _backupResultMessage = string.Empty;
+
+        // Restore properties
+        private string _selectedBackupPath = string.Empty;
+        private bool _hasSelectedBackup;
+        private DateTime _backupInfo = DateTime.MinValue;
+        private int _softwareCount;
+        private int _wifiCount;
+        private long _backupSize;
+        private bool _restoreDrivers = true;
+        private bool _restoreWifi = true;
+        private bool _restoreSoftware = true;
+        private bool _restoreUserSettings = true;
+        private bool _isRestoreRunning;
+        private int _restoreProgress;
+        private string _restoreStatusMessage = string.Empty;
+        private string _restoreProgressText = string.Empty;
+        private bool _restoreCompleted;
+        private string _restoreResultMessage = string.Empty;
 
         private object? _currentView;
         public object? CurrentView
@@ -125,6 +160,39 @@ namespace Wpc_SutilBox.ViewModels
         public int DriverExportProgress { get => _driverExportProgress; private set => SetProperty(ref _driverExportProgress, value); }
         public string DriverExportStatusMessage { get => _driverExportStatusMessage; private set => SetProperty(ref _driverExportStatusMessage, value); }
         public ProfileEditorViewModel? ProfileEditorViewModel => _profileEditorViewModel;
+
+        // Backup properties
+        public string BackupDestinationPath { get => _backupDestinationPath; set => SetProperty(ref _backupDestinationPath, value); }
+        public bool BackupDrivers { get => _backupDrivers; set => SetProperty(ref _backupDrivers, value); }
+        public bool BackupWifi { get => _backupWifi; set => SetProperty(ref _backupWifi, value); }
+        public bool BackupSoftware { get => _backupSoftware; set => SetProperty(ref _backupSoftware, value); }
+        public bool BackupUserSettings { get => _backupUserSettings; set => SetProperty(ref _backupUserSettings, value); }
+        public bool IsBackupRunning { get => _isBackupRunning; private set => SetProperty(ref _isBackupRunning, value); }
+        public int BackupProgress { get => _backupProgress; private set => SetProperty(ref _backupProgress, value); }
+        public string BackupStatusMessage { get => _backupStatusMessage; private set => SetProperty(ref _backupStatusMessage, value); }
+        public string BackupProgressText { get => _backupProgressText; private set => SetProperty(ref _backupProgressText, value); }
+        public bool BackupCompleted { get => _backupCompleted; private set => SetProperty(ref _backupCompleted, value); }
+        public string BackupResultMessage { get => _backupResultMessage; private set => SetProperty(ref _backupResultMessage, value); }
+
+        // Restore properties
+        public string SelectedBackupPath { get => _selectedBackupPath; private set { SetProperty(ref _selectedBackupPath, value); HasSelectedBackup = !string.IsNullOrEmpty(value); } }
+        public bool HasSelectedBackup { get => _hasSelectedBackup; private set => SetProperty(ref _hasSelectedBackup, value); }
+        public DateTime BackupInfo { get => _backupInfo; private set => SetProperty(ref _backupInfo, value); }
+        public int SoftwareCount { get => _softwareCount; private set => SetProperty(ref _softwareCount, value); }
+        public int WifiCount { get => _wifiCount; private set => SetProperty(ref _wifiCount, value); }
+        public long BackupSize { get => _backupSize; private set => SetProperty(ref _backupSize, value); }
+        public bool RestoreDrivers { get => _restoreDrivers; set => SetProperty(ref _restoreDrivers, value); }
+        public bool RestoreWifi { get => _restoreWifi; set => SetProperty(ref _restoreWifi, value); }
+        public bool RestoreSoftware { get => _restoreSoftware; set => SetProperty(ref _restoreSoftware, value); }
+        public bool RestoreUserSettings { get => _restoreUserSettings; set => SetProperty(ref _restoreUserSettings, value); }
+        public bool IsRestoreRunning { get => _isRestoreRunning; private set => SetProperty(ref _isRestoreRunning, value); }
+        public int RestoreProgress { get => _restoreProgress; private set => SetProperty(ref _restoreProgress, value); }
+        public string RestoreStatusMessage { get => _restoreStatusMessage; private set => SetProperty(ref _restoreStatusMessage, value); }
+        public string RestoreProgressText { get => _restoreProgressText; private set => SetProperty(ref _restoreProgressText, value); }
+        public bool RestoreCompleted { get => _restoreCompleted; private set => SetProperty(ref _restoreCompleted, value); }
+        public string RestoreResultMessage { get => _restoreResultMessage; private set => SetProperty(ref _restoreResultMessage, value); }
+
+        public ObservableCollection<BackupInfo> ExistingBackups { get; } = new();
 
         public ObservableCollection<StartupItem> StartupItems { get; } = new();
         public ObservableCollection<BloatwareApp> BloatwareApps { get; } = new();
@@ -271,7 +339,50 @@ namespace Wpc_SutilBox.ViewModels
         public ICommand ClearProcessSearchCommand { get; }
         public ICommand ExportDriversCommand { get; }
         public ICommand CancelDriverExportCommand { get; }
+
+        // Comandos de mantenimiento y optimización
+        public ICommand FlushDnsCommand { get; }
+        public ICommand CleanPrefetchCommand { get; }
+        public ICommand RebuildSearchIndexCommand { get; }
+        public ICommand ResetNetworkCommand { get; }
+        public ICommand AnalyzeDiskCommand { get; }
+        public ICommand RefreshDisksCommand { get; }
+        public ICommand AnalyzeCommand { get; }
+        public ICommand OptimizeCommand { get; }
+        public ICommand RefreshDriversCommand { get; }
+        public ICommand ReduceBackgroundProcessesCommand { get; }
+        public ICommand ClearServiceSearchCommand { get; }
+        public ICommand RefreshServicesCommand { get; }
+        public ICommand RefreshThermalCommand { get; }
+
+        // Backup & Restore commands
+        public ICommand? SelectBackupDestinationCommand { get; set; }
+        public ICommand? StartBackupCommand { get; set; }
+        public ICommand? CancelBackupCommand { get; set; }
+        public ICommand? RefreshBackupsCommand { get; set; }
+        public ICommand? OpenBackupFolderCommand { get; set; }
+        public ICommand? DeleteBackupCommand { get; set; }
+        public ICommand? SelectBackupCommand { get; set; }
+        public ICommand? SelectBackupByPathCommand { get; set; }
+        public ICommand? StartRestoreCommand { get; set; }
+        public ICommand? CancelRestoreCommand { get; set; }
+
+        // ==========================================
+        // ViewModels dedicados (Beta 1.2)
+        // ==========================================
         public StorageViewModel? StorageViewModel { get; }
+        public DashboardViewModel? DashboardViewModel { get; }
+        public PcReviewViewModel? PcReviewViewModel { get; }
+        public BatteryViewModel? BatteryViewModel { get; }
+        public DriversViewModel? DriversViewModel { get; }
+        public CleanupViewModel? CleanupViewModel { get; }
+        public StartupViewModel? StartupViewModel { get; }
+        public ProgramsViewModel? ProgramsViewModel { get; }
+        public RestorePointViewModel? RestorePointViewModel { get; }
+        public PrivacyViewModel? PrivacyViewModel { get; }
+        public HistoryViewModel? HistoryViewModel { get; }
+        public SpaceMapViewModel? SpaceMapViewModel { get; }
+        public NetworkTestViewModel? NetworkTestViewModel { get; }
 
         // ==========================================
         // 4. CONSTRUCTOR PRINCIPAL
@@ -294,9 +405,35 @@ namespace Wpc_SutilBox.ViewModels
             ProfileEditorViewModel? profileEditorViewModel = null,
             ILocalizationService? localizationService = null,
             IDriverService? driverService = null,
-            StorageViewModel? storageViewModel = null)
+            IBackupService? backupService = null,
+            IRestoreService? restoreService = null,
+            StorageViewModel? storageViewModel = null,
+            DashboardViewModel? dashboardViewModel = null,
+            PcReviewViewModel? pcReviewViewModel = null,
+            BatteryViewModel? batteryViewModel = null,
+            DriversViewModel? driversViewModel = null,
+            CleanupViewModel? cleanupViewModel = null,
+            StartupViewModel? startupViewModel = null,
+            ProgramsViewModel? programsViewModel = null,
+            RestorePointViewModel? restorePointViewModel = null,
+            PrivacyViewModel? privacyViewModel = null,
+            HistoryViewModel? historyViewModel = null,
+            SpaceMapViewModel? spaceMapViewModel = null,
+            NetworkTestViewModel? networkTestViewModel = null)
         {
             StorageViewModel = storageViewModel;
+            DashboardViewModel = dashboardViewModel;
+            PcReviewViewModel = pcReviewViewModel;
+            BatteryViewModel = batteryViewModel;
+            DriversViewModel = driversViewModel;
+            CleanupViewModel = cleanupViewModel;
+            StartupViewModel = startupViewModel;
+            ProgramsViewModel = programsViewModel;
+            RestorePointViewModel = restorePointViewModel;
+            PrivacyViewModel = privacyViewModel;
+            HistoryViewModel = historyViewModel;
+            SpaceMapViewModel = spaceMapViewModel;
+            NetworkTestViewModel = networkTestViewModel;
             _temperatureMonitorService = temperatureMonitorService;
             _diskHealthService = diskHealthService;
             _systemMaintenanceService = systemMaintenanceService;
@@ -314,6 +451,11 @@ namespace Wpc_SutilBox.ViewModels
             _profileEditorViewModel = profileEditorViewModel;
             _localizationService = localizationService;
             _driverService = driverService;
+            _backupService = backupService;
+            _restoreService = restoreService;
+
+            // Set default backup path
+            BackupDestinationPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "WPC-SutilBox Backups", DateTime.Now.ToString("yyyyMMdd_HHmmss"));
 
             ApplicationTitle = "WPC-SutilBox";
             SystemStatus = "WPC-SutilBox - Listo";
@@ -349,6 +491,34 @@ namespace Wpc_SutilBox.ViewModels
             ClearProcessSearchCommand = new RelayCommand(_ => ProcessSearchText = string.Empty);
             ExportDriversCommand = new AsyncRelayCommand(ExportDriversAsync);
             CancelDriverExportCommand = new RelayCommand(_ => _driverExportCts?.Cancel());
+
+            // Comandos de mantenimiento y optimización
+            FlushDnsCommand = new RelayCommand(ExecuteFlushDns);
+            CleanPrefetchCommand = new RelayCommand(ExecuteCleanPrefetch);
+            RebuildSearchIndexCommand = new RelayCommand(ExecuteRebuildSearchIndex);
+            ResetNetworkCommand = new RelayCommand(ExecuteResetNetwork);
+            AnalyzeDiskCommand = new RelayCommand(ExecuteAnalyzeDisk);
+            RefreshDisksCommand = new AsyncRelayCommand(_ => LoadDisksAsync());
+            AnalyzeCommand = new RelayCommand(ExecuteAnalyze);
+            OptimizeCommand = new AsyncRelayCommand(_ => ExecuteQuickOptimizeAsync());
+            RefreshDriversCommand = new AsyncRelayCommand(ExportDriversAsync);
+            ReduceBackgroundProcessesCommand = new RelayCommand(ExecuteReduceBackgroundProcesses);
+            ClearServiceSearchCommand = new RelayCommand(_ => { });
+            RefreshServicesCommand = new RelayCommand(_ => { });
+            RefreshThermalCommand = new AsyncRelayCommand(async () => { var ct = default(CancellationToken); await UpdateThermalAsync(ct); });
+
+            // Backup & Restore commands
+            SelectBackupDestinationCommand = new RelayCommand(SelectBackupDestination);
+            StartBackupCommand = new AsyncRelayCommand(StartBackupAsync);
+            CancelBackupCommand = new RelayCommand(_ => _backupCts?.Cancel());
+            RefreshBackupsCommand = new AsyncRelayCommand(RefreshBackupsAsync);
+            OpenBackupFolderCommand = new RelayCommand(p => OpenBackupFolder(p as string));
+            DeleteBackupCommand = new AsyncRelayCommand(DeleteBackupAsync);
+            SelectBackupCommand = new RelayCommand(SelectBackupFolder);
+            SelectBackupByPathCommand = new RelayCommand(p => SelectBackupByPath(p as string));
+            StartRestoreCommand = new AsyncRelayCommand(StartRestoreAsync);
+            CancelRestoreCommand = new RelayCommand(_ => _restoreCts?.Cancel());
+
             _ = LoadSettingsAsync();
 
             NavigateCommand = new RelayCommand(param =>
@@ -363,14 +533,18 @@ namespace Wpc_SutilBox.ViewModels
 
                     CurrentSection = targetSection;
                     WriteLog($"Navegando a la sección: {targetSection}");
-                    if (targetSection == AppSection.Aplicaciones)
+                    if (targetSection == AppSection.Desinstalador || targetSection == AppSection.Bloatware)
                     {
                         _ = RefreshStartupItemsAsync();
                         _ = RefreshBloatwareAppsAsync();
                     }
                     else if (targetSection == AppSection.Historial) RefreshLogs();
+                    else if (targetSection == AppSection.Dashboard && DashboardViewModel != null)
+                        _ = DashboardViewModel.RefreshAllAsync();
                 }
             });
+
+            _ = DashboardViewModel?.RefreshAllAsync();
 
             // Escribe un log de prueba al iniciar la app para verificar la ruta
             WriteLog("Aplicación iniciada correctamente en modo Debug.");
@@ -965,6 +1139,165 @@ namespace Wpc_SutilBox.ViewModels
         }
 
         // ==========================================
+        // 7b. COMANDOS DE MANTENIMIENTO Y OPTIMIZACIÓN
+        // ==========================================
+        private void ExecuteFlushDns()
+        {
+            try
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = "cmd.exe",
+                    Arguments = "/c ipconfig /flushdns",
+                    UseShellExecute = true,
+                    Verb = "runas"
+                });
+                GeneralStatusMessage = "DNS limpiado correctamente.";
+                WriteLog("DNS flush ejecutado.");
+            }
+            catch (Exception ex)
+            {
+                GeneralStatusMessage = $"Error al limpiar DNS: {ex.Message}";
+                WriteLog("Error al limpiar DNS", ex);
+            }
+        }
+
+        private void ExecuteCleanPrefetch()
+        {
+            try
+            {
+                string prefetchPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "Prefetch");
+                if (Directory.Exists(prefetchPath))
+                {
+                    int count = 0;
+                    foreach (var file in new DirectoryInfo(prefetchPath).EnumerateFiles("*.pf"))
+                    {
+                        try { file.Delete(); count++; } catch { }
+                    }
+                    GeneralStatusMessage = $"{count} archivos Prefetch eliminados.";
+                    WriteLog($"Prefetch limpiado: {count} archivos eliminados.");
+                }
+            }
+            catch (Exception ex)
+            {
+                GeneralStatusMessage = $"Error al limpiar Prefetch: {ex.Message}";
+                WriteLog("Error al limpiar Prefetch", ex);
+            }
+        }
+
+        private void ExecuteRebuildSearchIndex()
+        {
+            try
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = "control",
+                    Arguments = "srchadmin.dll",
+                    UseShellExecute = true
+                });
+                GeneralStatusMessage = "Abriendo configuración de índice de búsqueda.";
+                WriteLog("Índice de búsqueda - abierto panel de configuración.");
+            }
+            catch (Exception ex)
+            {
+                GeneralStatusMessage = $"Error al abrir índice de búsqueda: {ex.Message}";
+                WriteLog("Error al abrir índice de búsqueda", ex);
+            }
+        }
+
+        private void ExecuteResetNetwork()
+        {
+            try
+            {
+                var result = MessageBox.Show(
+                    "Se reiniciarán los componentes de red (Winsock, TCP/IP). ¿Desea continuar?",
+                    "Reiniciar Red",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning);
+                if (result != MessageBoxResult.Yes) return;
+
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = "cmd.exe",
+                    Arguments = "/c netsh winsock reset && netsh int ip reset && ipconfig /release && ipconfig /renew && ipconfig /flushdns",
+                    UseShellExecute = true,
+                    Verb = "runas"
+                });
+                GeneralStatusMessage = "Red reiniciada. Puede ser necesario reiniciar.";
+                WriteLog("Red reiniciada con netsh.");
+            }
+            catch (Exception ex)
+            {
+                GeneralStatusMessage = $"Error al reiniciar red: {ex.Message}";
+                WriteLog("Error al reiniciar red", ex);
+            }
+        }
+
+        private void ExecuteAnalyzeDisk()
+        {
+            try
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = "dfrgui.exe",
+                    UseShellExecute = true
+                });
+                GeneralStatusMessage = "Abriendo optimizador de discos.";
+                WriteLog("Optimizador de discos abierto.");
+            }
+            catch (Exception ex)
+            {
+                GeneralStatusMessage = $"Error al abrir optimizador: {ex.Message}";
+                WriteLog("Error al abrir optimizador de discos", ex);
+            }
+        }
+
+        private void ExecuteAnalyze(object? parameter)
+        {
+            CurrentSection = AppSection.MapaEspacio;
+            WriteLog("Navegando al mapa de espacio del disco.");
+        }
+
+        private void ExecuteReduceBackgroundProcesses()
+        {
+            try
+            {
+                var result = MessageBox.Show(
+                    "Se intentará reducir los procesos en segundo plano. Algunos servicios pueden reiniciarse. ¿Desea continuar?",
+                    "Reducir procesos",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question);
+                if (result != MessageBoxResult.Yes) return;
+
+                int count = 0;
+                var nonCritical = Process.GetProcesses()
+                    .Where(p => !s_criticalProcessNames.Contains(p.ProcessName, StringComparer.OrdinalIgnoreCase))
+                    .OrderBy(p => p.TotalProcessorTime.TotalSeconds)
+                    .Take(5)
+                    .ToList();
+
+                foreach (var p in nonCritical)
+                {
+                    try { p.Kill(); p.WaitForExit(1000); count++; } catch { }
+                }
+                GeneralStatusMessage = $"{count} procesos reducidos.";
+                WriteLog($"{count} procesos en segundo plano reducidos.");
+            }
+            catch (Exception ex)
+            {
+                GeneralStatusMessage = $"Error al reducir procesos: {ex.Message}";
+                WriteLog("Error al reducir procesos", ex);
+            }
+        }
+
+        private static readonly HashSet<string> s_criticalProcessNames = new(StringComparer.OrdinalIgnoreCase)
+        {
+            "System", "Idle", "Registry", "smss", "csrss", "wininit", "winlogon",
+            "services", "lsass", "svchost", "dwm", "fontdrvhost", "NisSrv",
+            "explorer", "sihost", "RuntimeBroker", "ShellExperienceHost"
+        };
+
+        // ==========================================
         // 7. MONITOREO Y ACTUALIZACIÓN ASÍNCRONA
         // ==========================================
         public async Task UpdateSystemUsageAsync()
@@ -1060,7 +1393,247 @@ namespace Wpc_SutilBox.ViewModels
         }
 
         // ==========================================
-        // 9. UTILIDAD DE REGISTRO (LOGS)
+        // 9. BACKUP & RESTORE MÉTODOS
+        // ==========================================
+        private void SelectBackupDestination()
+        {
+            // Usar la ruta por defecto en el escritorio
+            var defaultPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "WPC-SutilBox Backups", DateTime.Now.ToString("yyyyMMdd_HHmmss"));
+            var result = MessageBox.Show(
+                $"¿Deseas usar la carpeta por defecto para el backup?\n\n{defaultPath}",
+                "Confirmar carpeta de destino",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+            if (result == MessageBoxResult.Yes)
+            {
+                BackupDestinationPath = defaultPath;
+            }
+        }
+
+        private async Task StartBackupAsync()
+        {
+            if (_backupService == null || string.IsNullOrWhiteSpace(BackupDestinationPath))
+            {
+                GeneralStatusMessage = "Selecciona una carpeta de destino.";
+                return;
+            }
+
+            if (IsBackupRunning) return;
+
+            _backupCts = new CancellationTokenSource();
+            IsBackupRunning = true;
+            BackupProgress = 0;
+            BackupStatusMessage = "Iniciando copia de seguridad...";
+            BackupProgressText = "Preparando...";
+            BackupCompleted = false;
+            BackupResultMessage = string.Empty;
+
+            try
+            {
+                var progress = new Progress<(int Percentage, string Message)>(p =>
+                {
+                    BackupProgress = p.Percentage;
+                    BackupStatusMessage = p.Message;
+                    BackupProgressText = $"{p.Percentage}% completado";
+                });
+
+                var result = await _backupService.CreateFullBackupAsync(BackupDestinationPath, progress, _backupCts.Token);
+
+                if (result.Success)
+                {
+                    BackupCompleted = true;
+                    BackupResultMessage = result.Message;
+                    GeneralStatusMessage = "Copia de seguridad completada con éxito.";
+                    WriteLog($"Backup completado: {result.Message}");
+                    await RefreshBackupsAsync();
+                }
+                else
+                {
+                    BackupStatusMessage = result.Message;
+                    GeneralStatusMessage = result.Message;
+                    WriteLog($"Backup fallido: {result.Message}");
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                BackupStatusMessage = "Copia de seguridad cancelada.";
+                GeneralStatusMessage = "Copia de seguridad cancelada.";
+                WriteLog("Backup cancelado por el usuario.");
+            }
+            catch (Exception ex)
+            {
+                BackupStatusMessage = $"Error: {ex.Message}";
+                GeneralStatusMessage = $"Error: {ex.Message}";
+                WriteLog("Error en backup", ex);
+            }
+            finally
+            {
+                _backupCts?.Dispose();
+                _backupCts = null;
+                IsBackupRunning = false;
+            }
+        }
+
+        private async Task RefreshBackupsAsync()
+        {
+            if (_backupService == null) return;
+            var backups = await _backupService.GetExistingBackupsAsync();
+            ExistingBackups.Clear();
+            foreach (var backup in backups)
+                ExistingBackups.Add(backup);
+        }
+
+        private void OpenBackupFolder(string? path)
+        {
+            if (string.IsNullOrWhiteSpace(path) || !Directory.Exists(path)) return;
+            try
+            {
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = path,
+                    UseShellExecute = true,
+                    Verb = "open"
+                });
+            }
+            catch (Exception ex)
+            {
+                WriteLog($"Error al abrir carpeta de backup: {ex.Message}", ex);
+            }
+        }
+
+        private async Task DeleteBackupAsync(object? parameter)
+        {
+            if (_backupService == null || parameter is not string path) return;
+
+            var result = MessageBox.Show(
+                $"¿Estás seguro de que deseas eliminar este backup?\n\n{path}",
+                "Confirmar eliminación",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+
+            if (result != MessageBoxResult.Yes) return;
+
+            var success = await _backupService.DeleteBackupAsync(path);
+            if (success)
+            {
+                WriteLog($"Backup eliminado: {path}");
+                await RefreshBackupsAsync();
+            }
+        }
+
+        private void SelectBackupFolder()
+        {
+            // Refrescar la lista de backups y dejar que el usuario seleccione de la lista
+            _ = RefreshBackupsAsync();
+            MessageBox.Show(
+                "Selecciona un backup de la lista 'Backups Disponibles' más abajo, o haz clic en 'Actualizar' para refrescar la lista.",
+                "Seleccionar backup",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
+        }
+
+        private async void SelectBackupByPath(string? path)
+        {
+            if (string.IsNullOrWhiteSpace(path) || !Directory.Exists(path)) return;
+
+            SelectedBackupPath = path;
+            RestoreCompleted = false;
+            RestoreResultMessage = string.Empty;
+
+            if (_restoreService != null)
+            {
+                var manifest = await _restoreService.LoadBackupManifestAsync(path);
+                if (manifest != null)
+                {
+                    BackupInfo = manifest.CreatedAt;
+                    SoftwareCount = manifest.InstalledSoftware.Count;
+                    WifiCount = manifest.WifiProfiles.Count;
+                    BackupSize = manifest.TotalSizeBytes;
+                }
+            }
+        }
+
+        private async Task StartRestoreAsync()
+        {
+            if (_restoreService == null || string.IsNullOrWhiteSpace(SelectedBackupPath))
+            {
+                GeneralStatusMessage = "Selecciona un backup para restaurar.";
+                return;
+            }
+
+            if (IsRestoreRunning) return;
+
+            var result = MessageBox.Show(
+                "La restauración requiere privilegios de administrador y puede tardar varios minutos.\n\n¿Deseas continuar?",
+                "Confirmar restauración",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+
+            if (result != MessageBoxResult.Yes) return;
+
+            _restoreCts = new CancellationTokenSource();
+            IsRestoreRunning = true;
+            RestoreProgress = 0;
+            RestoreStatusMessage = "Iniciando restauración...";
+            RestoreProgressText = "Preparando...";
+            RestoreCompleted = false;
+            RestoreResultMessage = string.Empty;
+
+            try
+            {
+                var options = new RestoreOptions
+                {
+                    RestoreDrivers = RestoreDrivers,
+                    RestoreWifi = RestoreWifi,
+                    ReinstallSoftware = RestoreSoftware,
+                    RestoreUserSettings = RestoreUserSettings
+                };
+
+                var progress = new Progress<(int Percentage, string Message)>(p =>
+                {
+                    RestoreProgress = p.Percentage;
+                    RestoreStatusMessage = p.Message;
+                    RestoreProgressText = $"{p.Percentage}% completado";
+                });
+
+                var restoreResult = await _restoreService.RestoreFromBackupAsync(SelectedBackupPath, options, progress, _restoreCts.Token);
+
+                if (restoreResult.Success)
+                {
+                    RestoreCompleted = true;
+                    RestoreResultMessage = restoreResult.Message;
+                    GeneralStatusMessage = "Restauración completada con éxito.";
+                    WriteLog($"Restauración completada: {restoreResult.Message}");
+                }
+                else
+                {
+                    RestoreStatusMessage = restoreResult.Message;
+                    GeneralStatusMessage = restoreResult.Message;
+                    WriteLog($"Restauración fallida: {restoreResult.Message}");
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                RestoreStatusMessage = "Restauración cancelada.";
+                GeneralStatusMessage = "Restauración cancelada.";
+                WriteLog("Restauración cancelada por el usuario.");
+            }
+            catch (Exception ex)
+            {
+                RestoreStatusMessage = $"Error: {ex.Message}";
+                GeneralStatusMessage = $"Error: {ex.Message}";
+                WriteLog("Error en restauración", ex);
+            }
+            finally
+            {
+                _restoreCts?.Dispose();
+                _restoreCts = null;
+                IsRestoreRunning = false;
+            }
+        }
+
+        // ==========================================
+        // 10. UTILIDAD DE REGISTRO (LOGS)
         // ==========================================
         public static void WriteLog(string message, Exception? ex = null)
         {

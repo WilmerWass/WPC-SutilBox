@@ -15,7 +15,7 @@
 [![Windows](https://img.shields.io/badge/Windows-10%20%2F%2011-0078D4?style=for-the-badge&logo=windows&logoColor=white)](https://www.microsoft.com/windows)
 [![Linux](https://img.shields.io/badge/Linux-CLI%20only-FCC624?style=for-the-badge&logo=linux&logoColor=black)](CLI.md)
 [![macOS](https://img.shields.io/badge/macOS-CLI%20only-555555?style=for-the-badge&logo=apple&logoColor=white)](CLI.md)
-[![Status](https://img.shields.io/badge/Status-Beta%201.1.4-F59E0B?style=for-the-badge)](https://github.com/WilmerWass/WPC-SutilBox/releases)
+[![Status](https://img.shields.io/badge/Status-Beta%201.1.5-F59E0B?style=for-the-badge)](https://github.com/WilmerWass/WPC-SutilBox/releases)
 
 </p>
 
@@ -33,7 +33,7 @@
 
 ## 📌 Estado del proyecto
 
-> 🟠 **WPC-SutilBox se encuentra en Beta 1.1.4** (`1.1.4-beta`, ensamblado `1.1.4.0`).
+> 🟠 **WPC-SutilBox se encuentra en Beta 1.1.5** (`1.1.5-beta`, ensamblado `1.1.5.0`).
 
 Esta versión representa la nueva generación de la suite y se encuentra en una fase activa de **estabilización, verificación y corrección sobre hardware real**.
 
@@ -454,11 +454,11 @@ dotnet publish -c Release -r win-x64 --self-contained false
 
 La salida se genera en `bin\Release\net8.0-windows\win-x64\`.
 
-Paquete zip portable (Beta 1.1.4):
+Paquete zip portable (Beta 1.1.5):
 
 ```powershell
 Compress-Archive -Path .\bin\Release\net8.0-windows\win-x64\* `
-  -DestinationPath .\bin\Release\WPC-SutilBox-1.1.4-beta-win-x64.zip
+  -DestinationPath .\bin\Release\WPC-SutilBox-1.1.5-beta-win-x64.zip
 ```
 
 Requiere **.NET 8 Desktop Runtime** en el equipo de destino. El manifiesto solicita ejecución como administrador.
@@ -497,7 +497,7 @@ docs/
 | [`CHANGELOG.md`](docs/CHANGELOG.md) | Historial de cambios confirmados. |
 | [`RELEASE_NOTES_v1.1.4.md`](release_versiones/RELEASE_NOTES_v1.1.4.md) | Notas de entrega del paquete 1.1.4-beta. |
 
-Paquete Release actual: `bin/Release/WPC-SutilBox-1.1.4-beta-win-x64.zip` (portable, requiere .NET 8 Desktop Runtime).
+Paquete Release actual: `bin/Release/WPC-SutilBox-1.1.5-beta-win-x64.zip` (portable, requiere .NET 8 Desktop Runtime).
 
 > 📌 Los documentos históricos de pruebas de hardware no sustituyen la documentación principal. Se mantienen como **evidencia técnica** y referencia de campo.
 

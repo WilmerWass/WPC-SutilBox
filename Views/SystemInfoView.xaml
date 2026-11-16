@@ -105,7 +105,7 @@
                 </StackPanel>
                 <StackPanel Visibility="{Binding IsExportingDrivers, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="0,12,0,0">
                     <TextBlock Text="{Binding DriverExportStatusMessage}" Foreground="#888" FontSize="12" Margin="0,0,0,5"/>
-                    <ProgressBar Value="{Binding DriverExportProgress}" Maximum="100" Height="8" Foreground="{DynamicResource PrimaryBrush}"/>
+                    <ProgressBar Value="{Binding DriverExportProgress, Mode=OneWay}" Maximum="100" Height="8" Foreground="{DynamicResource PrimaryBrush}"/>
                 </StackPanel>
             </StackPanel>
         </Border>

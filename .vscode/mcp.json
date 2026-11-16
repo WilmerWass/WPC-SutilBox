@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "sutilbox": {
+      "command": "dotnet",
+      "args": [
+        "run",
+        "--project",
+        "SutilBox.McpServer/SutilBox.McpServer.csproj"
+      ]
+    },
+    "nuget": {
+      "command": "dnx",
+      "args": [
+        "NuGet.Mcp.Server",
+        "--yes"
+      ]
+    }
+  }
+}

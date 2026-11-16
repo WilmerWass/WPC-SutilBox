@@ -2,25 +2,48 @@ namespace Wpc_SutilBox.Models
 {
     public enum AppSection
     {
+        /* --- PRINCIPAL --- */
         Dashboard,
         RevisarPC,
-        Almacenamiento,
-        MapaEspacio,
-        Aplicaciones,
-        Juegos,
-        Rendimiento,
-        Proteccion,
-        Privacidad,
-        EditorPerfiles,
-        Actualizaciones,
+        /* --- DIAGNÓSTICO --- */
+        Batería,
+        Benchmark,
         Drivers,
+        SaludDiscos,
+        VerificarUSB,
+        Periféricos,
+        TestRed,
+        RepararWindows,
+        CompatibilidadWin11,
+        /* --- MANTENIMIENTO --- */
+        ArchivosDuplicados,
+        Limpieza,
+        MapaEspacio,
+        Almacenamiento,
+        Desinstalador,
+        Bloatware,
+        ProgramasInstalar,
+        ProgramasActualizar,
+        InicioWindows,
+        /* --- OPTIMIZACIÓN --- */
+        Optimizaciones,
+        Privacidad,
+        Rendimiento,
+        CentralDeshacer,
+        PuntosRestauracion,
+        /* --- BACKUP --- */
+        BackupFormatear,
+        PostFormateo,
+        /* --- HERRAMIENTAS --- */
         Red,
-        Reparacion,
         Herramientas,
+        /* --- SISTEMA --- */
         Historial,
         Configuracion,
         Hardware,
-        Escaneo
+        Escaneo,
+        AcercaDe,
+        Escala
     }
 }
 

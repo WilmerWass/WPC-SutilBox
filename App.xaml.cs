@@ -95,12 +95,27 @@ namespace Wpc_SutilBox
             services.AddSingleton<IStorageScanService, StorageScanService>();
             services.AddSingleton<ISpaceMapService, SpaceMapService>();
             services.AddSingleton<ISystemScanService, SystemScanService>();
+            services.AddSingleton<IHistoryService, HistoryService>();
+            services.AddSingleton<IPermissionService, PermissionService>();
+            services.AddSingleton<INetworkTestService, NetworkTestService>();
+            services.AddSingleton<IBackupService, BackupService>();
+            services.AddSingleton<IRestoreService, RestoreService>();
 
             services.AddTransient<StorageViewModel>();
             services.AddTransient<SpaceMapViewModel>();
             services.AddTransient<ProfileEditorViewModel>();
             services.AddTransient<PcReviewViewModel>();   // Beta 1.2 — Revisar mi PC
             services.AddTransient<SmartScannerViewModel>(); // Escáner Inteligente
+            services.AddTransient<DashboardViewModel>();
+            services.AddTransient<DriversViewModel>();
+            services.AddTransient<BatteryViewModel>();
+            services.AddTransient<CleanupViewModel>();
+            services.AddTransient<StartupViewModel>();
+            services.AddTransient<ProgramsViewModel>();
+            services.AddTransient<RestorePointViewModel>();
+            services.AddTransient<PrivacyViewModel>();
+            services.AddTransient<HistoryViewModel>();
+            services.AddTransient<NetworkTestViewModel>();
 
             services.AddSingleton<MainViewModel>();
             services.AddTransient<MainWindow>(s => new MainWindow(s.GetRequiredService<ILogService>()));
@@ -256,7 +271,7 @@ namespace Wpc_SutilBox
             }
 
             _notifyIcon?.Dispose();
-            _instanceMutex?.ReleaseMutex();
+            try { _instanceMutex?.ReleaseMutex(); } catch { }
             _instanceMutex?.Dispose();
             base.OnExit(e);
         }

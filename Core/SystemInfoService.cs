@@ -26,7 +26,7 @@ namespace Wpc_SutilBox.Core
                 yield return new System.Collections.Generic.KeyValuePair<string, string>("S.O.", OsVersion);
                 yield return new System.Collections.Generic.KeyValuePair<string, string>("Procesador", Processor);
                 yield return new System.Collections.Generic.KeyValuePair<string, string>("Memoria RAM", TotalRam);
-                yield return new System.Collections.Generic.KeyValuePair<string, string>("GrÃ¡ficos", Gpu);
+                yield return new System.Collections.Generic.KeyValuePair<string, string>("Gráficos", Gpu);
                 yield return new System.Collections.Generic.KeyValuePair<string, string>("Disco", SystemDisk);
                 yield return new System.Collections.Generic.KeyValuePair<string, string>("BIOS", BiosVersion);
                 yield return new System.Collections.Generic.KeyValuePair<string, string>("Red", NetworkInfo);
@@ -180,4 +180,3 @@ namespace Wpc_SutilBox.Core
         }
     }
 }
-

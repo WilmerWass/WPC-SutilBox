@@ -1,0 +1,297 @@
+<UserControl x:Class="Wpc_SutilBox.Views.RestoreView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="900">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- SUBHEADER -->
+        <Border Grid.Row="0" Margin="0,0,0,16" Padding="0,0,0,12" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="0,0,0,1">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Text="WPC-SutilBox" Foreground="{DynamicResource TextMutedBrush}" FontSize="12"/>
+                <TextBlock Text=" / Post-Formateo" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="12" Margin="4,0"/>
+            </StackPanel>
+        </Border>
+
+        <!-- CONTENIDO -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Margin="0,0,12,20">
+
+                <!-- TARJETA PRINCIPAL -->
+                <Border Style="{StaticResource AccentCardStyle}" Margin="0,0,0,18">
+                    <StackPanel Margin="0">
+                        <TextBlock Text="🔧 Post-Formateo" 
+                                   FontSize="22" FontWeight="Bold" 
+                                   Foreground="{DynamicResource TextPrimaryBrush}"
+                                   Margin="0,0,0,8"/>
+                        <TextBlock Text="Restaura tu sistema después de reinstalar Windows usando un backup previo. Selecciona qué componentes deseas restaurar." 
+                                   FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}"
+                                   TextWrapping="Wrap"
+                                   Margin="0,0,0,16"/>
+
+                        <!-- SELECCIÓN DE BACKUP -->
+                        <Border Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="8" Padding="14" Margin="0,0,0,12">
+                            <StackPanel>
+                                <TextBlock Text="📂 Seleccionar backup" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,6"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Border Grid.Column="0"
+                                            Background="{DynamicResource BackgroundBrush}"
+                                            BorderBrush="{DynamicResource BorderSubtleBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="6">
+                                        <TextBox Text="{Binding SelectedBackupPath, Mode=OneWay}"
+                                                 Padding="10,8"
+                                                 Background="Transparent"
+                                                 Foreground="{DynamicResource TextPrimaryBrush}"
+                                                 BorderThickness="0"
+                                                 IsReadOnly="True"/>
+                                    </Border>
+                                    <Button Grid.Column="1" 
+                                            Content="📁 Seleccionar"
+                                            Command="{Binding SelectBackupCommand}"
+                                            Padding="14,8"
+                                            Margin="8,0,0,0"
+                                            Background="{DynamicResource PrimaryBrush}"
+                                            Foreground="White"
+                                            BorderThickness="0"
+                                            Cursor="Hand"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- INFORMACIÓN DEL BACKUP -->
+                        <Border Visibility="{Binding HasSelectedBackup, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                Background="{DynamicResource SurfaceBrush}" 
+                                BorderBrush="{DynamicResource BorderSubtleBrush}" 
+                                BorderThickness="1" 
+                                CornerRadius="8" 
+                                Padding="14"
+                                Margin="0,0,0,12">
+                            <StackPanel>
+                                <TextBlock Text="ℹ️ Información del backup" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,8"/>
+                                <TextBlock FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4">
+                                    <Run Text="Creado: "/>
+                                    <Run Text="{Binding BackupInfo, Mode=OneWay, StringFormat={}{0:dd/MM/yyyy HH:mm}}" FontWeight="SemiBold"/>
+                                </TextBlock>
+                                <TextBlock FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4">
+                                    <Run Text="Programas: "/>
+                                    <Run Text="{Binding SoftwareCount, Mode=OneWay, StringFormat={}{0}}" FontWeight="SemiBold"/>
+                                </TextBlock>
+                                <TextBlock FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4">
+                                    <Run Text="Perfiles Wi-Fi: "/>
+                                    <Run Text="{Binding WifiCount, Mode=OneWay, StringFormat={}{0}}" FontWeight="SemiBold"/>
+                                </TextBlock>
+                                <TextBlock FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}">
+                                    <Run Text="Tamaño total: "/>
+                                    <Run Text="{Binding BackupSize, Mode=OneWay, StringFormat={}{0:N0} bytes}" FontWeight="SemiBold"/>
+                                </TextBlock>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- OPCIONES DE RESTAURACIÓN -->
+                        <Border Visibility="{Binding HasSelectedBackup, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                Background="{DynamicResource SurfaceBrush}" 
+                                BorderBrush="{DynamicResource BorderSubtleBrush}" 
+                                BorderThickness="1" 
+                                CornerRadius="8" 
+                                Padding="14" 
+                                Margin="0,0,0,12">
+                            <StackPanel>
+                                <TextBlock Text="⚙️ Qué restaurar" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,10"/>
+                                
+                                <CheckBox Content="🧩 Importar controladores (Drivers)" 
+                                          IsChecked="{Binding RestoreDrivers, Mode=TwoWay}"
+                                          Foreground="{DynamicResource TextPrimaryBrush}"
+                                          FontSize="12" Margin="0,0,0,6"/>
+                                
+                                <CheckBox Content="📡 Importar configuraciones Wi-Fi" 
+                                          IsChecked="{Binding RestoreWifi, Mode=TwoWay}"
+                                          Foreground="{DynamicResource TextPrimaryBrush}"
+                                          FontSize="12" Margin="0,0,0,6"/>
+                                
+                                <CheckBox Content="📦 Reinstalar programas con Winget" 
+                                          IsChecked="{Binding RestoreSoftware, Mode=TwoWay}"
+                                          Foreground="{DynamicResource TextPrimaryBrush}"
+                                          FontSize="12" Margin="0,0,0,6"/>
+                                
+                                <CheckBox Content="👤 Restaurar configuraciones de usuario" 
+                                          IsChecked="{Binding RestoreUserSettings, Mode=TwoWay}"
+                                          Foreground="{DynamicResource TextPrimaryBrush}"
+                                          FontSize="12" Margin="0,0,0,6"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- BOTÓN INICIAR RESTAURACIÓN -->
+                        <Button Content="🚀 Iniciar Restauración"
+                                Command="{Binding StartRestoreCommand}"
+                                Padding="16,12"
+                                FontSize="14"
+                                FontWeight="SemiBold"
+                                Background="{DynamicResource PrimaryBrush}"
+                                Foreground="White"
+                                BorderThickness="0"
+                                Cursor="Hand"
+                                HorizontalAlignment="Left"
+                                IsEnabled="{Binding IsRestoreRunning, Converter={StaticResource InverseBooleanConverter}}"
+                                Visibility="{Binding HasSelectedBackup, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                        <!-- BARRA DE PROGRESO -->
+                        <Border Visibility="{Binding IsRestoreRunning, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                Background="{DynamicResource SurfaceBrush}" 
+                                BorderBrush="{DynamicResource BorderSubtleBrush}" 
+                                BorderThickness="1" 
+                                CornerRadius="8" 
+                                Padding="14"
+                                Margin="0,12,0,0">
+                            <StackPanel>
+                                <TextBlock Text="{Binding RestoreStatusMessage}" 
+                                           FontSize="12" 
+                                           Foreground="{DynamicResource TextPrimaryBrush}"
+                                           Margin="0,0,0,8"/>
+                                <ProgressBar Value="{Binding RestoreProgress, Mode=OneWay}" 
+                                             Maximum="100"
+                                             Height="8"
+                                             Background="{DynamicResource BackgroundBrush}"
+                                             BorderThickness="0"/>
+                                <TextBlock Text="{Binding RestoreProgressText}" 
+                                           FontSize="11" 
+                                           Foreground="{DynamicResource TextMutedBrush}"
+                                           Margin="0,6,0,0"/>
+                                <Button Content="✖ Cancelar"
+                                        Command="{Binding CancelRestoreCommand}"
+                                        Padding="10,6"
+                                        Margin="0,10,0,0"
+                                        Background="{DynamicResource SurfaceElevatedBrush}"
+                                        Foreground="{DynamicResource TextSecondaryBrush}"
+                                        BorderThickness="0"
+                                        Cursor="Hand"
+                                        HorizontalAlignment="Left"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- RESULTADO DE LA RESTAURACIÓN -->
+                        <Border Visibility="{Binding RestoreCompleted, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                Background="#0A4A2C" 
+                                BorderBrush="#10B981" 
+                                BorderThickness="1" 
+                                CornerRadius="8" 
+                                Padding="14"
+                                Margin="0,12,0,0">
+                            <StackPanel>
+                                <TextBlock Text="✅ Restauración completada" 
+                                           FontSize="14" 
+                                           FontWeight="SemiBold"
+                                           Foreground="#10B981"
+                                           Margin="0,0,0,6"/>
+                                <TextBlock Text="{Binding RestoreResultMessage}" 
+                                           FontSize="12" 
+                                           Foreground="#6EE7B7"
+                                           TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- ADVERTENCIA -->
+                        <Border Background="#3B2F00" 
+                                BorderBrush="#F59E0B" 
+                                BorderThickness="1" 
+                                CornerRadius="8" 
+                                Padding="14"
+                                Margin="0,12,0,0">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="⚠️" FontSize="18" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                <StackPanel>
+                                    <TextBlock Text="Importante" FontSize="13" FontWeight="SemiBold" Foreground="#FCD34D"/>
+                                    <TextBlock Text="La restauración requiere privilegios de administrador. Algunos pasos pueden tardar varios minutos. Se recomienda reiniciar el equipo después de completar la restauración." 
+                                               FontSize="11" Foreground="#FDE68A" TextWrapping="Wrap" MaxWidth="500"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+                <!-- BACKUPS DISPONIBLES -->
+                <Border Style="{StaticResource AccentCardStyle}">
+                    <StackPanel Margin="0">
+                        <Grid Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="📦 Backups Disponibles" 
+                                       FontSize="16" FontWeight="SemiBold" 
+                                       Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <Button Grid.Column="1" 
+                                    Content="🔄 Actualizar"
+                                    Command="{Binding RefreshBackupsCommand}"
+                                    Padding="10,6"
+                                    Background="{DynamicResource SurfaceElevatedBrush}"
+                                    Foreground="{DynamicResource TextSecondaryBrush}"
+                                    BorderThickness="0"
+                                    Cursor="Hand"/>
+                        </Grid>
+
+                        <ItemsControl ItemsSource="{Binding ExistingBackups}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="{DynamicResource SurfaceBrush}" 
+                                            BorderBrush="{DynamicResource BorderSubtleBrush}" 
+                                            BorderThickness="1" 
+                                            CornerRadius="8" 
+                                            Padding="12"
+                                            Margin="0,0,0,8">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0">
+                                                <TextBlock Text="{Binding Description}" 
+                                                           FontSize="12" 
+                                                           FontWeight="SemiBold"
+                                                           Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                                <TextBlock FontSize="11" 
+                                                           Foreground="{DynamicResource TextMutedBrush}"
+                                                           Margin="0,4,0,0">
+                                                    <Run Text="Tamaño: "/>
+                                                    <Run Text="{Binding TotalSize, StringFormat={}{0:N0} bytes}"/>
+                                                    <Run Text=" | Items: "/>
+                                                    <Run Text="{Binding ItemsCount}"/>
+                                                </TextBlock>
+                                            </StackPanel>
+                                            <Button Grid.Column="1" 
+                                                    Content="Usar este backup"
+                                                    Command="{Binding DataContext.SelectBackupByPathCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    CommandParameter="{Binding Path}"
+                                                    Padding="10,6"
+                                                    Background="{DynamicResource PrimaryBrush}"
+                                                    Foreground="White"
+                                                    BorderThickness="0"
+                                                    Cursor="Hand"/>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <TextBlock Text="No se encontraron backups existentes. Crea un backup antes de formatear." 
+                                   FontSize="12" 
+                                   Foreground="{DynamicResource TextMutedBrush}"
+                                   FontStyle="Italic"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,20,0,0"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

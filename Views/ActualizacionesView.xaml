@@ -100,7 +100,7 @@
                                                     </StackPanel.Style>
                                                     <TextBlock Text="{Binding UpdateStatusMessage}" FontSize="10" 
                                                                Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,2"/>
-                                                    <ProgressBar Value="{Binding UpdateProgress}" Maximum="100" Height="6" 
+                                                    <ProgressBar Value="{Binding UpdateProgress, Mode=OneWay}" Maximum="100" Height="6" 
                                                                  BorderThickness="0" Background="#222"/>
                                                 </StackPanel>
                                             </Grid>

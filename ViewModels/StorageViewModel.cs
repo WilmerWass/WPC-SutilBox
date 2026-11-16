@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -9,6 +10,7 @@ using System.Windows.Input;
 using Microsoft.Win32;
 using Wpc_SutilBox.Core;
 using Wpc_SutilBox.Models;
+using System.Management;
 
 namespace Wpc_SutilBox.ViewModels;
 
@@ -41,6 +43,8 @@ public sealed class StorageViewModel : ViewModelBase
         CancelCommand = new RelayCommand(_ => _scanCancellation?.Cancel(), _ => IsScanning);
         BrowseFolderCommand = new RelayCommand(BrowseFolder);
         RefreshVolumesCommand = new RelayCommand(_ => RefreshVolumes(), _ => !IsScanning);
+        RefreshDiskHealthCommand = new AsyncRelayCommand(_ => RefreshDiskHealthAsync());
+        AnalyzeDiskSpaceCommand = new RelayCommand(AnalyzeDiskSpace);
     }
 
     public ObservableCollection<StorageVolumeInfo> Volumes { get; }
@@ -50,6 +54,8 @@ public sealed class StorageViewModel : ViewModelBase
     public ICommand CancelCommand { get; }
     public ICommand BrowseFolderCommand { get; }
     public ICommand RefreshVolumesCommand { get; }
+    public ICommand RefreshDiskHealthCommand { get; }
+    public ICommand AnalyzeDiskSpaceCommand { get; }
 
     public StorageVolumeInfo? SelectedVolume
     {
@@ -148,5 +154,60 @@ public sealed class StorageViewModel : ViewModelBase
         var unit = 0;
         while (size >= 1024 && unit < units.Length - 1) { size /= 1024; unit++; }
         return $"{size:0.##} {units[unit]}";
+    }
+
+    private async Task RefreshDiskHealthAsync()
+    {
+        StatusMessage = "Obteniendo información de salud de discos...";
+        try
+        {
+            Items.Clear();
+            Errors.Clear();
+            var drives = DriveInfo.GetDrives().Where(d => d.IsReady).ToList();
+            foreach (var drive in drives)
+            {
+                try
+                {
+                    string health = "Desconocido";
+                    try
+                    {
+                        using var searcher = new ManagementObjectSearcher("SELECT HealthStatus FROM Win32_DiskDrive");
+                        foreach (var mo in searcher.Get())
+                        {
+                            if (mo["PNPDeviceID"]?.ToString()?.Contains(drive.Name.TrimEnd('\\').Replace("\\", "\\\\")) == true)
+                            {
+                                health = mo["HealthStatus"]?.ToString() ?? "Desconocido";
+                                break;
+                            }
+                        }
+                    }
+                    catch { health = "No disponible"; }
+
+                    Items.Add(new StorageScanItem(
+                        Path: drive.Name,
+                        IsDirectory: true,
+                        SizeBytes: drive.TotalSize,
+                        LastWriteTimeUtc: null));
+                }
+                catch (Exception ex)
+                {
+                    Errors.Add(new StorageScanError(drive.Name, ex.Message));
+                }
+            }
+            StatusMessage = $"Salud de discos actualizada: {drives.Count} unidades.";
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Error al obtener salud de discos: {ex.Message}";
+        }
+    }
+
+    private void AnalyzeDiskSpace(object? parameter)
+    {
+        if (parameter is string path && Directory.Exists(path))
+        {
+            SelectedPath = path;
+            _ = ScanAsync();
+        }
     }
 }

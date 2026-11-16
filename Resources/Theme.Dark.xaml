@@ -7,32 +7,36 @@
     <!-- =============================================================== -->
 
     <!-- Accent -->
-    <Color x:Key="PrimaryColor">#3B82F6</Color>
-    <Color x:Key="PrimaryHoverColor">#60A5FA</Color>
+    <Color x:Key="PrimaryColor">#6366F1</Color>
+    <Color x:Key="PrimaryHoverColor">#818CF8</Color>
 
     <!-- Superficies -->
-    <Color x:Key="BackgroundColor">#121212</Color>
-    <Color x:Key="SurfaceColor">#1E1E1E</Color>
-    <Color x:Key="SurfaceElevatedColor">#252525</Color>
-    <Color x:Key="SurfaceHoverColor">#2A2A2A</Color>
+    <Color x:Key="BackgroundColor">#0F0F1A</Color>
+    <Color x:Key="SurfaceColor">#1A1A2E</Color>
+    <Color x:Key="SurfaceElevatedColor">#222240</Color>
+    <Color x:Key="SurfaceHoverColor">#2A2A4A</Color>
 
     <!-- Texto -->
-    <Color x:Key="TextPrimaryColor">#FFFFFF</Color>
-    <Color x:Key="TextSecondaryColor">#C8C8C8</Color>
-    <Color x:Key="TextMutedColor">#888888</Color>
+    <Color x:Key="TextPrimaryColor">#F1F5F9</Color>
+    <Color x:Key="TextSecondaryColor">#CBD5E1</Color>
+    <Color x:Key="TextMutedColor">#64748B</Color>
 
     <!-- Bordes -->
-    <Color x:Key="BorderColor">#444444</Color>
-    <Color x:Key="BorderSubtleColor">#333333</Color>
+    <Color x:Key="BorderColor">#334155</Color>
+    <Color x:Key="BorderSubtleColor">#1E293B</Color>
 
     <!-- Estados semánticos -->
-    <Color x:Key="SuccessColor">#22C55E</Color>
+    <Color x:Key="SuccessColor">#10B981</Color>
     <Color x:Key="WarningColor">#F59E0B</Color>
     <Color x:Key="DangerColor">#EF4444</Color>
-    <Color x:Key="InfoColor">#3B82F6</Color>
+    <Color x:Key="InfoColor">#6366F1</Color>
 
     <!-- Selección -->
-    <Color x:Key="SelectionColor">#403B82F6</Color>
+    <Color x:Key="SelectionColor">#406366F1</Color>
+
+    <!-- Gradientes y efectos -->
+    <Color x:Key="AccentGlowColor">#8B5CF6</Color>
+    <Color x:Key="CardShadowColor">#000000</Color>
 
     <!-- =============================================================== -->
     <!-- Brushes canónicos                                                -->
@@ -61,5 +65,41 @@
     <SolidColorBrush x:Key="InfoBrush" Color="{DynamicResource InfoColor}"/>
 
     <SolidColorBrush x:Key="SelectionBrush" Color="{DynamicResource SelectionColor}"/>
+
+    <!-- Brushes adicionales usados en vistas -->
+    <SolidColorBrush x:Key="GrayBrush" Color="#64748B"/>
+    <SolidColorBrush x:Key="ErrorBrush" Color="{DynamicResource DangerColor}"/>
+
+    <!-- =============================================================== -->
+    <!-- Gradientes y efectos visuales                                    -->
+    <!-- =============================================================== -->
+    <SolidColorBrush x:Key="AccentGlowBrush" Color="{DynamicResource AccentGlowColor}"/>
+
+    <!-- Gradiente principal para botones y headers -->
+    <LinearGradientBrush x:Key="PrimaryGradientBrush" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Offset="0" Color="#6366F1"/>
+        <GradientStop Offset="1" Color="#8B5CF6"/>
+    </LinearGradientBrush>
+
+    <!-- Gradiente sutil para tarjetas -->
+    <LinearGradientBrush x:Key="CardGradientBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0" Color="#1A1A2E"/>
+        <GradientStop Offset="1" Color="#16162A"/>
+    </LinearGradientBrush>
+
+    <!-- Gradiente para header -->
+    <LinearGradientBrush x:Key="HeaderGradientBrush" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Offset="0" Color="#0F0F1A"/>
+        <GradientStop Offset="1" Color="#1A1A2E"/>
+    </LinearGradientBrush>
+
+    <!-- Sombra para tarjetas -->
+    <DropShadowEffect x:Key="CardShadow" BlurRadius="12" ShadowDepth="4" Direction="270" Color="#000000" Opacity="0.3"/>
+
+    <!-- Sombra suave para botones -->
+    <DropShadowEffect x:Key="ButtonShadow" BlurRadius="8" ShadowDepth="2" Direction="270" Color="#6366F1" Opacity="0.25"/>
+
+    <!-- Glow para elementos activos -->
+    <DropShadowEffect x:Key="ActiveGlow" BlurRadius="15" ShadowDepth="0" Direction="0" Color="#6366F1" Opacity="0.4"/>
 
 </ResourceDictionary>

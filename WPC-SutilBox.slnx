@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="SutilBox.McpServer/SutilBox.McpServer.csproj" />
+  <Project Path="WPC-SutilBox.csproj" />
+</Solution>

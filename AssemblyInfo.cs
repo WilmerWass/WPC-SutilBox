@@ -1,4 +1,8 @@
-﻿using System.Windows;
+﻿using System.Reflection;
+using System.Windows;
+
+[assembly: AssemblyVersion("1.1.5.0")]
+[assembly: AssemblyFileVersion("1.1.5.0")]
 
 [assembly:ThemeInfo(
     ResourceDictionaryLocation.None,            //donde se encuentran los diccionarios de recursos específicos del tema
@@ -8,4 +12,3 @@
                                                 //(utilizado si un recurso no se encuentra en la página,
                                                 // aplicación, o cualquier diccionario de recursos específicos del tema)
 )]
-

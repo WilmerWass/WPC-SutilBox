@@ -16,7 +16,18 @@ Este documento es la **ÚNICA fuente oficial de planificación** de WPC-SutilBox
 ---
 
 ## ESTADO ACTUAL DEL PROYECTO
-Nos encontramos oficialmente en **BETA 1.1.4** (`1.1.4-beta` / ensamblado `1.1.4.0`), dentro de la fase de estabilización y calidad.
+Nos encontramos oficialmente en **BETA 1.1.5** (`1.1.5-beta` / ensamblado `1.1.5.0`), dentro de la fase de estabilización y calidad.
+
+La Beta 1.1.5 reorganiza completamente la página de inicio (Dashboard) transformándola de una vista informativa pasiva a una central de control accionable. Incluye: score de salud del PC, acciones rápidas a las herramientas más usadas, alertas contextuales dinámicas, y actividad reciente. El detalle está en el plan `dashboard-1-1-5-reorg.md`.
+
+* 🟢 Dashboard accionable con score de salud, 8 acciones rápidas, alertas dinámicas y actividad reciente.
+* 🟢 Métricas compactas en barra superior con saludo contextual.
+* ⚪ Eliminación de perfiles de rendimiento del dashboard (se mantienen en sección Rendimiento).
+* 🟢 Compilación Release: 0 errores y 0 advertencias.
+
+---
+
+### Beta 1.1.4 (Anterior)
 
 La Beta 1.1.4 hace verificable el flujo de perfiles de rendimiento ya existente. No amplía el catálogo de ajustes. El detalle, los límites y la validación pendiente están en [BETA_1.1.4.md](BETA_1.1.4.md).
 

@@ -197,17 +197,37 @@ namespace Wpc_SutilBox.Core
                         await process.WaitForExitAsync(ct);
                     }
 
-                    if (process.ExitCode == 0)
+                    // Códigos de salida comunes de Winget:
+                    // 0 = Éxito
+                    // 9 = Ya instalado (versión actual)
+                    // 1618 = Otra instalación en progreso
+                    // 1638 = Conflicto con Windows Installer
+                    // 1602 = Cancelado por el usuario
+                    // 1603 = Error fatal genérico
+                    // 1978335198 (0x76A1068E) = Error de manifiesto (a veces éxito)
+                    // 2 = No encontrado
+                    int exitCode = process.ExitCode;
+                    if (exitCode == 0 || exitCode == 9 || exitCode == 1978335198)
                     {
                         progress?.Report((100, "Actualización completada."));
+                        _log.Info($"[Winget] Actualización de {appId} completada (código {exitCode}).");
                         return true;
+                    }
+                    else if (exitCode == 1602)
+                    {
+                        progress?.Report((100, "Actualización cancelada por el usuario."));
+                        return false;
+                    }
+                    else if (exitCode == 1618 || exitCode == 1638)
+                    {
+                        progress?.Report((100, "Otra instalación en progreso. Intenta más tarde."));
+                        _log.Warn($"[Winget] Conflicto de instalación (código {exitCode}).");
+                        return false;
                     }
                     else
                     {
-                        _log.Warn($"Winget finalizó con código de salida: {process.ExitCode}");
-                        progress?.Report((100, "Error en la actualización."));
-                        // Código 1978335198 puede aparecer en algunas instalaciones exitosas.
-                        // Código 9 podría requerir atención, pero a veces es solo una advertencia.
+                        _log.Warn($"[Winget] Actualización de {appId} falló con código {exitCode}.");
+                        progress?.Report((100, $"Error en la actualización (código {exitCode})."));
                         return false;
                     }
                 }

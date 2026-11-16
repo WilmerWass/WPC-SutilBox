@@ -1,0 +1,57 @@
+<UserControl x:Class="Wpc_SutilBox.Views.PlaceholderView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="400" d:DesignWidth="800">
+    <Grid Style="{StaticResource AnimatedViewStyle}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- SUBHEADER -->
+        <Border Grid.Row="0" Margin="0,0,0,16" Padding="0,0,0,12" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="0,0,0,1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="WPC-SutilBox" Foreground="{DynamicResource TextMutedBrush}" FontSize="12"/>
+                    <TextBlock Text=" / " Foreground="{DynamicResource TextMutedBrush}" FontSize="12" Margin="4,0"/>
+                    <TextBlock Text="{Binding SectionName, RelativeSource={RelativeSource AncestorType=UserControl}}" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="12"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- CONTENIDO CENTRADO -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Margin="0,0,12,20">
+                <Border Style="{StaticResource AccentCardStyle}" Margin="0,0,0,18">
+                    <StackPanel Margin="0">
+                        <TextBlock Text="{Binding Title, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                                   FontSize="22" FontWeight="Bold" 
+                                   Foreground="{DynamicResource TextPrimaryBrush}"
+                                   Margin="0,0,0,8"/>
+                        <TextBlock Text="{Binding Description, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                                   FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}"
+                                   TextWrapping="Wrap"
+                                   Margin="0,0,0,16"/>
+                        <Border Background="#1A6366F1" BorderBrush="#336366F1" BorderThickness="1" CornerRadius="8" Padding="12,10" Margin="0,0,0,0">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="🚧" FontSize="18" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                <StackPanel>
+                                    <TextBlock Text="Módulo en desarrollo" FontSize="13" FontWeight="SemiBold" Foreground="#A5B4FC"/>
+                                    <TextBlock Text="Esta funcionalidad se está implementando. Consulta el historial de actualizaciones para más detalles." 
+                                               FontSize="11" Foreground="#94A3B8" TextWrapping="Wrap" MaxWidth="500"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

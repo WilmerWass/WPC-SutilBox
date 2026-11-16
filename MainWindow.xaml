@@ -76,7 +76,7 @@
                     <!-- ================================================= -->
 
                     <ScrollViewer Grid.Row="1"
-                                  VerticalScrollBarVisibility="Hidden"
+                                  VerticalScrollBarVisibility="Auto"
                                   HorizontalScrollBarVisibility="Disabled">
 
                         <StackPanel Margin="12,0">
@@ -87,65 +87,132 @@
                                 </Style>
                             </StackPanel.Resources>
 
-                            <!-- GRUPO PRINCIPAL -->
+                            <!-- PRINCIPAL -->
                             <TextBlock Text="PRINCIPAL"
                                        Margin="10,0,0,8"
                                        FontSize="10"
                                        FontWeight="SemiBold"
                                        Foreground="{DynamicResource TextMutedBrush}"/>
 
-                            <Button Content="🏠   Inicio"
+                            <Button Content="🏠   Panel principal"
                                     Command="{Binding NavigateCommand}"
                                     CommandParameter="Dashboard"
                                     Style="{StaticResource NavButtonStyle}"/>
 
-                            <Button Content="🔍   Revisar mi PC"
+                            <Button Content="🖥️   Mi PC"
                                     Command="{Binding NavigateCommand}"
                                     CommandParameter="RevisarPC"
                                     Style="{StaticResource NavButtonStyle}"/>
 
-                            <Button Content="🧹   Liberar espacio"
-                                    Command="{Binding NavigateCommand}"
-                                    CommandParameter="Almacenamiento"
-                                    Style="{StaticResource NavButtonStyle}"/>
-
-                            <!-- GESTIÓN -->
-                            <TextBlock Text="GESTIÓN"
+                            <!-- DIAGNÓSTICO -->
+                            <TextBlock Text="DIAGNÓSTICO"
                                        Margin="10,20,0,8"
                                        FontSize="10"
                                        FontWeight="SemiBold"
                                        Foreground="{DynamicResource TextMutedBrush}"/>
 
-                            <Button Content="📦   Aplicaciones"
+                            <Button Content="🔋   Batería"
                                     Command="{Binding NavigateCommand}"
-                                    CommandParameter="Aplicaciones"
+                                    CommandParameter="Batería"
                                     Style="{StaticResource NavButtonStyle}"/>
 
-                            <Button Content="🔄   Actualizaciones"
+                            <Button Content="⚡   Benchmark"
                                     Command="{Binding NavigateCommand}"
-                                    CommandParameter="Actualizaciones"
+                                    CommandParameter="Benchmark"
                                     Style="{StaticResource NavButtonStyle}"/>
 
-                            <Button Content="🎮   Juegos"
+                            <Button Content="🧩   Drivers"
                                     Command="{Binding NavigateCommand}"
-                                    CommandParameter="Juegos"
+                                    CommandParameter="Drivers"
                                     Style="{StaticResource NavButtonStyle}"/>
 
-                            <Button Content="⚡   Rendimiento"
+                            <Button Content="💾   Salud de discos"
                                     Command="{Binding NavigateCommand}"
-                                    CommandParameter="Rendimiento"
+                                    CommandParameter="SaludDiscos"
                                     Style="{StaticResource NavButtonStyle}"/>
 
-                            <!-- PROTECCIÓN & PRIVACIDAD -->
-                            <TextBlock Text="SEGURIDAD Y SISTEMA"
+                            <Button Content="🔌   Verificar USB"
+                                    Command="{Binding NavigateCommand}"
+                                    CommandParameter="VerificarUSB"
+                                    Style="{StaticResource NavButtonStyle}"/>
+
+                            <Button Content="🖱️   Periféricos"
+                                    Command="{Binding NavigateCommand}"
+                                    CommandParameter="Periféricos"
+                                    Style="{StaticResource NavButtonStyle}"/>
+
+                            <Button Content="🌐   Test de red"
+                                    Command="{Binding NavigateCommand}"
+                                    CommandParameter="TestRed"
+                                    Style="{StaticResource NavButtonStyle}"/>
+
+                            <Button Content="🔧   Reparar Windows"
+                                    Command="{Binding NavigateCommand}"
+                                    CommandParameter="RepararWindows"
+                                    Style="{StaticResource NavButtonStyle}"/>
+
+                            <Button Content="🪟   Compatibilidad Win 11"
+                                    Command="{Binding NavigateCommand}"
+                                    CommandParameter="CompatibilidadWin11"
+                                    Style="{StaticResource NavButtonStyle}"/>
+
+                            <!-- MANTENIMIENTO -->
+                            <TextBlock Text="MANTENIMIENTO"
                                        Margin="10,20,0,8"
                                        FontSize="10"
                                        FontWeight="SemiBold"
                                        Foreground="{DynamicResource TextMutedBrush}"/>
 
-                            <Button Content="🛡️   Seguridad"
+                            <Button Content="📄   Archivos duplicados"
                                     Command="{Binding NavigateCommand}"
-                                    CommandParameter="Proteccion"
+                                    CommandParameter="ArchivosDuplicados"
+                                    Style="{StaticResource NavButtonStyle}"/>
+
+                            <Button Content="🧹   Limpieza"
+                                    Command="{Binding NavigateCommand}"
+                                    CommandParameter="Limpieza"
+                                    Style="{StaticResource NavButtonStyle}"/>
+
+                            <Button Content="🗺️   Mapa del disco"
+                                    Command="{Binding NavigateCommand}"
+                                    CommandParameter="MapaEspacio"
+                                    Style="{StaticResource NavButtonStyle}"/>
+
+                            <Button Content="📦   Desinstalador"
+                                    Command="{Binding NavigateCommand}"
+                                    CommandParameter="Desinstalador"
+                                    Style="{StaticResource NavButtonStyle}"/>
+
+                            <Button Content="🗑️   Bloatware"
+                                    Command="{Binding NavigateCommand}"
+                                    CommandParameter="Bloatware"
+                                    Style="{StaticResource NavButtonStyle}"/>
+
+                            <Button Content="📥   Instalar programas"
+                                    Command="{Binding NavigateCommand}"
+                                    CommandParameter="ProgramasInstalar"
+                                    Style="{StaticResource NavButtonStyle}"/>
+
+                            <Button Content="🔄   Actualizar programas"
+                                    Command="{Binding NavigateCommand}"
+                                    CommandParameter="ProgramasActualizar"
+                                    Style="{StaticResource NavButtonStyle}"/>
+
+                            <Button Content="🚀   Inicio de Windows"
+                                    Command="{Binding NavigateCommand}"
+                                    CommandParameter="InicioWindows"
+                                    Style="{StaticResource NavButtonStyle}"/>
+
+                            <!-- OPTIMIZACIÓN -->
+                            <TextBlock Text="OPTIMIZACIÓN"
+                                       Margin="10,20,0,8"
+                                       FontSize="10"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextMutedBrush}"/>
+
+                            <Button Content="⚙️   Optimizaciones"
+                                    Command="{Binding NavigateCommand}"
+                                    CommandParameter="Optimizaciones"
                                     Style="{StaticResource NavButtonStyle}"/>
 
                             <Button Content="🔒   Privacidad"
@@ -153,39 +220,46 @@
                                     CommandParameter="Privacidad"
                                     Style="{StaticResource NavButtonStyle}"/>
 
-                            <Button Content="🎨   Personalización"
+                            <Button Content="🎮   Rendimiento"
                                     Command="{Binding NavigateCommand}"
-                                    CommandParameter="EditorPerfiles"
+                                    CommandParameter="Rendimiento"
                                     Style="{StaticResource NavButtonStyle}"/>
 
-                            <!-- HERRAMIENTAS & RED -->
-                            <TextBlock Text="HERRAMIENTAS &amp; RED"
+                            <Button Content="↩️   Central Deshacer"
+                                    Command="{Binding NavigateCommand}"
+                                    CommandParameter="CentralDeshacer"
+                                    Style="{StaticResource NavButtonStyle}"/>
+
+                            <Button Content="💿   Puntos de restauración"
+                                    Command="{Binding NavigateCommand}"
+                                    CommandParameter="PuntosRestauracion"
+                                    Style="{StaticResource NavButtonStyle}"/>
+
+                            <!-- BACKUP -->
+                            <TextBlock Text="BACKUP &amp; RESTAURACIÓN"
                                        Margin="10,20,0,8"
                                        FontSize="10"
                                        FontWeight="SemiBold"
                                        Foreground="{DynamicResource TextMutedBrush}"/>
 
-                            <Button Content="🧩   Drivers"
+                            <Button Content="💽   Backup para formatear"
                                     Command="{Binding NavigateCommand}"
-                                    CommandParameter="Drivers"
+                                    CommandParameter="BackupFormatear"
                                     Style="{StaticResource NavButtonStyle}"/>
 
-                            <Button Content="🌐   Red"
+                            <Button Content="🔧   Post-formateo"
                                     Command="{Binding NavigateCommand}"
-                                    CommandParameter="Red"
+                                    CommandParameter="PostFormateo"
                                     Style="{StaticResource NavButtonStyle}"/>
 
-                            <Button Content="🔧   Reparación"
-                                    Command="{Binding NavigateCommand}"
-                                    CommandParameter="Reparacion"
-                                    Style="{StaticResource NavButtonStyle}"/>
+                            <!-- SISTEMA -->
+                            <TextBlock Text="SISTEMA"
+                                       Margin="10,20,0,8"
+                                       FontSize="10"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextMutedBrush}"/>
 
-                            <Button Content="🛠️   Herramientas externas"
-                                    Command="{Binding NavigateCommand}"
-                                    CommandParameter="Herramientas"
-                                    Style="{StaticResource NavButtonStyle}"/>
-
-                            <Button Content="📋   Historial &amp; Logs"
+                            <Button Content="📋   Historial"
                                     Command="{Binding NavigateCommand}"
                                     CommandParameter="Historial"
                                     Style="{StaticResource NavButtonStyle}"/>
@@ -202,6 +276,16 @@
                                     CommandParameter="Escaneo"
                                     Style="{StaticResource NavButtonStyle}"/>
 
+                            <Button Content="ℹ️   Acerca de"
+                                    Command="{Binding NavigateCommand}"
+                                    CommandParameter="AcercaDe"
+                                    Style="{StaticResource NavButtonStyle}"/>
+
+                            <Button Content="🔤   Tamaño de letra"
+                                    Command="{Binding NavigateCommand}"
+                                    CommandParameter="Escala"
+                                    Style="{StaticResource NavButtonStyle}"/>
+
                         </StackPanel>
 
                     </ScrollViewer>
@@ -213,22 +297,17 @@
                     <StackPanel Grid.Row="2"
                                 Margin="12,10,12,16">
 
-                        <Button Content="⚙   Configuración"
-                                Command="{Binding NavigateCommand}"
-                                CommandParameter="Configuracion"
-                                Style="{StaticResource NavButtonStyle}"/>
-
                         <Border Margin="8,10,8,0"
                                 Padding="10"
                                 CornerRadius="8"
                                 Background="{DynamicResource BackgroundBrush}">
 
                             <StackPanel>
-                                <TextBlock Text="WPC-SutilBox Beta.1"
+                                <TextBlock Text="WPC-SutilBox Beta 1.1.5"
                                            FontSize="10"
                                            Foreground="{DynamicResource TextMutedBrush}"/>
 
-                                <TextBlock Text="Construyendo una suite todo-en-uno."
+                                <TextBlock Text="Suite integral de mantenimiento."
                                            Margin="0,3,0,0"
                                            FontSize="10"
                                            TextWrapping="Wrap"
@@ -351,57 +430,141 @@
                       Margin="28,24,28,28"
                       ClipToBounds="True">
 
-                    <views:DashboardView Grid.Row="0" Grid.Column="0"
-                        Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Dashboard}}"/>
+                    <!-- 1. Panel principal -->
+                    <views:DashboardView DataContext="{Binding DashboardViewModel}"
+                        Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Dashboard}}"/>
 
-                    <views:PcReviewView Grid.Row="0" Grid.Column="0"
-                        Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.RevisarPC}}"/>
+                    <!-- 2. Mi PC -->
+                    <views:PcReviewView DataContext="{Binding PcReviewViewModel}"
+                        Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.RevisarPC}}"/>
 
-                    <views:CleaningView Grid.Row="0" Grid.Column="0"
-                        Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Almacenamiento}}"/>
+                    <!-- 3. Batería -->
+                    <views:BatteryView DataContext="{Binding BatteryViewModel}"
+                        Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Batería}}"/>
 
-                    <views:SpaceMapView Grid.Row="0" Grid.Column="0"
+                    <!-- 4. Benchmark -->
+                    <views:PlaceholderView Title="⚡ Benchmark" Description="Pruebas de rendimiento de CPU, GPU, disco y memoria. En desarrollo." SectionName="Benchmark"
+                        Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Benchmark}}"/>
+
+                    <!-- 5. Drivers -->
+                    <views:DriversView DataContext="{Binding DriversViewModel}"
+                        Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Drivers}}"/>
+
+                    <!-- 6. Salud de discos -->
+                    <views:DiskHealthView DataContext="{Binding StorageViewModel}"
+                        Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.SaludDiscos}}"/>
+
+                    <!-- 7. Verificar USB -->
+                    <views:PlaceholderView Title="🔌 Verificar USB" Description="Autenticidad de memorias USB: VID/PID, capacidad real, prueba de escritura/lectura. En desarrollo." SectionName="VerificarUSB"
+                        Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.VerificarUSB}}"/>
+
+                    <!-- 8. Periféricos -->
+                    <views:PlaceholderView Title="🖱️ Periféricos" Description="Diagnóstico de teclado, mouse, pantalla, altavoces, micrófono y webcam. En desarrollo." SectionName="Periféricos"
+                        Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Periféricos}}"/>
+
+                    <!-- 9. Test de red -->
+                    <views:NetworkView DataContext="{Binding NetworkTestViewModel}"
+                        Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.TestRed}}"/>
+
+                    <!-- 10. Reparar Windows -->
+                    <views:DiagnosticView
+                        Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.RepararWindows}}"/>
+
+                    <!-- 11. Compatibilidad Win 11 -->
+                    <views:PlaceholderView Title="🪟 Compatibilidad Windows 11" Description="Verifica TPM 2.0, Secure Boot, UEFI, CPU compatible y demás requisitos. En desarrollo." SectionName="CompatibilidadWin11"
+                        Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.CompatibilidadWin11}}"/>
+
+                    <!-- 12. Archivos duplicados -->
+                    <views:PlaceholderView Title="📄 Archivos Duplicados" Description="Detecta y elimina archivos duplicados usando hash SHA256. En desarrollo." SectionName="ArchivosDuplicados"
+                        Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.ArchivosDuplicados}}"/>
+
+                    <!-- 13. Limpieza -->
+                    <views:CleaningView DataContext="{Binding CleanupViewModel}"
+                        Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Limpieza}}"/>
+
+                    <!-- 14. Mapa del disco -->
+                    <views:SpaceMapView DataContext="{Binding SpaceMapViewModel}"
                         Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.MapaEspacio}}"/>
 
-                    <views:AplicacionesView Grid.Row="0" Grid.Column="0"
-                        Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Aplicaciones}}"/>
+                    <!-- 15. Almacenamiento (escaneo) -->
+                    <views:CleaningView DataContext="{Binding StorageViewModel}"
+                        Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Almacenamiento}}"/>
 
-                    <views:GamesView Grid.Row="0" Grid.Column="0"
-                        Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Juegos}}"/>
+                    <!-- 16. Desinstalador -->
+                    <views:AplicacionesView DataContext="{Binding ProgramsViewModel}"
+                        Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Desinstalador}}"/>
 
-                    <views:RendimientoView Grid.Row="0" Grid.Column="0"
-                        Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Rendimiento}}"/>
+                    <!-- 17. Bloatware -->
+                    <views:BloatwareView
+                        Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Bloatware}}"/>
 
-                    <views:SecurityView Grid.Row="0" Grid.Column="0"
-                        Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Proteccion}}"/>
+                    <!-- 18. Instalar programas -->
+                    <views:ActualizacionesView DataContext="{Binding ProgramsViewModel}"
+                        Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.ProgramasInstalar}}"/>
 
-                    <views:PrivacyView Grid.Row="0" Grid.Column="0"
-                        Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Privacidad}}"/>
+                    <!-- 19. Actualizar programas -->
+                    <views:ActualizacionesView
+                        Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.ProgramasActualizar}}"/>
 
-                    <views:ProfileEditorView Grid.Row="0" Grid.Column="0"
-                        DataContext="{Binding ProfileEditorViewModel}"
-                        Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.EditorPerfiles}}"/>
+                    <!-- 20. Inicio de Windows -->
+                    <views:StartupManagerView DataContext="{Binding StartupViewModel}"
+                        Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.InicioWindows}}"/>
 
-                    <views:ActualizacionesView Grid.Row="0" Grid.Column="0"
-                        Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Actualizaciones}}"/>
+                    <!-- 21. Optimizaciones -->
+                    <views:OptimizationView
+                        Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Optimizaciones}}"/>
 
-                    <views:DriversView Grid.Row="0" Grid.Column="0"
-                        Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Drivers}}"/>
+                    <!-- 22. Privacidad -->
+                    <views:PrivacyView DataContext="{Binding PrivacyViewModel}"
+                        Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Privacidad}}"/>
 
-                    <views:NetworkView Grid.Row="0" Grid.Column="0"
-                        Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Red}}"/>
+                    <!-- 23. Rendimiento -->
+                    <views:RendimientoView
+                        Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Rendimiento}}"/>
 
-                    <views:DiagnosticView Grid.Row="0" Grid.Column="0"
-                        Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Reparacion}}"/>
+                    <!-- 24. Central Deshacer -->
+                    <views:HistoryView DataContext="{Binding HistoryViewModel}"
+                        Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.CentralDeshacer}}"/>
 
-                    <views:ToolboxView Grid.Row="0" Grid.Column="0"
-                        Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Herramientas}}"/>
+                    <!-- 25. Puntos de restauración -->
+                    <views:RestorePointView DataContext="{Binding RestorePointViewModel}"
+                        Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.PuntosRestauracion}}"/>
 
-                    <views:HistoryView Grid.Row="0" Grid.Column="0"
-                        Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Historial}}"/>
+                    <!-- 26. Backup para formatear -->
+                    <views:BackupView
+                        Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.BackupFormatear}}"/>
 
-                    <views:SettingsView Grid.Row="0" Grid.Column="0"
-                        Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Configuracion}}"/>
+                    <!-- 27. Post-formateo -->
+                    <views:RestoreView
+                        Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.PostFormateo}}"/>
+
+                    <!-- 28. Red (herramienta) -->
+                    <views:NetworkView
+                        Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Red}}"/>
+
+                    <!-- 29. Herramientas -->
+                    <views:ToolboxView
+                        Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Herramientas}}"/>
+
+                    <!-- 30. Historial -->
+                    <views:HistoryView
+                        Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Historial}}"/>
+
+                    <!-- 31. Configuración -->
+                    <views:SettingsView
+                        Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Configuracion}}"/>
+
+                    <!-- 32. Hardware -->
+                    <views:HardwareView
+                        Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Hardware}}"/>
+
+                    <!-- 33. Acerca de -->
+                    <views:PlaceholderView Title="ℹ️ Acerca de" Description="WPC-SutilBox Beta 1.1.5 — Suite integral de mantenimiento y diagnóstico de Windows." SectionName="AcercaDe"
+                        Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.AcercaDe}}"/>
+
+                    <!-- 34. Escala -->
+                    <views:SettingsView
+                        Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Escala}}"/>
 
                     <views:SmartScannerView Grid.Row="0" Grid.Column="0"
                         Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Escaneo}}"/>
