@@ -461,7 +461,7 @@ Compress-Archive -Path .\bin\Release\net8.0-windows\win-x64\* `
   -DestinationPath .\bin\Release\WPC-SutilBox-1.1.5-beta-win-x64.zip
 ```
 
-Requiere **.NET 8 Desktop Runtime** en el equipo de destino. El manifiesto solicita ejecución como administrador.
+Requiere **.NET 8 Desktop Runtime** en el equipo de destino. El manifiesto no solicita elevación automática.
 
 ---
 

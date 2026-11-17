@@ -1,6 +1,6 @@
 # Beta 1.1.5 — Diagnóstico y consistencia
 
-**Versión:** `1.1.5-beta` (`1.1.5.0`)  
+**Versión:** `1.1.5-beta` (`1.1.5.0`)
 **Estado:** compilación verificada; validación visual interactiva pendiente.
 
 ## Alcance
