@@ -480,6 +480,7 @@ docs/
 ├── PLAN_WPC_SUTILBOX_BETA1.md
 ├── BETA_1.1.3.md
 ├── BETA_1.1.4.md
+├── BETA_1.1.5.md
 ├── DEVELOPMENT.md
 ├── ROADMAP.md
 └── CHANGELOG.md
@@ -492,10 +493,11 @@ docs/
 | [`PRODUCT.md`](docs/PRODUCT.md) | Identidad, propósito, filosofía y límites del producto. |
 | [`ARCHITECTURE.md`](docs/ARCHITECTURE.md) | Arquitectura, MVVM, servicios y reglas técnicas. |
 | [`PLAN_BETAS.md`](docs/PLAN_BETAS.md) | Plan maestro de Beta 1, Beta 2, Beta 3 y etapas posteriores. |
+| [`BETA_1.1.5.md`](docs/BETA_1.1.5.md) | Alcance, límites y validación de la Beta 1.1.5. |
 | [`BETA_1.1.4.md`](docs/BETA_1.1.4.md) | Alcance, límites y validación de la Beta 1.1.4. |
 | [`DEVELOPMENT.md`](docs/DEVELOPMENT.md) | Normas de desarrollo, compilación, asincronía y empaquetado. |
 | [`CHANGELOG.md`](docs/CHANGELOG.md) | Historial de cambios confirmados. |
-| [`RELEASE_NOTES_v1.1.4.md`](release_versiones/RELEASE_NOTES_v1.1.4.md) | Notas de entrega del paquete 1.1.4-beta. |
+| [`RELEASE_NOTES_v1.1.4.md`](release_versiones/RELEASE_NOTES_v1.1.4.md) | Notas históricas de entrega de la versión 1.1.4. |
 
 Paquete Release actual: `bin/Release/WPC-SutilBox-1.1.5-beta-win-x64.zip` (portable, requiere .NET 8 Desktop Runtime).
 

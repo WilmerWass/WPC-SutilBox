@@ -1,9 +1,9 @@
 # WPC SUTILBOX — Plan de Reinicio Beta 1
 
-**Estado:** Beta 1.1.4 (`1.1.4-beta`) en estabilización  
+**Estado:** Beta 1.1.5 (`1.1.5-beta`) en estabilización
 **Objetivo:** mejorar claridad, consistencia, seguridad y experiencia sin romper las funciones existentes.
 
-La entrega actual documentada es [Beta 1.1.4](BETA_1.1.4.md): perfiles de rendimiento con confirmación, punto de restauración previo y resultado explícito. Compilación Release verificada el 2026-10-15 (0 errores, 0 advertencias).
+La entrega actual documentada es [Beta 1.1.5](BETA_1.1.5.md): correcciones de navegación y análisis, diagnósticos de hardware y consolidación de módulos. La compilación WPF verificada para esta entrega terminó con 0 errores y advertencias CA1416 pendientes.
 
 ## 1. Objetivos
 

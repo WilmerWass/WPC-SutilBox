@@ -1,6 +1,6 @@
 # Arquitectura Técnica — WPC-SutilBox
 
-**Versión alineada:** Beta 1.1.4 (`1.1.4-beta`). El flujo de perfiles documentado en [BETA_1.1.4.md](BETA_1.1.4.md) vive en `Core/PerformanceProfiles.cs` y `ViewModels/MainViewModel.cs`.
+**Versión alineada:** Beta 1.1.5 (`1.1.5-beta`). El flujo de perfiles documentado en [BETA_1.1.4.md](BETA_1.1.4.md) vive en `Core/PerformanceProfiles.cs` y `ViewModels/MainViewModel.cs`.
 
 ## 1. Stack Tecnológico Base
 * **Lenguaje:** C# (.NET Core / .NET 8+)

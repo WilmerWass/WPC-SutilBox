@@ -29,11 +29,11 @@ La Beta 1.1.5 reorganiza completamente la página de inicio (Dashboard) transfor
 
 ### Beta 1.1.4 (Anterior)
 
-La Beta 1.1.4 hace verificable el flujo de perfiles de rendimiento ya existente. No amplía el catálogo de ajustes. El detalle, los límites y la validación pendiente están en [BETA_1.1.4.md](BETA_1.1.4.md).
+La Beta 1.1.5 consolida navegación, análisis, diagnóstico de periféricos y configuración. El detalle, los límites y la validación pendiente están en [BETA_1.1.5.md](BETA_1.1.5.md).
 
 * ⚠️ Confirmación, punto de restauración previo y resultado explícito del perfil: implementados; falta prueba en Windows elevado.
 * ⚠️ Restauración del snapshot (plan de energía y servicios capturados): implementada; no es una reversión universal.
-* 🟢 Compilación Release del 2026-10-15: 0 errores y 0 advertencias.
+* ⚠️ Compilación WPF Beta 1.1.5: 0 errores; quedan advertencias CA1416 de plataforma.
 
 ---
 

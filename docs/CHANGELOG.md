@@ -4,6 +4,23 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/).
 Las versiones `1.1.x-beta` de 2026 describen el código actual de WPC-SutilBox.
 Las notas históricas de `release_versiones/` anteriores a la Beta 1.1.1 pertenecen a la generación WassControlSys y no describen este binario.
 
+## [1.1.5-beta] - 2026-11-17 (Beta 1.1.5 Diagnóstico y consistencia)
+
+### Añadido
+* Pruebas interactivas individuales o secuenciales de teclado, mouse y pantalla, además de tono para la salida de audio predeterminada.
+* Enumera dispositivos PnP adicionales y permite revisar el estado SMART expuesto por Windows.
+
+### Corregido
+* Los análisis prolongados muestran estado/progreso; el escaneo de almacenamiento reemplaza los resultados en vez de acumularlos y permite cancelar la previsualización de limpieza.
+* Salud de discos, editor de perfiles, navegación de red y rutas de configuración conectados a sus vistas y datos correctos.
+* Consolidadas las pantallas duplicadas de aplicaciones instaladas y Bloatware.
+* Actualización de identidad del producto a `1.1.5-beta` / `1.1.5.0`.
+
+### Límites
+* La prueba de teclado/mouse no puede identificar cuál de varios dispositivos físicos produjo el evento; la prueba auditiva usa la salida predeterminada.
+* La enumeración Plug and Play y SMART dependen de la información que Windows/controladores exponen. La prueba visual requiere confirmación del usuario.
+* No se realizó prueba visual interactiva de la app en esta sesión; su build compiló sin errores.
+
 ## [1.1.4-beta] - 2026-10-15 (Beta 1.1.4 Perfiles de rendimiento)
 
 ### Añadido

@@ -1,6 +1,6 @@
 # Visión y Especificación de Producto — WPC-SutilBox
 
-**Versión documentada:** Beta 1.1.4 (`1.1.4-beta`) — ver [BETA_1.1.4.md](BETA_1.1.4.md).
+**Versión documentada:** Beta 1.1.5 (`1.1.5-beta`) — ver [BETA_1.1.5.md](BETA_1.1.5.md).
 
 ## 1. Propósito
 WPC-SutilBox es una herramienta de mantenimiento y optimización para sistemas operacionales Windows. Nace con el objetivo de eliminar el "bloatware", optimizar parámetros de rendimiento y ofrecer un diagnóstico claro del hardware y software sin recurrir a scripts destructivos a ciegas.

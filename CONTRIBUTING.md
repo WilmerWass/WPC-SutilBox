@@ -125,7 +125,7 @@ La limpieza debería completarse sin errores.
 
 **Sistema**
 - Windows 11 Pro 64-bit
-- WPC-SutilBox v1.1.4
+- WPC-SutilBox v1.1.5
 - .NET 8.0
 
 **Logs**

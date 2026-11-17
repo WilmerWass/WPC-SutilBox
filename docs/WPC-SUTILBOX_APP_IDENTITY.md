@@ -6,7 +6,7 @@
 **Producto:** WPC-SutilBox  
 **Prioridad actual:** SUTILBOX General  
 **Última actualización:** 2026-10-15  
-**Versión de producto documentada:** Beta 1.1.4 (`1.1.4-beta`)
+**Versión de producto documentada:** Beta 1.1.5 (`1.1.5-beta`)
 
 ---
 
