@@ -15,6 +15,7 @@ namespace Wpc_SutilBox.ViewModels
         private readonly IWingetService _wingetService;
         private readonly IBloatwareService _bloatwareService;
         private readonly ILogService _logService;
+        private readonly IDialogService _dialogService;
 
         private bool _isBusy;
         private string _statusMessage = "Cargando programas...";
@@ -22,10 +23,25 @@ namespace Wpc_SutilBox.ViewModels
 
         public bool IsBusy { get => _isBusy; private set => SetProperty(ref _isBusy, value); }
         public string StatusMessage { get => _statusMessage; private set => SetProperty(ref _statusMessage, value); }
-        public string SearchText { get => _searchText; set => SetProperty(ref _searchText, value); }
+        public string SearchText
+        {
+            get => _searchText;
+            set
+            {
+                if (SetProperty(ref _searchText, value))
+                    OnPropertyChanged(nameof(FilteredInstalledApps));
+            }
+        }
 
         public ObservableCollection<BloatwareApp> InstalledApps { get; } = new();
         public ObservableCollection<WingetApp> UpdatableApps { get; } = new();
+        public System.Collections.Generic.IEnumerable<BloatwareApp> FilteredInstalledApps =>
+            string.IsNullOrWhiteSpace(SearchText)
+                ? InstalledApps
+                : InstalledApps.Where(app =>
+                    app.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase)
+                    || app.Publisher.Contains(SearchText, StringComparison.OrdinalIgnoreCase)
+                    || app.InstallLocation.Contains(SearchText, StringComparison.OrdinalIgnoreCase));
 
         public ICommand RefreshInstalledCommand { get; }
         public ICommand RefreshUpdatesCommand { get; }
@@ -36,11 +52,16 @@ namespace Wpc_SutilBox.ViewModels
         public ICommand PauseWindowsUpdatesCommand { get; }
         public ICommand ResumeWindowsUpdatesCommand { get; }
 
-        public ProgramsViewModel(IWingetService wingetService, IBloatwareService bloatwareService, ILogService logService)
+        public ProgramsViewModel(
+            IWingetService wingetService,
+            IBloatwareService bloatwareService,
+            ILogService logService,
+            IDialogService dialogService)
         {
             _wingetService = wingetService;
             _bloatwareService = bloatwareService;
             _logService = logService;
+            _dialogService = dialogService;
 
             RefreshInstalledCommand = new AsyncRelayCommand(_ => LoadInstalledAppsAsync());
             RefreshUpdatesCommand = new AsyncRelayCommand(_ => LoadUpdatableAppsAsync());
@@ -88,16 +109,9 @@ namespace Wpc_SutilBox.ViewModels
         {
             if (IsBusy) return;
             IsBusy = true;
-            StatusMessage = "Buscando actualizaciones...";
-
             try
             {
-                var apps = await _wingetService.GetUpdatableAppsAsync();
-                UpdatableApps.Clear();
-                foreach (var app in apps) UpdatableApps.Add(app);
-
-                StatusMessage = $"{UpdatableApps.Count} actualizaciones disponibles.";
-                _logService.Info($"Updatable apps: {UpdatableApps.Count}");
+                await RefreshUpdatableAppsCoreAsync();
             }
             catch (Exception ex)
             {
@@ -110,9 +124,25 @@ namespace Wpc_SutilBox.ViewModels
             }
         }
 
+        private async Task RefreshUpdatableAppsCoreAsync()
+        {
+            StatusMessage = "Buscando actualizaciones...";
+            var apps = await _wingetService.GetUpdatableAppsAsync();
+            UpdatableApps.Clear();
+            foreach (var app in apps) UpdatableApps.Add(app);
+
+            StatusMessage = $"{UpdatableApps.Count} actualizaciones disponibles.";
+            _logService.Info($"Updatable apps: {UpdatableApps.Count}");
+        }
+
         public async Task UninstallAppAsync(object? parameter)
         {
             if (parameter is not BloatwareApp app) return;
+            bool confirmed = await _dialogService.ShowConfirmation(
+                $"Se iniciará la desinstalación de «{app.Name}» mediante el desinstalador registrado por Windows. ¿Deseas continuar?",
+                "Confirmar desinstalación");
+            if (!confirmed) return;
+
             app.IsUninstalling = true;
 
             try
@@ -123,6 +153,11 @@ namespace Wpc_SutilBox.ViewModels
                     StatusMessage = $"{app.Name} desinstalado correctamente.";
                     _logService.Info($"Uninstalled: {app.Name}");
                 }
+            }
+            catch (Exception ex)
+            {
+                StatusMessage = $"No se pudo desinstalar {app.Name}: {ex.Message}";
+                _logService.Error($"Error al desinstalar {app.Name}", ex);
             }
             finally
             {
@@ -147,6 +182,11 @@ namespace Wpc_SutilBox.ViewModels
                 StatusMessage = $"{app.Name} actualizado.";
                 _logService.Info($"Updated: {app.Name}");
             }
+            catch (Exception ex)
+            {
+                StatusMessage = $"No se pudo actualizar {app.Name}: {ex.Message}";
+                _logService.Error($"Error al actualizar {app.Name}", ex);
+            }
             finally
             {
                 app.IsUpdating = false;
@@ -155,6 +195,7 @@ namespace Wpc_SutilBox.ViewModels
 
         public async Task UpdateAllAppsAsync()
         {
+            if (IsBusy) return;
             if (UpdatableApps.Count == 0)
             {
                 MessageBox.Show("No hay actualizaciones pendientes.", "WPC-SutilBox", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -166,7 +207,6 @@ namespace Wpc_SutilBox.ViewModels
                 "Confirmar Actualización",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question);
-
             if (result != MessageBoxResult.Yes) return;
 
             IsBusy = true;
@@ -174,12 +214,13 @@ namespace Wpc_SutilBox.ViewModels
             try
             {
                 await _wingetService.UpdateAllAppsAsync();
-                await LoadUpdatableAppsAsync();
+                await RefreshUpdatableAppsCoreAsync();
                 StatusMessage = "Actualización completada.";
             }
             catch (Exception ex)
             {
                 StatusMessage = $"Error al actualizar: {ex.Message}";
+                _logService.Error("Error al actualizar todas las aplicaciones", ex);
             }
             finally
             {

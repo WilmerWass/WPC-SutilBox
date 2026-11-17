@@ -38,6 +38,7 @@ namespace Wpc_SutilBox.ViewModels
         private readonly IStartupService? _startupService;
         private readonly IBloatwareService? _bloatwareService;
         private readonly IWingetService? _wingetService;
+        private readonly IServiceOptimizerService? _serviceOptimizerService;
         private readonly ISettingsService? _settingsService;
         private readonly ILogService? _logService;
         private readonly ILocalizationService? _localizationService;
@@ -50,6 +51,7 @@ namespace Wpc_SutilBox.ViewModels
         private CancellationTokenSource? _backupCts;
         private CancellationTokenSource? _restoreCts;
         private Task? _monitoringTask;
+        private int _navigationSequence;
         private bool _settingsReady;
         private DateTime _lastIdleOptimization = DateTime.MinValue;
         private DateTime _lastGlobalUsageSampleUtc = DateTime.MinValue;
@@ -79,6 +81,9 @@ namespace Wpc_SutilBox.ViewModels
         private string _selectedLanguage = "es";
         private string _accentColor = "#3B82F6";
         private string _processSearchText = string.Empty;
+        private string _serviceSearchText = string.Empty;
+        private string _serviceStatusMessage = "Lista de servicios sin cargar.";
+        private readonly List<WindowsService> _allWindowsServices = new();
         private double _netRecvMbps;
         private double _diskWritesPerSec;
         private bool _isExportingDrivers;
@@ -148,6 +153,16 @@ namespace Wpc_SutilBox.ViewModels
         public PerformanceMode CurrentMode { get => _currentMode; set => SetProperty(ref _currentMode, value); }
         public string WelcomeMessage { get => _welcomeMessage; private set => SetProperty(ref _welcomeMessage, value); }
         public string GeneralStatusMessage { get => _generalStatusMessage; private set => SetProperty(ref _generalStatusMessage, value); }
+        public string ServiceSearchText
+        {
+            get => _serviceSearchText;
+            set
+            {
+                if (SetProperty(ref _serviceSearchText, value))
+                    ApplyServiceFilter();
+            }
+        }
+        public string ServiceStatusMessage { get => _serviceStatusMessage; private set => SetProperty(ref _serviceStatusMessage, value); }
         public bool RunOnStartup { get => _runOnStartup; set => SetSetting(ref _runOnStartup, value); }
         public bool OptimizeOnIdle { get => _optimizeOnIdle; set => SetSetting(ref _optimizeOnIdle, value); }
         public bool MinimizeToTray { get => _minimizeToTray; set => SetSetting(ref _minimizeToTray, value); }
@@ -210,6 +225,7 @@ namespace Wpc_SutilBox.ViewModels
         public int CleanupCandidateCount => CleanupCandidates.Count;
         public long CleanupEstimatedBytes => CleanupCandidates.Sum(candidate => candidate.SizeBytes);
         public ObservableCollection<ProcessInfoDto> Processes { get; } = new();
+        public ObservableCollection<WindowsService> WindowsServices { get; } = new();
         public string ProcessSearchText { get => _processSearchText; set => SetProperty(ref _processSearchText, value); }
         // Nuevos Perfiles de Rendimiento
         private bool _isEquilibradoModeSelected = true; // Por defecto
@@ -253,6 +269,13 @@ namespace Wpc_SutilBox.ViewModels
             set => SetProperty(ref _applicationTitle, value);
         }
 
+        public string ApplicationVersion => typeof(MainViewModel).Assembly.GetName().Version?.ToString(3) ?? "desconocida";
+
+        public string ApplicationVersionLabel => $"Versión {ApplicationVersion}";
+
+        public string AboutDescription =>
+            $"Versión {ApplicationVersion} — Suite integral de mantenimiento y diagnóstico de Windows.";
+
         public AppSection CurrentSection
         {
             get => _currentSection;
@@ -260,11 +283,51 @@ namespace Wpc_SutilBox.ViewModels
             {
                 if (SetProperty(ref _currentSection, value))
                 {
+                    OnPropertyChanged(nameof(CurrentSectionTitle));
                     _logService?.Info($"[Navegación] CurrentSection cambió a: {value}");
                     WriteLog($"[Navegación] Sección activa: {value}");
                 }
             }
         }
+
+        public string CurrentSectionTitle => CurrentSection switch
+        {
+            AppSection.Dashboard => "Panel principal",
+            AppSection.RevisarPC => "Mi PC",
+            AppSection.EditorPerfiles => "Editor de perfiles",
+            AppSection.Batería => "Batería",
+            AppSection.Benchmark => "Benchmark",
+            AppSection.Drivers => "Drivers",
+            AppSection.SaludDiscos => "Salud de discos",
+            AppSection.VerificarUSB => "Verificar USB",
+            AppSection.Periféricos => "Periféricos",
+            AppSection.TestRed => "Test de red",
+            AppSection.RepararWindows => "Reparar Windows",
+            AppSection.CompatibilidadWin11 => "Compatibilidad Windows 11",
+            AppSection.ArchivosDuplicados => "Archivos duplicados",
+            AppSection.Limpieza => "Limpieza",
+            AppSection.MapaEspacio => "Mapa del disco",
+            AppSection.Almacenamiento => "Almacenamiento",
+            AppSection.Desinstalador => "Aplicaciones instaladas",
+            AppSection.Bloatware => "Bloatware",
+            AppSection.ProgramasInstalar or AppSection.ProgramasActualizar => "Programas y actualizaciones",
+            AppSection.InicioWindows => "Inicio de Windows",
+            AppSection.Optimizaciones => "Optimizaciones",
+            AppSection.Privacidad => "Privacidad",
+            AppSection.Rendimiento => "Rendimiento",
+            AppSection.CentralDeshacer => "Central Deshacer",
+            AppSection.PuntosRestauracion => "Puntos de restauración",
+            AppSection.BackupFormatear => "Backup para formatear",
+            AppSection.PostFormateo => "Post-formateo",
+            AppSection.Red => "Red",
+            AppSection.Herramientas => "Herramientas",
+            AppSection.Historial => "Historial",
+            AppSection.Configuracion => "Configuración",
+            AppSection.Hardware => "Hardware",
+            AppSection.AcercaDe => "Acerca de",
+            AppSection.Escala => "Tamaño de letra",
+            _ => "Centro de control"
+        };
 
         public int ActiveTcpConnections
         {
@@ -353,6 +416,8 @@ namespace Wpc_SutilBox.ViewModels
         public ICommand ReduceBackgroundProcessesCommand { get; }
         public ICommand ClearServiceSearchCommand { get; }
         public ICommand RefreshServicesCommand { get; }
+        public ICommand StartServiceCommand { get; }
+        public ICommand StopServiceCommand { get; }
         public ICommand RefreshThermalCommand { get; }
 
         // Backup & Restore commands
@@ -383,6 +448,11 @@ namespace Wpc_SutilBox.ViewModels
         public HistoryViewModel? HistoryViewModel { get; }
         public SpaceMapViewModel? SpaceMapViewModel { get; }
         public NetworkTestViewModel? NetworkTestViewModel { get; }
+        public Windows11CompatibilityViewModel? Windows11CompatibilityViewModel { get; }
+        public DuplicateFilesViewModel? DuplicateFilesViewModel { get; }
+        public PeripheralDiagnosticsViewModel? PeripheralDiagnosticsViewModel { get; }
+        public UsbStorageViewModel? UsbStorageViewModel { get; }
+        public BenchmarkViewModel? BenchmarkViewModel { get; }
 
         // ==========================================
         // 4. CONSTRUCTOR PRINCIPAL
@@ -419,7 +489,13 @@ namespace Wpc_SutilBox.ViewModels
             PrivacyViewModel? privacyViewModel = null,
             HistoryViewModel? historyViewModel = null,
             SpaceMapViewModel? spaceMapViewModel = null,
-            NetworkTestViewModel? networkTestViewModel = null)
+            NetworkTestViewModel? networkTestViewModel = null,
+            IServiceOptimizerService? serviceOptimizerService = null,
+            Windows11CompatibilityViewModel? windows11CompatibilityViewModel = null,
+            DuplicateFilesViewModel? duplicateFilesViewModel = null,
+            PeripheralDiagnosticsViewModel? peripheralDiagnosticsViewModel = null,
+            UsbStorageViewModel? usbStorageViewModel = null,
+            BenchmarkViewModel? benchmarkViewModel = null)
         {
             StorageViewModel = storageViewModel;
             DashboardViewModel = dashboardViewModel;
@@ -434,6 +510,13 @@ namespace Wpc_SutilBox.ViewModels
             HistoryViewModel = historyViewModel;
             SpaceMapViewModel = spaceMapViewModel;
             NetworkTestViewModel = networkTestViewModel;
+            Windows11CompatibilityViewModel = windows11CompatibilityViewModel;
+            DuplicateFilesViewModel = duplicateFilesViewModel;
+            PeripheralDiagnosticsViewModel = peripheralDiagnosticsViewModel;
+            UsbStorageViewModel = usbStorageViewModel;
+            BenchmarkViewModel = benchmarkViewModel;
+            if (SpaceMapViewModel != null)
+                SpaceMapViewModel.BackCommand = new RelayCommand(_ => StartNavigation(AppSection.Limpieza.ToString()));
             _temperatureMonitorService = temperatureMonitorService;
             _diskHealthService = diskHealthService;
             _systemMaintenanceService = systemMaintenanceService;
@@ -446,6 +529,7 @@ namespace Wpc_SutilBox.ViewModels
             _startupService = startupService;
             _bloatwareService = bloatwareService;
             _wingetService = wingetService;
+            _serviceOptimizerService = serviceOptimizerService;
             _settingsService = settingsService;
             _logService = logService;
             _profileEditorViewModel = profileEditorViewModel;
@@ -465,7 +549,7 @@ namespace Wpc_SutilBox.ViewModels
             OpenCleanmgrCommand = new RelayCommand(ExecuteOpenCleanmgr);
             CleanTempFilesCommand = new AsyncRelayCommand(PreviewCleanupAsync);
             PreviewCleanupCommand = new AsyncRelayCommand(PreviewCleanupAsync);
-            OpenSpaceMapCommand = new RelayCommand(_ => CurrentSection = AppSection.MapaEspacio);
+            OpenSpaceMapCommand = new RelayCommand(_ => StartNavigation(AppSection.MapaEspacio.ToString()));
             OpenLogFolderCommand = new RelayCommand(ExecuteOpenLogFolder);
             RunToolCommand = new RelayCommand(ExecuteRunTool);
             RunSfcCommand = new AsyncRelayCommand(ExecuteRunSfcAsync);
@@ -503,8 +587,10 @@ namespace Wpc_SutilBox.ViewModels
             OptimizeCommand = new AsyncRelayCommand(_ => ExecuteQuickOptimizeAsync());
             RefreshDriversCommand = new AsyncRelayCommand(ExportDriversAsync);
             ReduceBackgroundProcessesCommand = new RelayCommand(ExecuteReduceBackgroundProcesses);
-            ClearServiceSearchCommand = new RelayCommand(_ => { });
-            RefreshServicesCommand = new RelayCommand(_ => { });
+            ClearServiceSearchCommand = new RelayCommand(_ => ServiceSearchText = string.Empty);
+            RefreshServicesCommand = new AsyncRelayCommand(_ => LoadWindowsServicesAsync());
+            StartServiceCommand = new AsyncRelayCommand(p => ChangeWindowsServiceAsync(p, start: true));
+            StopServiceCommand = new AsyncRelayCommand(p => ChangeWindowsServiceAsync(p, start: false));
             RefreshThermalCommand = new AsyncRelayCommand(async () => { var ct = default(CancellationToken); await UpdateThermalAsync(ct); });
 
             // Backup & Restore commands
@@ -521,33 +607,219 @@ namespace Wpc_SutilBox.ViewModels
 
             _ = LoadSettingsAsync();
 
-            NavigateCommand = new RelayCommand(param =>
+            NavigateCommand = new RelayCommand(StartNavigation);
+
+            if (DashboardViewModel != null)
+                _ = DashboardViewModel.OnNavigatedToAsync();
+
+            WriteLog("Aplicación iniciada correctamente.");
+        }
+
+        private async Task LoadWindowsServicesAsync()
+        {
+            if (_serviceOptimizerService == null)
             {
-                if (param is string section && !string.IsNullOrWhiteSpace(section))
+                ServiceStatusMessage = "El servicio de administración no está disponible.";
+                return;
+            }
+
+            ServiceStatusMessage = "Cargando servicios de Windows...";
+            try
+            {
+                var services = await _serviceOptimizerService.GetWindowsServicesAsync();
+                _allWindowsServices.Clear();
+                _allWindowsServices.AddRange(services);
+                ApplyServiceFilter();
+            }
+            catch (Exception ex)
+            {
+                ServiceStatusMessage = $"Error al cargar servicios: {ex.Message}";
+                WriteLog("Error al cargar servicios de Windows", ex);
+            }
+        }
+
+        private void ApplyServiceFilter()
+        {
+            string search = ServiceSearchText.Trim();
+            var filtered = _allWindowsServices.Where(service =>
+                string.IsNullOrEmpty(search)
+                || service.Name.Contains(search, StringComparison.OrdinalIgnoreCase)
+                || service.DisplayName.Contains(search, StringComparison.OrdinalIgnoreCase)
+                || service.Description.Contains(search, StringComparison.OrdinalIgnoreCase));
+
+            WindowsServices.Clear();
+            foreach (var service in filtered)
+                WindowsServices.Add(service);
+
+            ServiceStatusMessage = string.IsNullOrEmpty(search)
+                ? $"{WindowsServices.Count} servicios encontrados."
+                : $"{WindowsServices.Count} servicios coinciden con la búsqueda.";
+        }
+
+        private async Task ChangeWindowsServiceAsync(object? parameter, bool start)
+        {
+            if (parameter is not string serviceName || string.IsNullOrWhiteSpace(serviceName))
+                return;
+
+            if (_serviceOptimizerService == null || _dialogService == null)
+            {
+                ServiceStatusMessage = "No se puede confirmar o ejecutar la acción en este momento.";
+                return;
+            }
+
+            var service = _allWindowsServices.FirstOrDefault(item =>
+                string.Equals(item.Name, serviceName, StringComparison.OrdinalIgnoreCase));
+            if (service == null || (start && !service.CanBeStarted) || (!start && !service.CanBeStopped))
+            {
+                ServiceStatusMessage = "El servicio seleccionado no admite esta acción.";
+                return;
+            }
+
+            string action = start ? "iniciar" : "detener";
+            string actionPast = start ? "iniciado" : "detenido";
+            try
+            {
+                bool confirmed = await _dialogService.ShowConfirmation(
+                    $"¿Desea {action} el servicio \"{service.DisplayName}\"? Esto puede afectar a Windows o a aplicaciones que dependan de él.",
+                    "Confirmar acción sobre servicio");
+                if (!confirmed)
                 {
-                    if (!Enum.TryParse(section, ignoreCase: true, out AppSection targetSection))
-                    {
-                        WriteLog($"Sección desconocida: {section}");
-                        return;
-                    }
-
-                    CurrentSection = targetSection;
-                    WriteLog($"Navegando a la sección: {targetSection}");
-                    if (targetSection == AppSection.Desinstalador || targetSection == AppSection.Bloatware)
-                    {
-                        _ = RefreshStartupItemsAsync();
-                        _ = RefreshBloatwareAppsAsync();
-                    }
-                    else if (targetSection == AppSection.Historial) RefreshLogs();
-                    else if (targetSection == AppSection.Dashboard && DashboardViewModel != null)
-                        _ = DashboardViewModel.RefreshAllAsync();
+                    ServiceStatusMessage = "Acción cancelada; el servicio no se modificó.";
+                    return;
                 }
-            });
 
-            _ = DashboardViewModel?.RefreshAllAsync();
+                bool succeeded = start
+                    ? await _serviceOptimizerService.StartServiceAsync(service.Name)
+                    : await _serviceOptimizerService.StopServiceAsync(service.Name);
 
-            // Escribe un log de prueba al iniciar la app para verificar la ruta
-            WriteLog("Aplicación iniciada correctamente en modo Debug.");
+                if (!succeeded)
+                {
+                    ServiceStatusMessage = $"No se pudo {action} el servicio. Compruebe los permisos y su estado.";
+                    return;
+                }
+
+                ServiceStatusMessage = $"Servicio {actionPast} correctamente.";
+                await LoadWindowsServicesAsync();
+            }
+            catch (Exception ex)
+            {
+                ServiceStatusMessage = $"Error al {action} el servicio: {ex.Message}";
+                WriteLog($"Error al {action} el servicio {service.Name}", ex);
+            }
+        }
+
+        private void StartNavigation(object? parameter)
+        {
+            var sequence = Interlocked.Increment(ref _navigationSequence);
+            _ = NavigateAsync(parameter, sequence);
+        }
+
+        private async Task NavigateAsync(object? parameter, int sequence)
+        {
+            if (parameter is not string section || string.IsNullOrWhiteSpace(section))
+                return;
+
+            if (!Enum.TryParse(section, ignoreCase: true, out AppSection targetSection))
+            {
+                WriteLog($"Sección desconocida: {section}");
+                return;
+            }
+
+            if (targetSection == AppSection.ProgramasInstalar)
+                targetSection = AppSection.ProgramasActualizar;
+            else if (targetSection == AppSection.Bloatware)
+                targetSection = AppSection.Desinstalador;
+            else if (targetSection == AppSection.Red)
+                targetSection = AppSection.TestRed;
+            else if (targetSection == AppSection.Hardware)
+                targetSection = AppSection.RevisarPC;
+            else if (targetSection == AppSection.Escala)
+                targetSection = AppSection.Configuracion;
+
+            try
+            {
+                if (CurrentSection != targetSection)
+                    await OnNavigatedFromAsync(CurrentSection);
+
+                if (sequence != Volatile.Read(ref _navigationSequence))
+                    return;
+
+                CurrentSection = targetSection;
+                WriteLog($"Navegando a la sección: {targetSection}");
+                await OnNavigatedToAsync(targetSection);
+
+                if (sequence != Volatile.Read(ref _navigationSequence) && CurrentSection != targetSection)
+                    await OnNavigatedFromAsync(targetSection);
+            }
+            catch (Exception ex)
+            {
+                WriteLog($"Error al navegar a la sección {targetSection}", ex);
+            }
+        }
+
+        private async Task OnNavigatedToAsync(AppSection section)
+        {
+            switch (section)
+            {
+                case AppSection.SaludDiscos when StorageViewModel != null:
+                    await StorageViewModel.RefreshDiskHealthAsync();
+                    break;
+                case AppSection.Dashboard when DashboardViewModel != null:
+                    await DashboardViewModel.OnNavigatedToAsync();
+                    break;
+                case AppSection.RevisarPC when PcReviewViewModel != null:
+                    await PcReviewViewModel.OnNavigatedToAsync();
+                    break;
+                case AppSection.Batería when BatteryViewModel != null:
+                    await BatteryViewModel.OnNavigatedToAsync();
+                    break;
+                case AppSection.Drivers when DriversViewModel != null:
+                    await DriversViewModel.OnNavigatedToAsync();
+                    break;
+                case AppSection.Desinstalador when ProgramsViewModel != null:
+                    await ProgramsViewModel.LoadInstalledAppsAsync();
+                    break;
+                case AppSection.ProgramasActualizar when ProgramsViewModel != null:
+                    await ProgramsViewModel.OnNavigatedToAsync();
+                    break;
+                case AppSection.InicioWindows when StartupViewModel != null:
+                    await StartupViewModel.OnNavigatedToAsync();
+                    break;
+                case AppSection.Privacidad when PrivacyViewModel != null:
+                    await PrivacyViewModel.OnNavigatedToAsync();
+                    break;
+                case AppSection.Rendimiento:
+                    await LoadWindowsServicesAsync();
+                    break;
+                case AppSection.CompatibilidadWin11 when Windows11CompatibilityViewModel != null:
+                    await Windows11CompatibilityViewModel.OnNavigatedToAsync();
+                    break;
+                case AppSection.Periféricos when PeripheralDiagnosticsViewModel != null:
+                    await PeripheralDiagnosticsViewModel.OnNavigatedToAsync();
+                    break;
+                case AppSection.VerificarUSB when UsbStorageViewModel != null:
+                    await UsbStorageViewModel.OnNavigatedToAsync();
+                    break;
+                case AppSection.CentralDeshacer when HistoryViewModel != null:
+                    await HistoryViewModel.OnNavigatedToAsync();
+                    break;
+                case AppSection.Historial:
+                    RefreshLogs();
+                    break;
+            }
+        }
+
+        private async Task OnNavigatedFromAsync(AppSection section)
+        {
+            switch (section)
+            {
+                case AppSection.Dashboard when DashboardViewModel != null:
+                    await DashboardViewModel.OnNavigatedFromAsync();
+                    break;
+                case AppSection.RevisarPC when PcReviewViewModel != null:
+                    await PcReviewViewModel.OnNavigatedFromAsync();
+                    break;
+            }
         }
 
         private async Task LoadSettingsAsync()

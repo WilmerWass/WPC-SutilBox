@@ -12,6 +12,7 @@
         public string RecommendedAction { get; set; } = string.Empty; // por ejemplo, "Mantener AutomÃ¡tico", "Establecer en Manual", "Deshabilitar"
         
         public bool IsRunning => Status == ServiceStatus.Running;
+        public bool CanBeStarted => Status == ServiceStatus.Stopped && StartType != ServiceStartType.Disabled;
     }
 
     public enum ServiceStatus
@@ -37,4 +38,3 @@
         Unknown
     }
 }
-

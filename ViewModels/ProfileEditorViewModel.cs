@@ -18,7 +18,17 @@ namespace Wpc_SutilBox.ViewModels
         private readonly IDialogService _dialogService;
         private AppSettings? _currentSettings;
         private bool _isBusy;
-        public bool IsBusy { get => _isBusy; set { _isBusy = value; OnPropertyChanged(); } }
+        public bool IsBusy
+        {
+            get => _isBusy;
+            set
+            {
+                if (_isBusy == value) return;
+                _isBusy = value;
+                OnPropertyChanged();
+                System.Windows.Input.CommandManager.InvalidateRequerySuggested();
+            }
+        }
         private string _statusMessage = "";
         public string StatusMessage { get => _statusMessage; set { _statusMessage = value; OnPropertyChanged(); } }
 
@@ -187,7 +197,7 @@ namespace Wpc_SutilBox.ViewModels
             _log = log;
             _dialogService = dialogService;
 
-            SaveCommand = new RelayCommand(async _ => await SaveChangesAsync());
+            SaveCommand = new AsyncRelayCommand(SaveChangesAsync, () => !IsBusy);
             RestoreDefaultsCommand = new RelayCommand(_ => RestoreDefaults());
             AddAutoBoostCommand = new RelayCommand(p => 
             {

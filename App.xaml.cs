@@ -84,6 +84,7 @@ namespace Wpc_SutilBox
             services.AddSingleton<IDialogService, DialogService>();
             services.AddSingleton<IStartupService, StartupService>();
             services.AddSingleton<IServiceOptimizerService, ServiceOptimizerService>();
+            services.AddSingleton<IBenchmarkService, BenchmarkService>();
             services.AddSingleton<IBloatwareService, BloatwareService>();
             services.AddSingleton<IPrivacyService, PrivacyService>();
             services.AddSingleton<ILocalizationService, LocalizationService>();
@@ -98,6 +99,12 @@ namespace Wpc_SutilBox
             services.AddSingleton<IHistoryService, HistoryService>();
             services.AddSingleton<IPermissionService, PermissionService>();
             services.AddSingleton<INetworkTestService, NetworkTestService>();
+            if (OperatingSystem.IsWindows())
+            {
+                services.AddSingleton<IWindows11CompatibilityService, Windows11CompatibilityService>();
+                services.AddSingleton<IPeripheralDiagnosticService, PeripheralDiagnosticService>();
+            }
+            services.AddSingleton<IDuplicateFileService, DuplicateFileService>();
             services.AddSingleton<IBackupService, BackupService>();
             services.AddSingleton<IRestoreService, RestoreService>();
 
@@ -116,6 +123,11 @@ namespace Wpc_SutilBox
             services.AddTransient<PrivacyViewModel>();
             services.AddTransient<HistoryViewModel>();
             services.AddTransient<NetworkTestViewModel>();
+            services.AddTransient<Windows11CompatibilityViewModel>();
+            services.AddTransient<DuplicateFilesViewModel>();
+            services.AddTransient<PeripheralDiagnosticsViewModel>();
+            services.AddTransient<UsbStorageViewModel>();
+            services.AddTransient<BenchmarkViewModel>();
 
             services.AddSingleton<MainViewModel>();
             services.AddTransient<MainWindow>(s => new MainWindow(s.GetRequiredService<ILogService>()));

@@ -13,18 +13,21 @@
         </Grid.RowDefinitions>
 
         <TextBlock Grid.Row="0" Text="Administrador de Inicio" Style="{StaticResource HeaderTextStyle}" Margin="0,0,0,30"/>
+        <Button Grid.Row="0" Content="Actualizar lista" Command="{Binding RefreshCommand}"
+                Style="{StaticResource SecondaryButtonStyle}" HorizontalAlignment="Right"/>
 
         <Border Grid.Row="1" Style="{StaticResource AnimatedCardStyle}">
             <StackPanel>
                 <TextBlock Text="Aplicaciones al iniciar Windows" FontSize="18" FontWeight="SemiBold" Foreground="White" Margin="0,0,0,15"/>
                 
+                <TextBlock Text="{Binding StatusMessage}" Foreground="{DynamicResource TextSecondaryBrush}"
+                           Margin="0,0,0,12"/>
                 <ListView ItemsSource="{Binding StartupItems}" Background="Transparent" BorderThickness="0">
                     <ListView.ItemTemplate>
                         <DataTemplate DataType="{x:Type models:StartupItem}">
                             <Grid Margin="0,5">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
 
@@ -34,12 +37,18 @@
                                     <TextBlock Text="{Binding Type}" Foreground="#666" FontSize="10"/>
                                 </StackPanel>
 
-                                <ToggleButton Grid.Column="1" 
-                                              IsChecked="{Binding IsEnabled}" 
-                                              Content="{Binding IsEnabled, Converter={StaticResource BooleanToStringConverter}, ConverterParameter='Activado|Desactivado'}" 
-                                              Style="{StaticResource ToggleSwitchStyle}" Margin="10,0"/>
-
-                                <Button Grid.Column="2" Content="Deshabilitar" Style="{StaticResource SecondaryButtonStyle}" Margin="5,0"/>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                    <Button Content="Habilitar"
+                                            Command="{Binding DataContext.EnableCommand, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
+                                            CommandParameter="{Binding}"
+                                            Visibility="{Binding IsEnabled, Converter={StaticResource InvertedBooleanToVisibilityConverter}}"
+                                            Style="{StaticResource SecondaryButtonStyle}" Margin="5,0"/>
+                                    <Button Content="Deshabilitar"
+                                            Command="{Binding DataContext.DisableCommand, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
+                                            CommandParameter="{Binding}"
+                                            Visibility="{Binding IsEnabled, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                            Style="{StaticResource DangerButtonStyle}" Margin="5,0"/>
+                                </StackPanel>
                             </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>

@@ -39,7 +39,8 @@
                                    FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}"
                                    TextWrapping="Wrap"
                                    Margin="0,0,0,16"/>
-                        <Border Background="#1A6366F1" BorderBrush="#336366F1" BorderThickness="1" CornerRadius="8" Padding="12,10" Margin="0,0,0,0">
+                        <Border Background="#1A6366F1" BorderBrush="#336366F1" BorderThickness="1" CornerRadius="8" Padding="12,10" Margin="0,0,0,0"
+                                Visibility="{Binding ShowDevelopmentNotice, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="🚧" FontSize="18" VerticalAlignment="Center" Margin="0,0,10,0"/>
                                 <StackPanel>

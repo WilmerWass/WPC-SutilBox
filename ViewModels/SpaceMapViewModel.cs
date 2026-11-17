@@ -31,7 +31,7 @@ public sealed class SpaceMapViewModel : ViewModelBase
     public string Status { get => _status; private set => SetProperty(ref _status, value); }
     public long TotalBytes => Roots.Sum(root => root.SizeBytes);
     public int FileCount => Files.Count;
-    public ICommand BackCommand { get; set; } = new RelayCommand(() => { });
+    public ICommand? BackCommand { get; set; }
     public ICommand BrowseCommand => new RelayCommand(_ => Browse());
     public ICommand AnalyzeCommand => new AsyncRelayCommand(_ => AnalyzeAsync());
     public ICommand CancelCommand => new RelayCommand(_ => _scanCancellation?.Cancel());

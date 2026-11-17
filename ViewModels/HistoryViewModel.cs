@@ -91,8 +91,12 @@ namespace Wpc_SutilBox.ViewModels
                 if (success)
                 {
                     entry.WasReverted = true;
-                    StatusMessage = $"{entry.Title} marcada como revertida.";
+                    StatusMessage = $"{entry.Title} se revirtió correctamente.";
                     _logService.Info($"History reverted: {entry.Title}");
+                }
+                else
+                {
+                    StatusMessage = $"No se pudo revertir {entry.Title}; no existe una acción de reversión implementada.";
                 }
             }
             catch (Exception ex)

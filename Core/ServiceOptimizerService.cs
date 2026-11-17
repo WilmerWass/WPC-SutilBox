@@ -49,6 +49,7 @@ namespace Wpc_SutilBox.Core
                 catch (Exception ex)
                 {
                     _log.Error("Error getting list of Windows services", ex);
+                    throw;
                 }
                 return services.OrderBy(s => s.DisplayName);
             });
@@ -206,4 +207,3 @@ namespace Wpc_SutilBox.Core
         }
     }
 }
-

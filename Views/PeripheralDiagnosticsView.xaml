@@ -1,0 +1,136 @@
+<UserControl x:Class="Wpc_SutilBox.Views.PeripheralDiagnosticsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="650" d:DesignWidth="1000">
+    <Grid Style="{StaticResource AnimatedViewStyle}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Margin="20,20,20,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel>
+                <TextBlock Text="Diagnóstico y prueba de periféricos" Style="{StaticResource HeaderTextStyle}"/>
+                <TextBlock Text="{Binding StatusMessage}" Style="{StaticResource SubHeaderTextStyle}"
+                           Margin="0,6,12,0" TextWrapping="Wrap"/>
+            </StackPanel>
+            <Button Grid.Column="1" Content="Actualizar dispositivos" Command="{Binding RefreshCommand}"
+                    Style="{StaticResource SecondaryButtonStyle}" Margin="0,0,8,0" VerticalAlignment="Center"/>
+            <Button Grid.Column="2" Content="Probar todo" Command="{Binding TestAllCommand}"
+                    Style="{StaticResource PrimaryButtonStyle}" VerticalAlignment="Center"/>
+        </Grid>
+
+        <Border Grid.Row="1" Margin="20,0,20,12" Padding="12"
+                Background="{DynamicResource SurfaceBrush}" CornerRadius="10"
+                Visibility="{Binding IsTesting, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <StackPanel>
+                <TextBlock Text="{Binding TestInstruction}" Foreground="{DynamicResource TextSecondaryBrush}"
+                           TextWrapping="Wrap" Margin="0,0,0,10"/>
+                <Border Visibility="{Binding IsTestingKeyboard, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        Background="{DynamicResource BackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}"
+                        BorderThickness="1" CornerRadius="8" Padding="12" Focusable="True"
+                        MouseDown="KeyboardCaptureTarget_MouseDown"
+                        PreviewKeyDown="KeyboardCaptureTarget_PreviewKeyDown">
+                    <StackPanel>
+                        <TextBlock Text="Área de prueba del teclado — haz clic aquí y pulsa teclas"
+                                   Foreground="{DynamicResource TextPrimaryBrush}" FontWeight="SemiBold"/>
+                        <TextBlock Text="{Binding LastKey, StringFormat='{}Última tecla observada: {0}'}"
+                                   Foreground="{DynamicResource PrimaryBrush}" Margin="0,6,0,0"/>
+                        <TextBlock Text="{Binding ObservedKeys, StringFormat='{}Teclas observadas: {0}'}"
+                                   Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
+                <Border Visibility="{Binding IsTestingMouse, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        Background="{DynamicResource BackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}"
+                        BorderThickness="1" CornerRadius="8" Padding="12"
+                        PreviewMouseDown="MouseCaptureTarget_PreviewMouseDown"
+                        PreviewMouseMove="MouseCaptureTarget_PreviewMouseMove"
+                        PreviewMouseWheel="MouseCaptureTarget_PreviewMouseWheel">
+                    <StackPanel>
+                        <TextBlock Text="Área de prueba del mouse — usa los botones y la rueda aquí"
+                                   Foreground="{DynamicResource TextPrimaryBrush}" FontWeight="SemiBold"/>
+                        <TextBlock Text="{Binding LeftClicks, StringFormat='{}Clics izquierdo: {0}'}"
+                                   Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,6,0,0"/>
+                        <TextBlock Text="{Binding RightClicks, StringFormat='{}Clics derecho: {0}'}"
+                                   Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        <TextBlock Text="{Binding MiddleClicks, StringFormat='{}Clics centrales: {0}'}"
+                                   Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        <TextBlock Text="{Binding WheelSteps, StringFormat='{}Eventos de rueda: {0}'}"
+                                   Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        <TextBlock Text="{Binding PointerMoves, StringFormat='{}Movimientos detectados: {0}'}"
+                                   Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    </StackPanel>
+                </Border>
+                <Border Visibility="{Binding IsTestingScreen, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        Background="{Binding ScreenPatternBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}"
+                        BorderThickness="1" CornerRadius="8" Padding="12" MinHeight="90">
+                    <StackPanel>
+                        <TextBlock Text="Prueba visual de pantalla" Foreground="#FF808080" FontWeight="SemiBold"/>
+                        <Button Content="Siguiente color" Command="{Binding NextScreenPatternCommand}"
+                                Style="{StaticResource SecondaryButtonStyle}" HorizontalAlignment="Left" Margin="0,8,0,0"/>
+                    </StackPanel>
+                </Border>
+                <Border Visibility="{Binding IsTestingAudio, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        Background="{DynamicResource BackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}"
+                        BorderThickness="1" CornerRadius="8" Padding="12">
+                    <StackPanel>
+                        <TextBlock Text="Prueba de salida de audio predeterminada"
+                                   Foreground="{DynamicResource TextPrimaryBrush}" FontWeight="SemiBold"/>
+                        <Button Content="Reproducir tono" Command="{Binding PlayTestToneCommand}"
+                                Style="{StaticResource SecondaryButtonStyle}" HorizontalAlignment="Left" Margin="0,8,0,0"/>
+                    </StackPanel>
+                </Border>
+                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                    <Button Content="Correcto" Command="{Binding MarkTestPassedCommand}"
+                            Style="{StaticResource PrimaryButtonStyle}" Margin="0,0,8,0"/>
+                    <Button Content="Falló" Command="{Binding MarkTestFailedCommand}"
+                            Style="{StaticResource SecondaryButtonStyle}"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <Grid Grid.Row="2" Margin="20,0,20,20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <DataGrid Grid.Row="0" ItemsSource="{Binding Devices}" AutoGenerateColumns="False"
+                      IsReadOnly="True" CanUserAddRows="False" HeadersVisibility="Column">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Tipo" Binding="{Binding Category}" Width="150"/>
+                    <DataGridTextColumn Header="Dispositivo" Binding="{Binding Name}" Width="2*"/>
+                    <DataGridTextColumn Header="Fabricante" Binding="{Binding Manufacturer}" Width="150"/>
+                    <DataGridTextColumn Header="Estado en Windows" Binding="{Binding Status}" Width="220"/>
+                    <DataGridTemplateColumn Header="Prueba" Width="90">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="Probar" Command="{Binding DataContext.TestDeviceCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}" Style="{StaticResource SecondaryButtonStyle}" Padding="8,3"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+            <StackPanel Grid.Row="1" Margin="0,8,0,0">
+                <TextBlock Text="Las pruebas interactivas disponibles miden eventos de teclado/mouse recibidos por Windows, muestran patrones visuales y reproducen un tono por la salida de audio predeterminada. No identifican qué periférico físico generó cada evento; desconecta los demás para aislar uno. Otros dispositivos quedan enumerados y su estado PnP es informativo, no una prueba funcional."
+                           Foreground="{DynamicResource TextMutedBrush}" FontSize="11" TextWrapping="Wrap"/>
+                <ItemsControl ItemsSource="{Binding TestResults}" Margin="0,6,0,0">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>

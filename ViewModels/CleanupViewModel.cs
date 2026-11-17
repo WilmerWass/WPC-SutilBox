@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Wpc_SutilBox.Core;
@@ -15,6 +16,7 @@ namespace Wpc_SutilBox.ViewModels
         private readonly ILogService _logService;
 
         private bool _isBusy;
+        private CancellationTokenSource? _operationCancellation;
         private string _statusMessage = "Selecciona las categorías a limpiar.";
         private bool _cleanSystemTemp = true;
         private bool _cleanRecycleBin;
@@ -34,11 +36,13 @@ namespace Wpc_SutilBox.ViewModels
 
         public ObservableCollection<CleanupCandidate> CleanupCandidates { get; } = new();
         public int CleanupCandidateCount => CleanupCandidates.Count;
+        public bool HasCleanupCandidates => CleanupCandidates.Count > 0;
         public long CleanupEstimatedBytes => CleanupCandidates.Sum(c => c.SizeBytes);
         public string FormattedEstimatedBytes => FormatBytes(CleanupEstimatedBytes);
 
         public ICommand PreviewCommand { get; }
         public ICommand CleanCommand { get; }
+        public ICommand CancelCommand { get; }
 
         public CleanupViewModel(ISystemMaintenanceService maintenanceService, IDialogService dialogService, ILogService logService)
         {
@@ -48,11 +52,14 @@ namespace Wpc_SutilBox.ViewModels
 
             PreviewCommand = new AsyncRelayCommand(_ => PreviewCleanupAsync());
             CleanCommand = new AsyncRelayCommand(_ => ExecuteCleanAsync());
+            CancelCommand = new RelayCommand(_ => _operationCancellation?.Cancel(), _ => IsBusy);
         }
 
         public async Task PreviewCleanupAsync()
         {
             if (IsBusy) return;
+            using var cancellation = new CancellationTokenSource();
+            _operationCancellation = cancellation;
             IsBusy = true;
             StatusMessage = "Analizando archivos temporales...";
 
@@ -68,12 +75,20 @@ namespace Wpc_SutilBox.ViewModels
                     CleanEventLogs = CleanEventLogs
                 };
 
-                var candidates = await _maintenanceService.PreviewTemporaryFilesAsync(options);
+                var candidates = await _maintenanceService.PreviewTemporaryFilesAsync(options, cancellation.Token);
                 CleanupCandidates.Clear();
                 foreach (var candidate in candidates) CleanupCandidates.Add(candidate);
+                OnPropertyChanged(nameof(CleanupCandidateCount));
+                OnPropertyChanged(nameof(HasCleanupCandidates));
+                OnPropertyChanged(nameof(CleanupEstimatedBytes));
+                OnPropertyChanged(nameof(FormattedEstimatedBytes));
 
                 StatusMessage = $"{CleanupCandidateCount} archivos encontrados ({FormattedEstimatedBytes}).";
                 _logService.Info($"Preview limpieza: {CleanupCandidateCount} candidatos, {FormattedEstimatedBytes}");
+            }
+            catch (OperationCanceledException)
+            {
+                StatusMessage = "Análisis cancelado. No se eliminó ningún archivo.";
             }
             catch (Exception ex)
             {
@@ -82,6 +97,7 @@ namespace Wpc_SutilBox.ViewModels
             }
             finally
             {
+                _operationCancellation = null;
                 IsBusy = false;
             }
         }
@@ -97,14 +113,24 @@ namespace Wpc_SutilBox.ViewModels
             if (!confirmed) return;
 
             IsBusy = true;
+            using var cancellation = new CancellationTokenSource();
+            _operationCancellation = cancellation;
             StatusMessage = "Limpiando archivos...";
 
             try
             {
-                var result = await _maintenanceService.CleanTemporaryFilesAsync(CleanupCandidates.ToList());
+                var result = await _maintenanceService.CleanTemporaryFilesAsync(CleanupCandidates.ToList(), cancellation.Token);
                 StatusMessage = result.ToString();
                 CleanupCandidates.Clear();
+                OnPropertyChanged(nameof(CleanupCandidateCount));
+                OnPropertyChanged(nameof(HasCleanupCandidates));
+                OnPropertyChanged(nameof(CleanupEstimatedBytes));
+                OnPropertyChanged(nameof(FormattedEstimatedBytes));
                 _logService.Info($"Limpieza completada: {result}");
+            }
+            catch (OperationCanceledException)
+            {
+                StatusMessage = "Limpieza cancelada. Revisa los resultados antes de volver a intentarlo.";
             }
             catch (Exception ex)
             {
@@ -113,6 +139,7 @@ namespace Wpc_SutilBox.ViewModels
             }
             finally
             {
+                _operationCancellation = null;
                 IsBusy = false;
             }
         }

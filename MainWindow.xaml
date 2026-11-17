@@ -178,22 +178,12 @@
                                     CommandParameter="MapaEspacio"
                                     Style="{StaticResource NavButtonStyle}"/>
 
-                            <Button Content="📦   Desinstalador"
+                            <Button Content="📦   Aplicaciones instaladas"
                                     Command="{Binding NavigateCommand}"
                                     CommandParameter="Desinstalador"
                                     Style="{StaticResource NavButtonStyle}"/>
 
-                            <Button Content="🗑️   Bloatware"
-                                    Command="{Binding NavigateCommand}"
-                                    CommandParameter="Bloatware"
-                                    Style="{StaticResource NavButtonStyle}"/>
-
-                            <Button Content="📥   Instalar programas"
-                                    Command="{Binding NavigateCommand}"
-                                    CommandParameter="ProgramasInstalar"
-                                    Style="{StaticResource NavButtonStyle}"/>
-
-                            <Button Content="🔄   Actualizar programas"
+                            <Button Content="📦   Programas y actualizaciones"
                                     Command="{Binding NavigateCommand}"
                                     CommandParameter="ProgramasActualizar"
                                     Style="{StaticResource NavButtonStyle}"/>
@@ -276,6 +266,12 @@
                                     CommandParameter="Escaneo"
                                     Style="{StaticResource NavButtonStyle}"/>
 
+                            <Button Content="⚙️   Configuración"
+                                    Command="{Binding NavigateCommand}"
+                                    CommandParameter="Configuracion"
+                                    Style="{StaticResource NavButtonStyle}"/>
+                                    Style="{StaticResource NavButtonStyle}"/>
+
                             <Button Content="ℹ️   Acerca de"
                                     Command="{Binding NavigateCommand}"
                                     CommandParameter="AcercaDe"
@@ -303,7 +299,7 @@
                                 Background="{DynamicResource BackgroundBrush}">
 
                             <StackPanel>
-                                <TextBlock Text="WPC-SutilBox Beta 1.1.5"
+                                <TextBlock Text="{Binding ApplicationVersionLabel}"
                                            FontSize="10"
                                            Foreground="{DynamicResource TextMutedBrush}"/>
 
@@ -357,7 +353,7 @@
                                        FontSize="13"
                                        Foreground="{DynamicResource TextMutedBrush}"/>
 
-                            <TextBlock Text="Centro de control"
+                            <TextBlock Text="{Binding CurrentSectionTitle}"
                                        Margin="0,2,0,0"
                                        FontSize="21"
                                        FontWeight="SemiBold"
@@ -443,7 +439,7 @@
                         Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Batería}}"/>
 
                     <!-- 4. Benchmark -->
-                    <views:PlaceholderView Title="⚡ Benchmark" Description="Pruebas de rendimiento de CPU, GPU, disco y memoria. En desarrollo." SectionName="Benchmark"
+                    <views:BenchmarkView DataContext="{Binding BenchmarkViewModel}"
                         Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Benchmark}}"/>
 
                     <!-- 5. Drivers -->
@@ -455,11 +451,11 @@
                         Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.SaludDiscos}}"/>
 
                     <!-- 7. Verificar USB -->
-                    <views:PlaceholderView Title="🔌 Verificar USB" Description="Autenticidad de memorias USB: VID/PID, capacidad real, prueba de escritura/lectura. En desarrollo." SectionName="VerificarUSB"
+                    <views:UsbStorageView DataContext="{Binding UsbStorageViewModel}"
                         Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.VerificarUSB}}"/>
 
                     <!-- 8. Periféricos -->
-                    <views:PlaceholderView Title="🖱️ Periféricos" Description="Diagnóstico de teclado, mouse, pantalla, altavoces, micrófono y webcam. En desarrollo." SectionName="Periféricos"
+                    <views:PeripheralDiagnosticsView DataContext="{Binding PeripheralDiagnosticsViewModel}"
                         Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Periféricos}}"/>
 
                     <!-- 9. Test de red -->
@@ -471,15 +467,15 @@
                         Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.RepararWindows}}"/>
 
                     <!-- 11. Compatibilidad Win 11 -->
-                    <views:PlaceholderView Title="🪟 Compatibilidad Windows 11" Description="Verifica TPM 2.0, Secure Boot, UEFI, CPU compatible y demás requisitos. En desarrollo." SectionName="CompatibilidadWin11"
+                    <views:Windows11CompatibilityView DataContext="{Binding Windows11CompatibilityViewModel}"
                         Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.CompatibilidadWin11}}"/>
 
                     <!-- 12. Archivos duplicados -->
-                    <views:PlaceholderView Title="📄 Archivos Duplicados" Description="Detecta y elimina archivos duplicados usando hash SHA256. En desarrollo." SectionName="ArchivosDuplicados"
+                    <views:DuplicateFilesView DataContext="{Binding DuplicateFilesViewModel}"
                         Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.ArchivosDuplicados}}"/>
 
                     <!-- 13. Limpieza -->
-                    <views:CleaningView DataContext="{Binding CleanupViewModel}"
+                    <views:CleanupView DataContext="{Binding CleanupViewModel}"
                         Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Limpieza}}"/>
 
                     <!-- 14. Mapa del disco -->
@@ -494,16 +490,8 @@
                     <views:AplicacionesView DataContext="{Binding ProgramsViewModel}"
                         Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Desinstalador}}"/>
 
-                    <!-- 17. Bloatware -->
-                    <views:BloatwareView
-                        Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Bloatware}}"/>
-
-                    <!-- 18. Instalar programas -->
+                    <!-- 18. Programas y actualizaciones -->
                     <views:ActualizacionesView DataContext="{Binding ProgramsViewModel}"
-                        Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.ProgramasInstalar}}"/>
-
-                    <!-- 19. Actualizar programas -->
-                    <views:ActualizacionesView
                         Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.ProgramasActualizar}}"/>
 
                     <!-- 20. Inicio de Windows -->
@@ -538,36 +526,32 @@
                     <views:RestoreView
                         Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.PostFormateo}}"/>
 
-                    <!-- 28. Red (herramienta) -->
-                    <views:NetworkView
-                        Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Red}}"/>
-
-                    <!-- 29. Herramientas -->
+                    <!-- 28. Herramientas -->
                     <views:ToolboxView
                         Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Herramientas}}"/>
 
                     <!-- 30. Historial -->
-                    <views:HistoryView
+                    <views:HistoryLogView
                         Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Historial}}"/>
 
                     <!-- 31. Configuración -->
                     <views:SettingsView
                         Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Configuracion}}"/>
 
-                    <!-- 32. Hardware -->
-                    <views:HardwareView
-                        Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Hardware}}"/>
+                    <!-- 32. Editor de perfiles -->
+                    <views:ProfileEditorView DataContext="{Binding ProfileEditorViewModel}"
+                        Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.EditorPerfiles}}"/>
 
                     <!-- 33. Acerca de -->
-                    <views:PlaceholderView Title="ℹ️ Acerca de" Description="WPC-SutilBox Beta 1.1.5 — Suite integral de mantenimiento y diagnóstico de Windows." SectionName="AcercaDe"
+                    <views:PlaceholderView Title="ℹ️ Acerca de" Description="{Binding DataContext.AboutDescription, RelativeSource={RelativeSource AncestorType=Window}}" SectionName="AcercaDe" ShowDevelopmentNotice="False"
                         Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.AcercaDe}}"/>
 
                     <!-- 34. Escala -->
                     <views:SettingsView
-                        Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Escala}}"/>
+                        Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Escala}}/>
 
                     <views:SmartScannerView Grid.Row="0" Grid.Column="0"
-                        Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Escaneo}}"/>
+                        Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Escaneo}}/>
 
                 </Grid>
 

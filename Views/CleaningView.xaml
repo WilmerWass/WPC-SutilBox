@@ -45,6 +45,8 @@
                                TextWrapping="Wrap" Margin="0,0,0,12" ToolTip="{Binding SelectedPath}"/>
 
                     <StackPanel Grid.Row="4" VerticalAlignment="Top">
+                        <ProgressBar Value="0" IsIndeterminate="True" Height="3" Margin="0,0,0,8"
+                                     Visibility="{Binding IsScanning, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                         <Button Content="Actualizar unidades" Command="{Binding RefreshVolumesCommand}"
                                 Style="{StaticResource SecondaryButtonStyle}" HorizontalAlignment="Stretch" Margin="0,0,0,8"/>
                         <Button Content="Analizar" Command="{Binding ScanCommand}"

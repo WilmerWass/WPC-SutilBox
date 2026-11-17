@@ -32,6 +32,11 @@ namespace Wpc_SutilBox.Core
             try
             {
                 var entries = await LoadEntriesAsync();
+                if (entry.IsReversible)
+                {
+                    entry.IsReversible = false;
+                    _logService.Warn($"Historial: '{entry.Title}' se guardó como no reversible porque no hay una acción de reversión implementada.");
+                }
                 entries.Insert(0, entry);
                 await SaveEntriesAsync(entries);
                 _logService.Info($"Historial: {entry.Title} - {entry.Description}");
@@ -39,6 +44,7 @@ namespace Wpc_SutilBox.Core
             catch (Exception ex)
             {
                 _logService.Error($"Error al añadir entrada al historial: {entry.Title}", ex);
+                throw;
             }
         }
 
@@ -55,26 +61,13 @@ namespace Wpc_SutilBox.Core
 
         public async Task<bool> RevertEntryAsync(Guid id)
         {
-            try
-            {
-                var entries = await LoadEntriesAsync();
-                var entry = entries.FirstOrDefault(e => e.Id == id);
-                if (entry == null) return false;
-                if (!entry.IsReversible) return false;
-
-                // La reversión real depende de la categoría y el estado guardado
-                // Cada servicio que registre una entrada reversible debe implementar
-                // la lógica de reversión específica. Aquí marcamos como revertida.
-                entry.WasReverted = true;
-                await SaveEntriesAsync(entries);
-                _logService.Info($"Historial: entrada {entry.Title} marcada como revertida");
-                return true;
-            }
-            catch (Exception ex)
-            {
-                _logService.Error($"Error al revertir entrada del historial: {id}", ex);
+            var entries = await LoadEntriesAsync();
+            var entry = entries.FirstOrDefault(e => e.Id == id);
+            if (entry == null || !entry.IsReversible || entry.WasReverted)
                 return false;
-            }
+
+            _logService.Warn($"No se revirtió '{entry.Title}': todavía no hay una acción de reversión implementada.");
+            return false;
         }
 
         public async Task ClearAsync()
@@ -87,6 +80,7 @@ namespace Wpc_SutilBox.Core
             catch (Exception ex)
             {
                 _logService.Error("Error al limpiar el historial", ex);
+                throw;
             }
         }
 
@@ -102,6 +96,7 @@ namespace Wpc_SutilBox.Core
             catch (Exception ex)
             {
                 _logService.Error("Error al limpiar entradas revertidas", ex);
+                throw;
             }
         }
 
@@ -120,7 +115,7 @@ namespace Wpc_SutilBox.Core
             catch (Exception ex)
             {
                 _logService.Error("Error al cargar el historial", ex);
-                return new List<HistoryEntry>();
+                throw;
             }
         }
 
@@ -135,6 +130,7 @@ namespace Wpc_SutilBox.Core
             catch (Exception ex)
             {
                 _logService.Error("Error al guardar el historial", ex);
+                throw;
             }
         }
     }

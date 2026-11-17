@@ -1,22 +1,21 @@
 using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
 using Microsoft.Win32;
 using Wpc_SutilBox.Core;
 using Wpc_SutilBox.Models;
-using System.Management;
 
 namespace Wpc_SutilBox.ViewModels;
 
 public sealed class StorageViewModel : ViewModelBase
 {
     private readonly IStorageScanService _scanService;
+    private readonly IDiskHealthService _diskHealthService;
+    private readonly ILogService _logService;
     private CancellationTokenSource? _scanCancellation;
     private StorageVolumeInfo? _selectedVolume;
     private string _selectedPath = string.Empty;
@@ -27,10 +26,14 @@ public sealed class StorageViewModel : ViewModelBase
     private long _directoriesScanned;
     private long _totalBytes;
     private bool _isPartial;
+    private bool _isRefreshingDiskHealth;
+    private string _diskHealthStatus = "La salud SMART todavía no se ha consultado.";
 
-    public StorageViewModel(IStorageScanService scanService)
+    public StorageViewModel(IStorageScanService scanService, IDiskHealthService diskHealthService, ILogService logService)
     {
         _scanService = scanService;
+        _diskHealthService = diskHealthService;
+        _logService = logService;
         Volumes = new ObservableCollection<StorageVolumeInfo>(_scanService.GetVolumes());
         if (Volumes.Count > 0)
         {
@@ -39,23 +42,23 @@ public sealed class StorageViewModel : ViewModelBase
         }
         Items = new ObservableCollection<StorageScanItem>();
         Errors = new ObservableCollection<StorageScanError>();
+        DiskHealth = new ObservableCollection<DiskHealthInfo>();
         ScanCommand = new AsyncRelayCommand(ScanAsync, () => !IsScanning && !string.IsNullOrWhiteSpace(SelectedPath));
         CancelCommand = new RelayCommand(_ => _scanCancellation?.Cancel(), _ => IsScanning);
         BrowseFolderCommand = new RelayCommand(BrowseFolder);
         RefreshVolumesCommand = new RelayCommand(_ => RefreshVolumes(), _ => !IsScanning);
-        RefreshDiskHealthCommand = new AsyncRelayCommand(_ => RefreshDiskHealthAsync());
-        AnalyzeDiskSpaceCommand = new RelayCommand(AnalyzeDiskSpace);
+        RefreshDiskHealthCommand = new AsyncRelayCommand(RefreshDiskHealthAsync, () => !IsRefreshingDiskHealth);
     }
 
     public ObservableCollection<StorageVolumeInfo> Volumes { get; }
-    public ObservableCollection<StorageScanItem> Items { get; }
+    public ObservableCollection<StorageScanItem> Items { get; private set; }
     public ObservableCollection<StorageScanError> Errors { get; }
+    public ObservableCollection<DiskHealthInfo> DiskHealth { get; }
     public ICommand ScanCommand { get; }
     public ICommand CancelCommand { get; }
     public ICommand BrowseFolderCommand { get; }
     public ICommand RefreshVolumesCommand { get; }
     public ICommand RefreshDiskHealthCommand { get; }
-    public ICommand AnalyzeDiskSpaceCommand { get; }
 
     public StorageVolumeInfo? SelectedVolume
     {
@@ -77,6 +80,16 @@ public sealed class StorageViewModel : ViewModelBase
     public long TotalBytes { get => _totalBytes; private set { if (SetProperty(ref _totalBytes, value)) OnPropertyChanged(nameof(FormattedTotalBytes)); } }
     public string FormattedTotalBytes => FormatSize(TotalBytes);
     public bool IsPartial { get => _isPartial; private set => SetProperty(ref _isPartial, value); }
+    public bool IsRefreshingDiskHealth
+    {
+        get => _isRefreshingDiskHealth;
+        private set
+        {
+            if (SetProperty(ref _isRefreshingDiskHealth, value))
+                CommandManager.InvalidateRequerySuggested();
+        }
+    }
+    public string DiskHealthStatus { get => _diskHealthStatus; private set => SetProperty(ref _diskHealthStatus, value); }
     public System.Collections.Generic.IEnumerable<StorageScanItem> FilteredItems => string.IsNullOrWhiteSpace(SearchText)
         ? Items
         : Items.Where(item => item.Path.Contains(SearchText, StringComparison.OrdinalIgnoreCase));
@@ -105,7 +118,9 @@ public sealed class StorageViewModel : ViewModelBase
         FilesScanned = 0;
         DirectoriesScanned = 0;
         TotalBytes = 0;
-        Items.Clear();
+        Items = new ObservableCollection<StorageScanItem>();
+        OnPropertyChanged(nameof(Items));
+        OnPropertyChanged(nameof(FilteredItems));
         Errors.Clear();
         StatusMessage = "Analizando… El escaneo no modifica archivos.";
 
@@ -119,7 +134,9 @@ public sealed class StorageViewModel : ViewModelBase
         try
         {
             var result = await _scanService.ScanAsync(SelectedPath, progress, token);
-            foreach (var item in result.Items) Items.Add(item);
+            Items = new ObservableCollection<StorageScanItem>(result.Items);
+            OnPropertyChanged(nameof(Items));
+            OnPropertyChanged(nameof(FilteredItems));
             foreach (var error in result.Errors) Errors.Add(error);
             FilesScanned = result.FilesScanned;
             DirectoriesScanned = result.DirectoriesScanned;
@@ -156,58 +173,31 @@ public sealed class StorageViewModel : ViewModelBase
         return $"{size:0.##} {units[unit]}";
     }
 
-    private async Task RefreshDiskHealthAsync()
+    public async Task RefreshDiskHealthAsync()
     {
-        StatusMessage = "Obteniendo información de salud de discos...";
+        if (IsRefreshingDiskHealth) return;
+        IsRefreshingDiskHealth = true;
+        DiskHealthStatus = "Consultando estado SMART y sensores compatibles...";
         try
         {
-            Items.Clear();
-            Errors.Clear();
-            var drives = DriveInfo.GetDrives().Where(d => d.IsReady).ToList();
-            foreach (var drive in drives)
-            {
-                try
-                {
-                    string health = "Desconocido";
-                    try
-                    {
-                        using var searcher = new ManagementObjectSearcher("SELECT HealthStatus FROM Win32_DiskDrive");
-                        foreach (var mo in searcher.Get())
-                        {
-                            if (mo["PNPDeviceID"]?.ToString()?.Contains(drive.Name.TrimEnd('\\').Replace("\\", "\\\\")) == true)
-                            {
-                                health = mo["HealthStatus"]?.ToString() ?? "Desconocido";
-                                break;
-                            }
-                        }
-                    }
-                    catch { health = "No disponible"; }
+            var disks = await _diskHealthService.GetDiskHealthAsync();
+            DiskHealth.Clear();
+            foreach (var disk in disks)
+                DiskHealth.Add(disk);
 
-                    Items.Add(new StorageScanItem(
-                        Path: drive.Name,
-                        IsDirectory: true,
-                        SizeBytes: drive.TotalSize,
-                        LastWriteTimeUtc: null));
-                }
-                catch (Exception ex)
-                {
-                    Errors.Add(new StorageScanError(drive.Name, ex.Message));
-                }
-            }
-            StatusMessage = $"Salud de discos actualizada: {drives.Count} unidades.";
+            DiskHealthStatus = DiskHealth.Count == 0
+                ? "Windows no devolvió discos físicos para consultar."
+                : $"{DiskHealth.Count} discos físicos consultados. «Sin datos SMART» significa que el dispositivo o controlador no expone esa información.";
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error al obtener salud de discos: {ex.Message}";
+            DiskHealthStatus = $"No se pudo consultar la salud de los discos: {ex.Message}";
+            _logService.Error("Error al consultar la salud de discos", ex);
+        }
+        finally
+        {
+            IsRefreshingDiskHealth = false;
         }
     }
 
-    private void AnalyzeDiskSpace(object? parameter)
-    {
-        if (parameter is string path && Directory.Exists(path))
-        {
-            SelectedPath = path;
-            _ = ScanAsync();
-        }
-    }
 }

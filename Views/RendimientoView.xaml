@@ -241,7 +241,7 @@
                                     </Button>
                                 </Grid>
                             </Border>
-                            
+
                             <!-- Botón Actualizar -->
                             <Button Grid.Column="2" 
                                     Content="Actualizar Lista" 
@@ -433,7 +433,14 @@
                                     </Button>
                                 </Grid>
                             </Border>
-                            
+
+                            <TextBlock Grid.Column="1"
+                                       Text="{Binding ServiceStatusMessage}"
+                                       Foreground="{DynamicResource TextSecondaryBrush}"
+                                       VerticalAlignment="Center"
+                                       Margin="12,0"
+                                       TextTrimming="CharacterEllipsis"/>
+
                             <!-- Botón Actualizar -->
                             <Button Grid.Column="2" 
                                     Content="Actualizar Lista" 
@@ -454,13 +461,14 @@
                                             <Button Content="Iniciar" 
                                                     Command="{Binding DataContext.StartServiceCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" 
                                                     CommandParameter="{Binding Name}" 
-                                                    Visibility="{Binding IsRunning, Converter={StaticResource InvertedBooleanToVisibilityConverter}}" 
+                                                    Visibility="{Binding CanBeStarted, Converter={StaticResource BooleanToVisibilityConverter}}"
                                                     Style="{StaticResource SecondaryButtonStyle}" 
                                                     Padding="15,2"
                                                     MinWidth="80"/>
                                             <Button Content="Detener" 
                                                     Command="{Binding DataContext.StopServiceCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" 
                                                     CommandParameter="{Binding Name}" 
+                                                    IsEnabled="{Binding CanBeStopped}"
                                                     Visibility="{Binding IsRunning, Converter={StaticResource BooleanToVisibilityConverter}}" 
                                                     Style="{StaticResource DangerButtonStyle}" 
                                                     Padding="15,2"

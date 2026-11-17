@@ -43,7 +43,7 @@ namespace Wpc_SutilBox.Models
         Hardware,
         Escaneo,
         AcercaDe,
-        Escala
+        Escala,
+        EditorPerfiles
     }
 }
-

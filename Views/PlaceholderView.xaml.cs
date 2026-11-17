@@ -17,6 +17,10 @@ namespace Wpc_SutilBox.Views
             DependencyProperty.Register(nameof(SectionName), typeof(string), typeof(PlaceholderView),
                 new PropertyMetadata(""));
 
+        public static readonly DependencyProperty ShowDevelopmentNoticeProperty =
+            DependencyProperty.Register(nameof(ShowDevelopmentNotice), typeof(bool), typeof(PlaceholderView),
+                new PropertyMetadata(true));
+
         public string Title
         {
             get => (string)GetValue(TitleProperty);
@@ -33,6 +37,12 @@ namespace Wpc_SutilBox.Views
         {
             get => (string)GetValue(SectionNameProperty);
             set => SetValue(SectionNameProperty, value);
+        }
+
+        public bool ShowDevelopmentNotice
+        {
+            get => (bool)GetValue(ShowDevelopmentNoticeProperty);
+            set => SetValue(ShowDevelopmentNoticeProperty, value);
         }
 
         public PlaceholderView()

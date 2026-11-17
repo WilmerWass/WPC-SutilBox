@@ -13,11 +13,30 @@
 
                 <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="12" Padding="20" Margin="0,0,0,20">
                     <StackPanel>
-                        <TextBlock Text="Administrador de Dispositivos" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,10"/>
-                        <TextBlock Text="Examine los dispositivos instalados y sus controladores mediante la consola oficial de Windows." FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,15"/>
-                        <Button Content="Abrir devmgmt.msc" Command="{Binding RunToolCommand}" CommandParameter="devmgmt.msc" Style="{StaticResource PrimaryButtonStyle}" HorizontalAlignment="Left"/>
+                        <TextBlock Text="Diagnóstico de controladores" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,10"/>
+                        <TextBlock Text="{Binding StatusMessage}" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,15"/>
+                        <WrapPanel>
+                            <Button Content="Actualizar diagnóstico" Command="{Binding RefreshCommand}"
+                                    Style="{StaticResource SecondaryButtonStyle}" Margin="0,0,10,0"/>
+                            <Button Content="Abrir Administrador de dispositivos"
+                                    Command="{Binding DataContext.RunToolCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+                                    CommandParameter="devmgmt.msc"
+                                    Style="{StaticResource PrimaryButtonStyle}" Margin="0,0,10,0"/>
+                            <Button Content="Exportar controladores" Command="{Binding ExportDriversCommand}"
+                                    Style="{StaticResource SecondaryButtonStyle}"/>
+                        </WrapPanel>
                     </StackPanel>
                 </Border>
+
+                <DataGrid ItemsSource="{Binding DriversWithProblems}" AutoGenerateColumns="False"
+                          IsReadOnly="True" CanUserAddRows="False" HeadersVisibility="Column">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Dispositivo" Binding="{Binding Name}" Width="2*"/>
+                        <DataGridTextColumn Header="Estado" Binding="{Binding Status}" Width="*"/>
+                        <DataGridTextColumn Header="Identificador" Binding="{Binding DeviceId}" Width="2*"/>
+                        <DataGridTextColumn Header="Descripción" Binding="{Binding ErrorDescription}" Width="2*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
             </StackPanel>
         </ScrollViewer>
     </Grid>

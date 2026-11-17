@@ -10,6 +10,7 @@
         public bool SmartStatusKnown { get; set; }
         public string SmartStatus { get; set; } = string.Empty;
         public int Temperature { get; set; }
+        public string TemperatureDisplay => Temperature > 0 ? Temperature.ToString() : "No disponible";
         public string? PnpDeviceId { get; set; }
         public int? PhysicalDiskIndex { get; set; }
     }

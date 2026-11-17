@@ -6,6 +6,12 @@
 *.user
 *.userosscache
 *.sln.docstates
+*.log
+startup_log.txt
+stderr_final.txt
+stdout_final.txt
+.continue/
+.junie/
 
 # Build results
 [Dd]ebug/

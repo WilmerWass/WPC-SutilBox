@@ -29,7 +29,7 @@
                 <TextBlock Text="Visualiza la distribución proporcional de almacenamiento y localiza archivos grandes." 
                            Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12"/>
             </StackPanel>
-            <Button Grid.Column="1" Content="← Volver a Liberar espacio" Command="{Binding BackCommand}" 
+            <Button Grid.Column="1" Content="← Volver a Limpieza" Command="{Binding BackCommand}"
                     Style="{StaticResource SecondaryButtonStyle}" VerticalAlignment="Center" Padding="12,6"/>
         </Grid>
 
@@ -61,6 +61,10 @@
                         IsEnabled="{Binding IsScanning}" Padding="14,6"/>
             </Grid>
         </Border>
+
+        <ProgressBar Grid.Row="2" Height="3" VerticalAlignment="Top" IsIndeterminate="True"
+                     Visibility="{Binding IsScanning, Converter={StaticResource BooleanToVisibilityConverter}}"
+                     Panel.ZIndex="2"/>
 
         <!-- CONTENIDO PRINCIPAL: MAPA (IZQ) Y TABLA (DER) -->
         <Grid Grid.Row="2" MinWidth="0" MinHeight="0">
