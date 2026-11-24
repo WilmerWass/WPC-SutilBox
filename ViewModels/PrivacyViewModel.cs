@@ -67,7 +67,7 @@ namespace Wpc_SutilBox.ViewModels
 
         public async Task ToggleSettingAsync(object? parameter)
         {
-            if (parameter is not PrivacySetting setting) return;
+            if (parameter is not PrivacySetting setting || !setting.CanModify) return;
 
             try
             {
@@ -75,9 +75,13 @@ namespace Wpc_SutilBox.ViewModels
                 var result = await _privacyService.UpdatePrivacySettingAsync(setting, newValue);
                 if (result)
                 {
-                    setting.CurrentValue = newValue;
+                    await LoadPrivacySettingsAsync();
                     StatusMessage = $"{setting.Name}: {(newValue ? "activado" : "desactivado")}.";
                     _logService.Info($"Privacy setting toggled: {setting.Name}");
+                }
+                else
+                {
+                    StatusMessage = "El cambio se canceló o no pudo aplicarse.";
                 }
             }
             catch (Exception ex)
@@ -98,7 +102,7 @@ namespace Wpc_SutilBox.ViewModels
                 int success = 0;
                 int failed = 0;
 
-                foreach (var setting in PrivacySettings)
+                foreach (var setting in PrivacySettings.Where(item => item.CanModify))
                 {
                     try
                     {

@@ -1,71 +1,43 @@
 <UserControl x:Class="Wpc_SutilBox.Views.PrivacyView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" 
-             d:DesignHeight="550" d:DesignWidth="800">
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="600" d:DesignWidth="900">
     <Grid Style="{StaticResource AnimatedViewStyle}">
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel Margin="20">
-                <TextBlock Text="🔒 Control de Privacidad y Telemetría" Style="{StaticResource HeaderTextStyle}" Margin="0,0,0,10"/>
-                <TextBlock Text="Administre la privacidad de Windows, servicios de telemetría y diagnósticos." Style="{StaticResource SubHeaderTextStyle}" Margin="0,0,0,25"/>
+                <DockPanel Margin="0,0,0,10">
+                    <Button DockPanel.Dock="Right" Content="Actualizar" Command="{Binding RefreshCommand}" Style="{StaticResource SecondaryButtonStyle}"/>
+                    <TextBlock Text="🔒 Privacidad y diagnósticos" Style="{StaticResource HeaderTextStyle}" VerticalAlignment="Center"/>
+                </DockPanel>
+                <TextBlock Text="Los valores reflejan el Registro del usuario; si una clave no existe, se muestra una estimación predeterminada. Solo se habilitan cambios DWORD verificados y cada cambio pide confirmación." Style="{StaticResource SubHeaderTextStyle}" TextWrapping="Wrap" Margin="0,0,0,10"/>
+                <TextBlock Text="{Binding StatusMessage}" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,16"/>
 
-                <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="12" Padding="20" Margin="0,0,0,20">
-                    <StackPanel>
-                        <TextBlock Text="Configuración de Telemetría de Windows" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,15"/>
-
-                        <Grid Margin="0,5">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <StackPanel Grid.Column="0">
-                                <TextBlock Text="Desactivar Telemetría del Sistema" FontWeight="Medium" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                                <TextBlock Text="Reduce el envío de datos de diagnóstico a Microsoft." FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                            </StackPanel>
-                            <CheckBox Grid.Column="1" VerticalAlignment="Center" IsChecked="True"/>
-                        </Grid>
-
-                        <Separator Background="{DynamicResource BorderSubtleBrush}" Margin="0,12"/>
-
-                        <Grid Margin="0,5">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <StackPanel Grid.Column="0">
-                                <TextBlock Text="Desactivar Rastreo de Experiencia del Usuario (DiagTrack)" FontWeight="Medium" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                                <TextBlock Text="Detiene y deshabilita el servicio de seguimiento de diagnósticos." FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                            </StackPanel>
-                            <CheckBox Grid.Column="1" VerticalAlignment="Center" IsChecked="True"/>
-                        </Grid>
-
-                        <Separator Background="{DynamicResource BorderSubtleBrush}" Margin="0,12"/>
-
-                        <Grid Margin="0,5">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <StackPanel Grid.Column="0">
-                                <TextBlock Text="Desactivar ID de Anuncios" FontWeight="Medium" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                                <TextBlock Text="Evita que las aplicaciones usen el ID de publicidad para mostrar anuncios personalizados." FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                            </StackPanel>
-                            <CheckBox Grid.Column="1" VerticalAlignment="Center" IsChecked="True"/>
-                        </Grid>
-                    </StackPanel>
-                </Border>
-
-                <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="12" Padding="20">
-                    <StackPanel>
-                        <TextBlock Text="Telemetría de WPC SUTILBOX" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,10"/>
-                        <TextBlock Text="WPC SUTILBOX respeta plenamente su privacidad. Ningún dato personal es recopilado ni enviado a servidores externos." FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" Margin="0,0,0,15"/>
-                        <Border Background="{DynamicResource SurfaceElevatedBrush}" CornerRadius="8" Padding="12">
-                            <TextBlock Text="✓ Privacidad Local Garantizada. Todos los análisis e historiales permanecen únicamente en este equipo." FontSize="11" Foreground="{DynamicResource PrimaryBrush}" FontWeight="SemiBold"/>
-                        </Border>
-                    </StackPanel>
-                </Border>
+                <ItemsControl ItemsSource="{Binding PrivacySettings}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="10" Padding="16" Margin="0,0,0,10">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Name}" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                        <TextBlock Text="{Binding Description}" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" Margin="0,4,12,0"/>
+                                    </StackPanel>
+                                    <CheckBox Grid.Column="1" IsChecked="{Binding CurrentValue, Mode=OneWay}" IsEnabled="False" VerticalAlignment="Center" Margin="12,0"/>
+                                    <Button Grid.Column="2" Content="Cambiar" Command="{Binding DataContext.ToggleSettingCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                            CommandParameter="{Binding}" Style="{StaticResource SecondaryButtonStyle}" VerticalAlignment="Center"
+                                            Visibility="{Binding CanModify, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
             </StackPanel>
         </ScrollViewer>
     </Grid>

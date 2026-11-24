@@ -82,19 +82,19 @@ Además de la interfaz gráfica para Windows, WPC-SutilBox incluye **SutilBox CL
 
 | Característica | WPF (Interfaz gráfica) | CLI (Terminal) |
 |---|---|---|
-| **Windows** | ✅ Completo | ✅ Completo |
+| **Windows** | ✅ Completo | ⚠️ Parcial: disco y memoria |
 | **Linux** | ❌ No disponible | ✅ Completo |
 | **macOS** | ❌ No disponible | ✅ Completo |
-| **Escaneo completo** | ✅ | ✅ |
-| **Info del sistema** | ✅ | ✅ |
+| **Escaneo disponible** | ✅ | ⚠️ Según plataforma; Windows ofrece disco y memoria |
+| **Info del sistema** | ✅ | ✅ Datos básicos según plataforma |
 | **Modo experto interactivo** | ✅ | ✅ |
 
 ### Comandos principales
 
 ```bash
-sbox scan              # Escaneo completo con score de salud
+sbox scan              # Diagnósticos disponibles para el sistema actual
 sbox scan --expert     # Escaneo con modo experto interactivo
-sbox info              # Información del sistema (CPU, RAM, discos, red)
+sbox info              # Información básica del sistema actual
 sbox help              # Ayuda y uso
 ```
 

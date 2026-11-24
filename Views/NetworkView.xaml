@@ -1,30 +1,55 @@
 <UserControl x:Class="Wpc_SutilBox.Views.NetworkView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" 
-             d:DesignHeight="550" d:DesignWidth="800">
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="650" d:DesignWidth="900">
     <Grid Style="{StaticResource AnimatedViewStyle}">
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel Margin="20">
-                <TextBlock Text="🌐 Diagnóstico y Herramientas de Red" Style="{StaticResource HeaderTextStyle}" Margin="0,0,0,10"/>
-                <TextBlock Text="Estado de adaptadores de red, limpieza de caché DNS y herramientas TCP/IP." Style="{StaticResource SubHeaderTextStyle}" Margin="0,0,0,25"/>
+                <TextBlock Text="🌐 Diagnóstico y herramientas de red" Style="{StaticResource HeaderTextStyle}" Margin="0,0,0,8"/>
+                <TextBlock Text="Prueba la conexión o ejecuta una reparación puntual cuando conozcas su alcance." Style="{StaticResource SubHeaderTextStyle}" Margin="0,0,0,20"/>
 
-                <UniformGrid Columns="2" Margin="0,0,0,20">
-                    <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="12" Padding="20" Margin="0,0,10,0">
+                <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="12" Padding="20" Margin="0,0,0,16">
+                    <StackPanel>
+                        <TextBlock Text="Prueba de conexión" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <TextBlock Text="La prueba de velocidad se conecta a Cloudflare; la medición de subida envía hasta 5 MB." FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" Margin="0,6,0,12"/>
+                        <ProgressBar Value="{Binding Progress}" Maximum="100" Height="7" Margin="0,0,0,10"/>
+                        <TextBlock Text="{Binding StatusMessage}" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,12"/>
+                        <UniformGrid Columns="2" Margin="0,0,0,12">
+                            <TextBlock Text="Latencia" Foreground="{DynamicResource TextMutedBrush}"/>
+                            <TextBlock Text="{Binding PingResult}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBlock Text="DNS" Foreground="{DynamicResource TextMutedBrush}"/>
+                            <TextBlock Text="{Binding DnsResult}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBlock Text="Descarga" Foreground="{DynamicResource TextMutedBrush}"/>
+                            <TextBlock Text="{Binding DownloadResult}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBlock Text="Subida" Foreground="{DynamicResource TextMutedBrush}"/>
+                            <TextBlock Text="{Binding UploadResult}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        </UniformGrid>
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="Iniciar prueba" Command="{Binding RunTestCommand}" Style="{StaticResource PrimaryButtonStyle}"/>
+                            <Button Content="Cancelar" Command="{Binding CancelCommand}" Style="{StaticResource SecondaryButtonStyle}" Margin="8,0,0,0"
+                                    Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <UniformGrid Columns="2">
+                    <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="12" Padding="20" Margin="0,0,8,0">
                         <StackPanel>
-                            <TextBlock Text="Limpieza de DNS" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,10"/>
-                            <TextBlock Text="Vacía la caché de resolución DNS de Windows para solucionar problemas de conectividad." FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,15" TextWrapping="Wrap"/>
-                            <Button Content="Ejecutar ipconfig /flushdns" Command="{Binding RunToolCommand}" CommandParameter="ipconfig /flushdns" Style="{StaticResource PrimaryButtonStyle}"/>
+                            <TextBlock Text="Vaciar caché DNS" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,8"/>
+                            <TextBlock Text="Ejecuta ipconfig /flushdns para volver a resolver nombres de dominio." FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" Margin="0,0,0,12"/>
+                            <Button Content="Vaciar caché DNS" Command="{Binding DataContext.RunToolCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                    CommandParameter="ipconfig /flushdns" Style="{StaticResource PrimaryButtonStyle}"/>
                         </StackPanel>
                     </Border>
-
-                    <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="12" Padding="20" Margin="10,0,0,0">
+                    <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="12" Padding="20" Margin="8,0,0,0">
                         <StackPanel>
-                            <TextBlock Text="Restablecer Winsock y TCP/IP" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,10"/>
-                            <TextBlock Text="Restablece el catálogo del protocolo de red a su configuración inicial." FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,15" TextWrapping="Wrap"/>
-                            <Button Content="Restablecer Red" Command="{Binding RunToolCommand}" CommandParameter="netsh winsock reset" Style="{StaticResource SecondaryButtonStyle}"/>
+                            <TextBlock Text="Restablecer Winsock" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,8"/>
+                            <TextBlock Text="Restablece el catálogo de red. Puede interrumpir conexiones y requerir reiniciar Windows." FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" Margin="0,0,0,12"/>
+                            <Button Content="Restablecer catálogo" Command="{Binding DataContext.RunToolCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                    CommandParameter="netsh winsock reset" Style="{StaticResource SecondaryButtonStyle}"/>
                         </StackPanel>
                     </Border>
                 </UniformGrid>

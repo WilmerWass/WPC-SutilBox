@@ -53,26 +53,22 @@ namespace Wpc_SutilBox.Core
 
         public async Task<bool> UpdatePrivacySettingAsync(PrivacySetting setting, bool newValue)
         {
-            return await Task.Run(async () =>
+            if (setting == null || !setting.CanModify)
             {
-                if (setting == null) return false;
+                _log.Warn("Blocked update for an unsupported or read-only privacy setting.");
+                return false;
+            }
 
+            bool confirm = await _dialogService.ShowConfirmation(
+                $"Se cambiará el ajuste «{setting.Name}» de {(setting.CurrentValue ? "activado" : "desactivado")} a {(newValue ? "activado" : "desactivado")}. {setting.Description}\n\n¿Deseas aplicar este cambio?",
+                "Confirmar cambio de privacidad");
+            if (!confirm) return false;
+
+            return await Task.Run(() =>
+            {
                 try
                 {
                     _log.Info($"Updating privacy setting '{setting.Name}' to '{newValue}'");
-
-                    // Una advertencia para configuraciones críticas
-                    if (setting.Type == PrivacySettingType.Telemetry && newValue == true)
-                    {
-                        bool confirm = await _dialogService.ShowConfirmation($"Habilitar la telemetría podría enviar datos de uso a Microsoft. ¿Está seguro?", "Confirmar");
-                        if (!confirm) return false;
-                    }
-                    if (setting.Type == PrivacySettingType.AdvertisingId && newValue == true)
-                    {
-                        bool confirm = await _dialogService.ShowConfirmation($"Habilitar el ID de publicidad permitirá que las aplicaciones utilicen su actividad para anuncios personalizados. ¿Está seguro?", "Confirmar");
-                        if (!confirm) return false;
-                    }
-
                     using (RegistryKey key = Registry.CurrentUser.CreateSubKey(setting.RegistryPath, true))
                     {
                         if (key != null)
@@ -162,6 +158,7 @@ namespace Wpc_SutilBox.Core
                 Description = "Permite que las aplicaciones usen su actividad para mostrarle anuncios personalizados.",
                 CurrentValue = currentValue == 1,
                 RecommendedValue = false,
+                CanModify = true,
                 Type = PrivacySettingType.AdvertisingId,
                 RegistryPath = path,
                 RegistryValueName = valueName

@@ -551,6 +551,7 @@
                         Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Escala}}"/>
 
                     <views:SmartScannerView Grid.Row="0" Grid.Column="0"
+                        DataContext="{Binding SmartScannerViewModel}"
                         Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Escaneo}}"/>
 
                 </Grid>

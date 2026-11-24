@@ -49,7 +49,7 @@ class Program
     static async Task RunScanAsync(bool isExpert)
     {
         var engine = DiagnosticEngineFactory.Create();
-        Console.WriteLine($"🔍 Iniciando escaneo completo en {engine.PlatformName}...");
+        Console.WriteLine($"🔍 Iniciando diagnósticos disponibles en {engine.PlatformName}...");
         Console.WriteLine();
 
         var result = await engine.RunScanAsync();
@@ -89,7 +89,7 @@ class Program
         Console.WriteLine("Uso: sbox <comando> [opciones]");
         Console.WriteLine();
         Console.WriteLine("Comandos:");
-        Console.WriteLine("  scan        Ejecuta un escaneo completo del sistema");
+        Console.WriteLine("  scan        Ejecuta los diagnósticos disponibles para el sistema actual");
         Console.WriteLine("  info        Muestra información del sistema (SO, CPU, RAM, discos)");
         Console.WriteLine("  help        Muestra esta ayuda");
         Console.WriteLine();

@@ -25,7 +25,7 @@ dotnet SutilBox.CLI/bin/Debug/net8.0/sbox.dll <comando>
 
 ## 📋 Comandos
 
-### `sbox scan` — Escaneo completo del sistema
+### `sbox scan` — Diagnósticos disponibles del sistema
 
 Ejecuta todos los diagnósticos disponibles y muestra un informe con:
 - **Score de salud** (0-100) con indicador visual
@@ -38,10 +38,13 @@ sbox scan
 
 #### Checks realizados
 
-| Plataforma | Checks |
+| Plataforma | Checks implementados |
 |---|---|
-| **Linux/macOS** | Uso de disco (`df`), memoria RAM (`/proc/meminfo`), carga de CPU (`/proc/loadavg`), temperatura (`/sys/class/thermal/`, `sensors`), SMART de discos (`smartctl`), tiempo sin reinicio |
-| **Windows** | Drivers con problemas, salud de discos SMART, CPU/RAM, temperaturas, programas de inicio, archivos temporales, firewall/antivirus, privacidad, bloatware, puntos de restauración |
+| **Linux** | Uso de disco (`df`), RAM y swap (`/proc/meminfo`), carga de CPU, temperaturas disponibles, SMART cuando `smartctl` está instalado y tiempo activo. |
+| **macOS** | Compatibilidad del CLI y consulta de información básica. Los chequeos del motor Unix que dependen de `/proc`, `/sys`, `df` o `lsblk` pueden no estar disponibles. |
+| **Windows** | Porcentaje de uso de unidades listas y uso/disponibilidad de RAM mediante APIs de Windows. No implementa todavía SMART, controladores, temperaturas, inicio, seguridad, privacidad ni restauración. |
+
+El score de Windows se calcula solo con los chequeos de memoria y espacio que se pudieron leer; no representa una auditoría completa de salud del equipo.
 
 ### `sbox scan --expert` — Modo experto interactivo
 
@@ -52,7 +55,7 @@ sbox scan --expert
 ```
 
 **Flujo del modo experto:**
-1. Se ejecuta el escaneo completo
+1. Se ejecutan los diagnósticos implementados para la plataforma actual
 2. Se muestran los problemas solucionables en un menú numerado
 3. El usuario elige un número
 4. El CLI muestra la solución detallada con comandos a ejecutar
@@ -118,11 +121,11 @@ sbox scan | grep -A5 "CRÍTICOS"
 
 | Característica | WPF (Interfaz gráfica) | CLI (Terminal) |
 |---|---|---|
-| **Windows** | ✅ Completo | ✅ Completo |
+| **Windows** | ✅ Completo | ⚠️ Parcial: espacio en disco y memoria |
 | **Linux** | ❌ No disponible | ✅ Completo |
 | **macOS** | ❌ No disponible | ✅ Completo |
-| **Escaneo** | ✅ | ✅ |
-| **Info del sistema** | ✅ | ✅ |
+| **Escaneo** | ✅ | ⚠️ Parcial en Windows; más comprobaciones en Linux |
+| **Info del sistema** | ✅ | ✅ Datos básicos según plataforma |
 | **Modo experto** | ✅ | ✅ |
 | **Gráficos en tiempo real** | ✅ | ❌ |
 | **Navegación visual** | ✅ | ❌ |

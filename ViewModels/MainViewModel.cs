@@ -448,6 +448,7 @@ namespace Wpc_SutilBox.ViewModels
         public HistoryViewModel? HistoryViewModel { get; }
         public SpaceMapViewModel? SpaceMapViewModel { get; }
         public NetworkTestViewModel? NetworkTestViewModel { get; }
+        public SmartScannerViewModel? SmartScannerViewModel { get; }
         public Windows11CompatibilityViewModel? Windows11CompatibilityViewModel { get; }
         public DuplicateFilesViewModel? DuplicateFilesViewModel { get; }
         public PeripheralDiagnosticsViewModel? PeripheralDiagnosticsViewModel { get; }
@@ -495,7 +496,8 @@ namespace Wpc_SutilBox.ViewModels
             DuplicateFilesViewModel? duplicateFilesViewModel = null,
             PeripheralDiagnosticsViewModel? peripheralDiagnosticsViewModel = null,
             UsbStorageViewModel? usbStorageViewModel = null,
-            BenchmarkViewModel? benchmarkViewModel = null)
+            BenchmarkViewModel? benchmarkViewModel = null,
+            SmartScannerViewModel? smartScannerViewModel = null)
         {
             StorageViewModel = storageViewModel;
             DashboardViewModel = dashboardViewModel;
@@ -1314,22 +1316,78 @@ namespace Wpc_SutilBox.ViewModels
 
         private void ExecuteRunTool(object? param)
         {
-            if (param is string tool && !string.IsNullOrWhiteSpace(tool))
+            _ = ExecuteRunToolAsync(param);
+        }
+
+        private async Task ExecuteRunToolAsync(object? param)
+        {
+            if (param is not string tool || string.IsNullOrWhiteSpace(tool)) return;
+
+            try
             {
-                try
+                ProcessStartInfo startInfo;
+                switch (tool)
                 {
-                    Process.Start(new ProcessStartInfo
-                    {
-                        FileName = tool,
-                        UseShellExecute = true
-                    });
-                    WriteLog($"Herramienta ejecutada correctamente: {tool}");
+                    case "ipconfig /flushdns":
+                        if (_dialogService == null || !await _dialogService.ShowConfirmation(
+                                "Se vaciará la caché DNS local. Windows volverá a resolver los dominios cuando se necesiten. ¿Deseas continuar?",
+                                "Confirmar limpieza DNS"))
+                            return;
+                        startInfo = new ProcessStartInfo("ipconfig.exe", "/flushdns") { UseShellExecute = true };
+                        break;
+
+                    case "netsh winsock reset":
+                        if (_dialogService == null || !await _dialogService.ShowConfirmation(
+                                "Se restablecerá el catálogo Winsock. Esto puede interrumpir conexiones y requerir reiniciar Windows. ¿Deseas continuar?",
+                                "Confirmar restablecimiento de red"))
+                            return;
+                        startInfo = new ProcessStartInfo("netsh.exe", "winsock reset")
+                        {
+                            UseShellExecute = true,
+                            Verb = "runas"
+                        };
+                        break;
+
+                    case "msdt.exe -id NetworkDiagnosticsWeb":
+                        startInfo = new ProcessStartInfo("msdt.exe", "-id NetworkDiagnosticsWeb") { UseShellExecute = true };
+                        break;
+
+                    case "ms-settings:windowsupdate":
+                    case "windowsdefender://":
+                        startInfo = new ProcessStartInfo(tool) { UseShellExecute = true };
+                        break;
+
+                    case "appwiz.cpl":
+                    case "cmd.exe":
+                    case "devmgmt.msc":
+                    case "diskmgmt.msc":
+                    case "dxdiag.exe":
+                    case "eventvwr.msc":
+                    case "gpedit.msc":
+                    case "msconfig.exe":
+                    case "msinfo32":
+                    case "perfmon.msc":
+                    case "powercfg.cpl":
+                    case "powershell.exe":
+                    case "regedit.exe":
+                    case "resmon.exe":
+                    case "services.msc":
+                        startInfo = new ProcessStartInfo(tool) { UseShellExecute = true };
+                        break;
+
+                    default:
+                        WriteLog($"Se bloqueó un destino de herramienta no permitido: {tool}");
+                        GeneralStatusMessage = "La herramienta solicitada no está en la lista permitida.";
+                        return;
                 }
-                catch (Exception ex)
-                {
-                    WriteLog($"Error al ejecutar la herramienta: {tool}", ex);
-                    MessageBox.Show($"No se pudo iniciar {tool}: {ex.Message}", "Error de ejecución", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+
+                Process.Start(startInfo);
+                WriteLog($"Herramienta ejecutada correctamente: {tool}");
+            }
+            catch (Exception ex)
+            {
+                WriteLog($"Error al ejecutar la herramienta: {tool}", ex);
+                GeneralStatusMessage = $"No se pudo iniciar la herramienta: {ex.Message}";
             }
         }
 
