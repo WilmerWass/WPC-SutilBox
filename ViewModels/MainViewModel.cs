@@ -454,6 +454,7 @@ namespace Wpc_SutilBox.ViewModels
         public PeripheralDiagnosticsViewModel? PeripheralDiagnosticsViewModel { get; }
         public UsbStorageViewModel? UsbStorageViewModel { get; }
         public BenchmarkViewModel? BenchmarkViewModel { get; }
+        public GamesViewModel? GamesViewModel { get; set; }
 
         // ==========================================
         // 4. CONSTRUCTOR PRINCIPAL
@@ -760,6 +761,9 @@ namespace Wpc_SutilBox.ViewModels
                     break;
                 case AppSection.Dashboard when DashboardViewModel != null:
                     await DashboardViewModel.OnNavigatedToAsync();
+                    break;
+                case AppSection.ZonaGamer when GamesViewModel != null:
+                    await GamesViewModel.RefreshAsync();
                     break;
                 case AppSection.RevisarPC when PcReviewViewModel != null:
                     await PcReviewViewModel.OnNavigatedToAsync();

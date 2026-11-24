@@ -74,6 +74,7 @@ namespace Wpc_SutilBox
             services.AddSingleton<IMonitoringService, MonitoringService>();
             services.AddSingleton<IPerformanceProfileService, PerformanceProfileService>();
             services.AddSingleton<IProcessManagerService, ProcessManagerService>();
+            services.AddSingleton<IGameLibraryService, GameLibraryService>();
             services.AddSingleton<ITemperatureMonitorService, TemperatureMonitorService>();
             services.AddSingleton<IDiskHealthService, DiskHealthService>();
             services.AddSingleton<ISecurityService, SecurityService>();
@@ -128,6 +129,7 @@ namespace Wpc_SutilBox
             services.AddTransient<PeripheralDiagnosticsViewModel>();
             services.AddTransient<UsbStorageViewModel>();
             services.AddTransient<BenchmarkViewModel>();
+            services.AddTransient<GamesViewModel>();
 
             services.AddSingleton<MainViewModel>();
             services.AddTransient<MainWindow>(s => new MainWindow(s.GetRequiredService<ILogService>()));
@@ -178,12 +180,14 @@ namespace Wpc_SutilBox
             try
             {
                 var mainWindow = _serviceProvider!.GetRequiredService<MainWindow>();
-                mainWindow.DataContext = _serviceProvider!.GetRequiredService<MainViewModel>();
+                var mainViewModel = _serviceProvider!.GetRequiredService<MainViewModel>();
+                mainViewModel.GamesViewModel = _serviceProvider!.GetRequiredService<GamesViewModel>();
+                mainWindow.DataContext = mainViewModel;
                 this.MainWindow = mainWindow;
 
                 SetupTrayIcon();
                 mainWindow.Show();
-                (_serviceProvider!.GetRequiredService<MainViewModel>()).StartMonitoring();
+                mainViewModel.StartMonitoring();
                 ShowMainWindow();
             }
             catch (Exception ex)

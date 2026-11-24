@@ -44,6 +44,7 @@ namespace Wpc_SutilBox.Models
         Escaneo,
         AcercaDe,
         Escala,
-        EditorPerfiles
+        EditorPerfiles,
+        ZonaGamer
     }
 }

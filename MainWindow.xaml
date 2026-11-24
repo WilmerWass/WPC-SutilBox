@@ -87,6 +87,9 @@
                                 </Style>
                             </StackPanel.Resources>
 
+                            <TextBlock Text="ZONA GAMER" Margin="10,0,0,8" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextMutedBrush}"/>
+                            <Button Content="Biblioteca de juegos" Command="{Binding NavigateCommand}" CommandParameter="ZonaGamer" Style="{StaticResource NavButtonStyle}"/>
+
                             <!-- PRINCIPAL -->
                             <TextBlock Text="PRINCIPAL"
                                        Margin="10,0,0,8"
@@ -553,6 +556,10 @@
                     <views:SmartScannerView Grid.Row="0" Grid.Column="0"
                         DataContext="{Binding SmartScannerViewModel}"
                         Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Escaneo}}"/>
+
+                    <views:GamesView Grid.Row="0" Grid.Column="0"
+                        DataContext="{Binding GamesViewModel}"
+                        Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.ZonaGamer}}"/>
 
                 </Grid>
 
