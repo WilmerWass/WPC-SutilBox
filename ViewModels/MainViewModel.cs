@@ -728,16 +728,7 @@ namespace Wpc_SutilBox.ViewModels
                 return;
             }
 
-            if (targetSection == AppSection.ProgramasInstalar)
-                targetSection = AppSection.ProgramasActualizar;
-            else if (targetSection == AppSection.Bloatware)
-                targetSection = AppSection.Desinstalador;
-            else if (targetSection == AppSection.Red)
-                targetSection = AppSection.TestRed;
-            else if (targetSection == AppSection.Hardware)
-                targetSection = AppSection.RevisarPC;
-            else if (targetSection == AppSection.Escala)
-                targetSection = AppSection.Configuracion;
+            targetSection = AppSectionRoutes.Canonicalize(targetSection);
 
             try
             {
