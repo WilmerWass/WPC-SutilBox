@@ -94,6 +94,21 @@ Informar
 
 La Beta dispone de las áreas principales de monitorización, optimización, revisión del PC, almacenamiento, aplicaciones, herramientas avanzadas, historial/seguridad y ajustes.
 
+### Implementado y verificado en esta intervención
+
+- Integración del escáner inteligente, comandos del test de red y controles reales de privacidad para el ajuste modificable.
+- CLI Windows con diagnósticos básicos implementados; no equivale a un motor completo.
+- Confirmación al cerrar procesos desde la GUI y MCP; procesos esenciales protegidos.
+- Biblioteca local verificada de Steam y Epic con filtro por nombre/plataforma.
+- El Dashboard muestra “Sin datos” cuando no hay comprobaciones de salud válidas y limita las recomendaciones a tres.
+
+### Parcial o pendiente
+
+- La navegación todavía mantiene varias opciones planas y no completa la reorganización de los diez dominios.
+- La Zona Gamer aún no incluye monitor de sesión, sensores GPU/temperatura/FPS, perfiles por juego ni los demás lanzadores.
+- Las nueve vistas desconectadas y la consolidación control por control requieren una fase posterior; se preservaron para no perder código sin auditar.
+- La revisión visual en ejecución no pudo hacerse en esta sesión.
+
 ### Evolución prevista
 
 La dirección de producto contempla:

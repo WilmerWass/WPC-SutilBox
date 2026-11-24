@@ -9,7 +9,14 @@ Bienvenido a la documentación oficial del proyecto.
 - [Identidad de la aplicación](WPC-SUTILBOX_APP_IDENTITY.md) — por qué existe SUTILBOX, para quién, principios, límites y visión.
 - [Blueprint del producto](PRODUCT_BLUEPRINT_ES.md) — qué producto estamos construyendo.
 - [Arquitectura](ARCHITECTURE.md) — cómo está construido técnicamente.
-- [Plan de Reinicio Beta 1](PLAN_WPC_SUTILBOX_BETA1.md) — qué estamos haciendo ahora y cuál es el estado de la Beta.
+- [Auditoría de navegación](AUDITORIA_INICIAL_2026-11-24.md) — inventario comprobado y vistas desconectadas.
+- [Informe de estabilización](ESTABILIZACION_2026-11-24.md) — fases, validación y pendientes de esta intervención.
+- [Fase 2 — Integraciones](FASE2_INTEGRACIONES_2026-11-24.md)
+- [Fase 3 — Seguridad](FASE3_SEGURIDAD_2026-11-24.md)
+- [Fase 4 — Consolidación](FASE4_CONSOLIDACION_2026-11-24.md)
+- [Fase 5 — Zona Gamer](FASE5_ZONA_GAMER_2026-11-24.md)
+- [Fase 6 — Dashboard](FASE6_DASHBOARD_2026-11-24.md)
+- [Fase 7 — Validación](FASE7_VALIDACION_2026-11-24.md)
 - [Roadmap](ROADMAP.md) — dirección por etapas y versiones.
 - [Historial de cambios](CHANGELOG.md) — versiones publicadas y sus límites.
 - [Beta 1.1.5](BETA_1.1.5.md) — alcance, límites y validación de la entrega actual.

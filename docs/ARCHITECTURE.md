@@ -2,6 +2,16 @@
 
 **Versión alineada:** Beta 1.1.5 (`1.1.5-beta`). El flujo de perfiles documentado en [BETA_1.1.4.md](BETA_1.1.4.md) vive en `Core/PerformanceProfiles.cs` y `ViewModels/MainViewModel.cs`.
 
+## Estado comprobado del repositorio (24-11-2026)
+
+- La aplicación WPF y sus servicios Core están en un solo proyecto .NET 8; CLI es un proyecto aparte. El servidor MCP también compila como proyecto aparte, pero no está incluido en `WPC-SutilBox.sln`.
+- El flujo real sigue siendo `App.xaml.cs → MainWindow.xaml → Views → ViewModels → Core`. La navegación mantiene las vistas en la ventana y alterna su visibilidad por `AppSection`.
+- La solución usa MVVM y DI, pero aún no tiene ensamblados separados por dominio/aplicación/infraestructura; por eso se describe como arquitectura por capas en un único ensamblado, no como Clean Architecture estricta.
+- Zona Gamer detecta instalaciones locales verificables de Steam y Epic mediante manifiestos y existencia de carpeta. No hay monitor de FPS, GPU/VRAM o temperatura, ni integración con otros lanzadores en este cambio.
+- El CLI Windows implementa diagnósticos básicos disponibles; no representa compatibilidad completa con un motor Windows de diagnóstico.
+- El servidor MCP requiere `confirm=true` para cerrar procesos, bloquea procesos esenciales y redacta valores de variables sensibles por heurística de nombre/patrón.
+- La lista de vistas desconectadas y el detalle de estado por fase están en [la auditoría inicial](AUDITORIA_INICIAL_2026-11-24.md) y en los informes FASE2–FASE7.
+
 ## 1. Stack Tecnológico Base
 * **Lenguaje:** C# (.NET Core / .NET 8+)
 * **Framework UI:** WPF (Windows Presentation Foundation)
