@@ -40,7 +40,7 @@ namespace Wpc_SutilBox.ViewModels
         private string _greetingMessage = "Bienvenido";
 
         // Score de salud
-        private int _healthScore = 100;
+        private int? _healthScore;
         private int _healthChecksOk;
         private int _healthWarnings;
         private int _healthCritical;
@@ -59,7 +59,16 @@ namespace Wpc_SutilBox.ViewModels
         public ObservableCollection<DiskHealthInfo> Disks { get; } = new();
 
         public string GreetingMessage { get => _greetingMessage; private set => SetProperty(ref _greetingMessage, value); }
-        public int HealthScore { get => _healthScore; private set => SetProperty(ref _healthScore, value); }
+        public int? HealthScore
+        {
+            get => _healthScore;
+            private set
+            {
+                if (SetProperty(ref _healthScore, value))
+                    OnPropertyChanged(nameof(HealthScoreDisplay));
+            }
+        }
+        public string HealthScoreDisplay => HealthScore.HasValue ? $"{HealthScore.Value}/100" : "Sin datos";
         public int HealthChecksOk { get => _healthChecksOk; private set => SetProperty(ref _healthChecksOk, value); }
         public int HealthWarnings { get => _healthWarnings; private set => SetProperty(ref _healthWarnings, value); }
         public int HealthCritical { get => _healthCritical; private set => SetProperty(ref _healthCritical, value); }
@@ -223,7 +232,7 @@ namespace Wpc_SutilBox.ViewModels
                     Title = "Uso de CPU muy alto",
                     Description = $"La CPU está al {CpuUsage:F0}%, lo que puede indicar un proceso problemático.",
                     ActionLabel = "Ver procesos",
-                    NavigateTo = "Hardware"
+                    NavigateTo = "Rendimiento"
                 });
             }
             else if (CpuUsage > 70)
@@ -235,7 +244,7 @@ namespace Wpc_SutilBox.ViewModels
                     Title = "Uso de CPU elevado",
                     Description = $"La CPU está al {CpuUsage:F0}%. Considera cerrar aplicaciones innecesarias.",
                     ActionLabel = "Ver procesos",
-                    NavigateTo = "Hardware"
+                    NavigateTo = "Rendimiento"
                 });
             }
             else ok++;
@@ -250,7 +259,7 @@ namespace Wpc_SutilBox.ViewModels
                     Title = "Memoria RAM casi agotada",
                     Description = $"La RAM está al {RamUsage:F0}%. Cierra aplicaciones para liberar memoria.",
                     ActionLabel = "Ver procesos",
-                    NavigateTo = "Hardware"
+                    NavigateTo = "Rendimiento"
                 });
             }
             else if (RamUsage > 70)
@@ -297,7 +306,7 @@ namespace Wpc_SutilBox.ViewModels
                     }
                 }
             }
-            catch { ok++; }
+            catch { /* Una lectura fallida no se considera un resultado saludable. */ }
 
             // Check 4: Temperature
             if (CpuTempC.HasValue && CpuTempC.Value > 85)
@@ -336,7 +345,7 @@ namespace Wpc_SutilBox.ViewModels
                 }
                 else ok++;
             }
-            catch { ok++; }
+            catch { /* Una lectura fallida no se considera un resultado saludable. */ }
 
             // Check 6: Disk health (SMART)
             var hasCriticalDisk = Disks.Any(d => d.SmartStatus.Contains("Caution", StringComparison.OrdinalIgnoreCase)
@@ -358,7 +367,10 @@ namespace Wpc_SutilBox.ViewModels
 
             // Calculate score
             var totalChecks = ok + warnings + criticals;
-            HealthScore = totalChecks > 0 ? (int)((double)ok / totalChecks * 100) : 100;
+            HealthScore = totalChecks > 0
+                ? Math.Clamp(100 - (warnings * 10) - (criticals * 25), 0, 100)
+                : null;
+            while (Alerts.Count > 3) Alerts.RemoveAt(Alerts.Count - 1);
             HealthChecksOk = ok;
             HealthWarnings = warnings;
             HealthCritical = criticals;
@@ -421,7 +433,7 @@ namespace Wpc_SutilBox.ViewModels
                     Timestamp = DateTime.Now,
                     Title = "Escáner completado",
                     Description = $"Score: {HealthScore}/100",
-                    StatusIcon = HealthScore >= 70 ? "✅" : "⚠️"
+                    StatusIcon = HealthScore is >= 70 ? "✅" : "⚠️"
                 });
 
                 while (RecentActivities.Count > 5)

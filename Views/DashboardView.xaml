@@ -145,7 +145,7 @@
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Text="{Binding HealthScore, StringFormat={}{0}/100}"
+                                    <TextBlock Text="{Binding HealthScoreDisplay}"
                                                FontSize="36"
                                                FontWeight="Bold"
                                                Foreground="{DynamicResource TextPrimaryBrush}"/>
