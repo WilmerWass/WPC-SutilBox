@@ -10,6 +10,12 @@ namespace Wpc_SutilBox.Core
 {
     public class ProcessManagerService : IProcessManagerService
     {
+        private static readonly HashSet<string> ProtectedProcesses = new(StringComparer.OrdinalIgnoreCase)
+        {
+            "System", "Idle", "Registry", "smss", "csrss", "wininit", "winlogon", "services",
+            "lsass", "svchost", "explorer", "dwm", "fontdrvhost", "sihost", "taskhostw",
+            "RuntimeBroker", "audiodg", "spoolsv", "WmiPrvSE"
+        };
         [DllImport("psapi.dll")]
         static extern bool EmptyWorkingSet(IntPtr hProcess);
 
@@ -71,8 +77,18 @@ namespace Wpc_SutilBox.Core
             {
                 try
                 {
+                    if (pid <= 4 || pid == Environment.ProcessId)
+                    {
+                        _log.Warn($"Blocked attempt to terminate protected PID {pid}");
+                        return false;
+                    }
                     using var p = Process.GetProcessById(pid);
-                    p.Kill(true);
+                    if (ProtectedProcesses.Contains(p.ProcessName))
+                    {
+                        _log.Warn($"Blocked attempt to terminate protected process {p.ProcessName}({pid})");
+                        return false;
+                    }
+                    p.Kill(entireProcessTree: false);
                     _log.Warn($"Process killed {p.ProcessName}({pid})");
                     return true;
                 }

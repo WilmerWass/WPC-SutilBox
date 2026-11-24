@@ -614,6 +614,7 @@ namespace Wpc_SutilBox.ViewModels
             if (DashboardViewModel != null)
                 _ = DashboardViewModel.OnNavigatedToAsync();
 
+            SmartScannerViewModel = smartScannerViewModel;
             WriteLog("Aplicación iniciada correctamente.");
         }
 
@@ -974,7 +975,20 @@ namespace Wpc_SutilBox.ViewModels
         private async Task KillProcessAsync(object? parameter)
         {
             if (_processManagerService == null || parameter is not ProcessInfoDto process || process.IsCritical) return;
-            if (await _processManagerService.KillProcessAsync(process.Pid)) Processes.Remove(process);
+            if (_dialogService == null) return;
+            var confirmed = await _dialogService.ShowConfirmation(
+                $"Se terminará el proceso '{process.Name}' (PID {process.Pid}). Puede perder datos sin guardar y no se puede deshacer. ¿Deseas continuar?",
+                "Confirmar cierre de proceso");
+            if (!confirmed) return;
+            if (await _processManagerService.KillProcessAsync(process.Pid))
+            {
+                Processes.Remove(process);
+                WriteLog($"Proceso terminado tras confirmación: {process.Name} (PID {process.Pid}).");
+            }
+            else
+            {
+                GeneralStatusMessage = "Windows rechazó el cierre del proceso o está protegido.";
+            }
         }
 
         public void StartMonitoring()

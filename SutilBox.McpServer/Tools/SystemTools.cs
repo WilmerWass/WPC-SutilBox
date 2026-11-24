@@ -65,20 +65,39 @@ public static class SystemTools
     }
 
     [McpServerTool(Name = "get_environment_variables", Title = "Get Environment Variables")]
-    [Description("Obtiene las variables de entorno del sistema y usuario. Permite filtrar opcionalmente por prefijo.")]
+    [Description("Obtiene nombres y valores de variables de entorno, ocultando valores de nombres que parecen contener credenciales o secretos. Permite filtrar opcionalmente por prefijo.")]
     public static string GetEnvironmentVariables([Description("Prefijo opcional para filtrar las variables (ej: 'PATH', 'USER', 'DOTNET').")] string? prefix = null)
     {
         var envVars = Environment.GetEnvironmentVariables()
             .Cast<System.Collections.DictionaryEntry>()
             .Where(kv => prefix == null || kv.Key.ToString()?.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) == true)
             .OrderBy(kv => kv.Key.ToString())
-            .Select(kv => new
+            .Select(kv =>
             {
-                Nombre = kv.Key,
-                Valor = kv.Value
+                var name = kv.Key?.ToString() ?? string.Empty;
+                var value = kv.Value?.ToString();
+                return new
+                {
+                    Nombre = name,
+                    Valor = LooksSensitive(name) || LooksLikeCredential(value) ? "[REDACTADO]" : value
+                };
             });
 
         return JsonSerializer.Serialize(envVars, JsonOptions);
+    }
+
+    private static bool LooksSensitive(string name) =>
+        new[] { "TOKEN", "SECRET", "PASSWORD", "PASSWD", "CREDENTIAL", "API_KEY", "APIKEY", "PRIVATE_KEY", "ACCESS_KEY", "CLIENT_SECRET", "AUTH" }
+            .Any(marker => name.Contains(marker, StringComparison.OrdinalIgnoreCase));
+
+    private static bool LooksLikeCredential(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value)) return false;
+        return value.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase)
+            || value.StartsWith("ghp_", StringComparison.OrdinalIgnoreCase)
+            || value.StartsWith("github_pat_", StringComparison.OrdinalIgnoreCase)
+            || value.StartsWith("sk-", StringComparison.OrdinalIgnoreCase)
+            || value.StartsWith("AKIA", StringComparison.OrdinalIgnoreCase);
     }
 
     // Helper functions

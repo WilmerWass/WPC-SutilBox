@@ -9,6 +9,12 @@ namespace SutilBox.McpServer.Tools;
 public static class ProcessTools
 {
     private static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true };
+    private static readonly HashSet<string> ProtectedProcesses = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "System", "Idle", "Registry", "smss", "csrss", "wininit", "winlogon", "services",
+        "lsass", "svchost", "explorer", "dwm", "fontdrvhost", "secure system", "sihost",
+        "taskhostw", "RuntimeBroker", "audiodg", "spoolsv", "WmiPrvSE"
+    };
 
     [McpServerTool(Name = "list_processes", Title = "List Running Processes")]
     [Description("Lista los procesos en ejecución ordenados por consumo de memoria RAM (Working Set), con opción de limitar la cantidad de resultados y filtrar por nombre.")]
@@ -55,14 +61,21 @@ public static class ProcessTools
     }
 
     [McpServerTool(Name = "kill_process", Title = "Kill Process by PID")]
-    [Description("Termina un proceso en ejecución dado su PID (Process ID).")]
-    public static string KillProcess([Description("El identificador numérico de proceso (PID).")] int pid)
+    [Description("Termina un proceso no protegido tras confirmación explícita. Debe pasar confirm=true; la herramienta no puede solicitar confirmación interactiva.")]
+    public static string KillProcess([Description("El identificador numérico de proceso (PID).")] int pid,
+        [Description("Confirmación explícita del usuario para terminar este proceso.")] bool confirm = false)
     {
+        if (!confirm)
+            return JsonSerializer.Serialize(new { Exito = false, Mensaje = "Operación cancelada: establece confirm=true solo después de revisar el PID y aceptar terminar el proceso." }, JsonOptions);
+        if (pid <= 4 || pid == Environment.ProcessId)
+            return JsonSerializer.Serialize(new { Exito = false, Mensaje = "PID protegido o no válido." }, JsonOptions);
         try
         {
             var p = Process.GetProcessById(pid);
             string name = p.ProcessName;
-            p.Kill();
+            if (ProtectedProcesses.Contains(name))
+                return JsonSerializer.Serialize(new { Exito = false, Mensaje = $"El proceso '{name}' está protegido y no se puede terminar desde esta herramienta." }, JsonOptions);
+            p.Kill(entireProcessTree: false);
             return JsonSerializer.Serialize(new { Exito = true, Mensaje = $"El proceso '{name}' (PID: {pid}) ha sido terminado correctamente." }, JsonOptions);
         }
         catch (ArgumentException)
