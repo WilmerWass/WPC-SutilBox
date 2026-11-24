@@ -44,7 +44,7 @@ namespace Wpc_SutilBox.ViewModels
         private string _statusMessage = string.Empty;
         private double _cpuUsage;
         private double _ramUsage;
-        private double _cpuTempC;
+        private double? _cpuTempC;
         private SystemInfo? _systemInfo;
         private bool _disposed;
         private CancellationTokenSource? _liveCts;
@@ -80,7 +80,7 @@ namespace Wpc_SutilBox.ViewModels
         }
 
         /// <summary>Temperatura del CPU en grados Celsius (si está disponible).</summary>
-        public double CpuTempC
+        public double? CpuTempC
         {
             get => _cpuTempC;
             private set => SetProperty(ref _cpuTempC, value);
@@ -176,8 +176,7 @@ namespace Wpc_SutilBox.ViewModels
                 try {
                     var temperature = await _temperatureMonitorService.GetCpuTemperatureCAsync();
                     
-                    if (temperature.HasValue)
-                    CpuTempC = temperature.Value;
+                    CpuTempC = temperature;
                 }
                 catch (Exception ex)
                 {

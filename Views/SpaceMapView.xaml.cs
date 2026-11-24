@@ -9,7 +9,17 @@ public partial class SpaceMapView : UserControl
     public SpaceMapView()
     {
         InitializeComponent();
-        if (App.Current is App app && app.Services.GetService(typeof(ISpaceMapService)) is ISpaceMapService service && app.Services.GetService(typeof(IDialogService)) is IDialogService dialogs)
+        Loaded += OnLoaded;
+    }
+
+    private void OnLoaded(object sender, System.Windows.RoutedEventArgs e)
+    {
+        if (DataContext is SpaceMapViewModel)
+            return;
+
+        if (App.Current is App app
+            && app.Services?.GetService(typeof(ISpaceMapService)) is ISpaceMapService service
+            && app.Services?.GetService(typeof(IDialogService)) is IDialogService dialogs)
         {
             var viewModel = new SpaceMapViewModel(service, dialogs);
             viewModel.BackCommand = new RelayCommand(GoBack);

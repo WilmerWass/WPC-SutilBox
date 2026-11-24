@@ -83,7 +83,7 @@
 
                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Width="260">
                             <!-- Progress Bar -->
-                            <ProgressBar Value="{Binding Progress}" Maximum="100" 
+                            <ProgressBar Value="{Binding Progress, Mode=OneWay}" Maximum="100"
                                          Height="8" Margin="0,0,0,12" 
                                          Visibility="{Binding IsScanning, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 

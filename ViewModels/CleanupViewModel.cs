@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
@@ -17,26 +18,22 @@ namespace Wpc_SutilBox.ViewModels
 
         private bool _isBusy;
         private CancellationTokenSource? _operationCancellation;
-        private string _statusMessage = "Selecciona las categorías a limpiar.";
-        private bool _cleanSystemTemp = true;
-        private bool _cleanRecycleBin;
-        private bool _cleanBrowserCache;
-        private bool _cleanWindowsUpdate;
-        private bool _cleanThumbnails;
-        private bool _cleanEventLogs;
+        private string _statusMessage = "Analiza los archivos temporales autorizados para ver cuánto espacio puedes liberar.";
 
-        public bool IsBusy { get => _isBusy; private set => SetProperty(ref _isBusy, value); }
+        public bool IsBusy
+        {
+            get => _isBusy;
+            private set
+            {
+                if (SetProperty(ref _isBusy, value)) OnPropertyChanged(nameof(CanClean));
+            }
+        }
         public string StatusMessage { get => _statusMessage; private set => SetProperty(ref _statusMessage, value); }
-        public bool CleanSystemTemp { get => _cleanSystemTemp; set => SetProperty(ref _cleanSystemTemp, value); }
-        public bool CleanRecycleBin { get => _cleanRecycleBin; set => SetProperty(ref _cleanRecycleBin, value); }
-        public bool CleanBrowserCache { get => _cleanBrowserCache; set => SetProperty(ref _cleanBrowserCache, value); }
-        public bool CleanWindowsUpdate { get => _cleanWindowsUpdate; set => SetProperty(ref _cleanWindowsUpdate, value); }
-        public bool CleanThumbnails { get => _cleanThumbnails; set => SetProperty(ref _cleanThumbnails, value); }
-        public bool CleanEventLogs { get => _cleanEventLogs; set => SetProperty(ref _cleanEventLogs, value); }
 
         public ObservableCollection<CleanupCandidate> CleanupCandidates { get; } = new();
         public int CleanupCandidateCount => CleanupCandidates.Count;
         public bool HasCleanupCandidates => CleanupCandidates.Count > 0;
+        public bool CanClean => HasCleanupCandidates && !IsBusy;
         public long CleanupEstimatedBytes => CleanupCandidates.Sum(c => c.SizeBytes);
         public string FormattedEstimatedBytes => FormatBytes(CleanupEstimatedBytes);
 
@@ -51,7 +48,9 @@ namespace Wpc_SutilBox.ViewModels
             _logService = logService;
 
             PreviewCommand = new AsyncRelayCommand(_ => PreviewCleanupAsync());
-            CleanCommand = new AsyncRelayCommand(_ => ExecuteCleanAsync());
+            CleanCommand = new AsyncRelayCommand(
+                ExecuteCleanAsync,
+                selectedItems => !IsBusy && selectedItems is IList selectedList && selectedList.Count > 0);
             CancelCommand = new RelayCommand(_ => _operationCancellation?.Cancel(), _ => IsBusy);
         }
 
@@ -65,21 +64,14 @@ namespace Wpc_SutilBox.ViewModels
 
             try
             {
-                var options = new CleaningOptions
-                {
-                    CleanSystemTemp = CleanSystemTemp,
-                    CleanRecycleBin = CleanRecycleBin,
-                    CleanBrowserCache = CleanBrowserCache,
-                    CleanWindowsUpdate = CleanWindowsUpdate,
-                    CleanThumbnails = CleanThumbnails,
-                    CleanEventLogs = CleanEventLogs
-                };
+                var options = new CleaningOptions { CleanSystemTemp = true };
 
                 var candidates = await _maintenanceService.PreviewTemporaryFilesAsync(options, cancellation.Token);
                 CleanupCandidates.Clear();
                 foreach (var candidate in candidates) CleanupCandidates.Add(candidate);
                 OnPropertyChanged(nameof(CleanupCandidateCount));
                 OnPropertyChanged(nameof(HasCleanupCandidates));
+                OnPropertyChanged(nameof(CanClean));
                 OnPropertyChanged(nameof(CleanupEstimatedBytes));
                 OnPropertyChanged(nameof(FormattedEstimatedBytes));
 
@@ -102,12 +94,23 @@ namespace Wpc_SutilBox.ViewModels
             }
         }
 
-        public async Task ExecuteCleanAsync()
+        public async Task ExecuteCleanAsync(object? selectedItems)
         {
-            if (IsBusy || CleanupCandidates.Count == 0) return;
+            if (IsBusy) return;
+
+            var selectedCandidates = selectedItems is IList selectedList
+                ? selectedList.Cast<CleanupCandidate>().Where(CleanupCandidates.Contains).Distinct().ToList()
+                : new List<CleanupCandidate>();
+            if (selectedCandidates.Count == 0)
+            {
+                StatusMessage = "Selecciona uno o varios archivos revisados antes de limpiar.";
+                return;
+            }
+
+            long selectedBytes = selectedCandidates.Sum(candidate => candidate.SizeBytes);
 
             var confirmed = await _dialogService.ShowConfirmation(
-                $"Se eliminarán {CleanupCandidateCount} archivos ({FormattedEstimatedBytes}). ¿Deseas continuar?",
+                $"Se intentarán eliminar los {selectedCandidates.Count} archivos seleccionados ({FormatBytes(selectedBytes)}). ¿Deseas continuar?",
                 "Confirmar limpieza");
 
             if (!confirmed) return;
@@ -119,13 +122,20 @@ namespace Wpc_SutilBox.ViewModels
 
             try
             {
-                var result = await _maintenanceService.CleanTemporaryFilesAsync(CleanupCandidates.ToList(), cancellation.Token);
-                StatusMessage = result.ToString();
-                CleanupCandidates.Clear();
-                OnPropertyChanged(nameof(CleanupCandidateCount));
-                OnPropertyChanged(nameof(HasCleanupCandidates));
-                OnPropertyChanged(nameof(CleanupEstimatedBytes));
-                OnPropertyChanged(nameof(FormattedEstimatedBytes));
+                var result = await _maintenanceService.CleanTemporaryFilesAsync(selectedCandidates, cancellation.Token);
+                if (result.FilesFailed == 0)
+                {
+                    foreach (var candidate in selectedCandidates) CleanupCandidates.Remove(candidate);
+                    OnPropertyChanged(nameof(CleanupCandidateCount));
+                    OnPropertyChanged(nameof(HasCleanupCandidates));
+                    OnPropertyChanged(nameof(CanClean));
+                    OnPropertyChanged(nameof(CleanupEstimatedBytes));
+                    OnPropertyChanged(nameof(FormattedEstimatedBytes));
+                }
+
+                StatusMessage = result.FilesFailed == 0
+                    ? result.ToString()
+                    : $"{result} Los candidatos seleccionados se conservan para que puedas revisarlos de nuevo.";
                 _logService.Info($"Limpieza completada: {result}");
             }
             catch (OperationCanceledException)

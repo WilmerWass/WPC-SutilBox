@@ -25,7 +25,7 @@ namespace Wpc_SutilBox
 
         private const int SW_RESTORE = 9;
         private readonly ServiceProvider? _serviceProvider;
-        public IServiceProvider Services => _serviceProvider!;
+        public IServiceProvider? Services => _serviceProvider;
         private NotifyIcon? _notifyIcon;
         private System.Threading.Mutex? _instanceMutex;
         public bool IsShuttingDown { get; private set; }
@@ -69,7 +69,7 @@ namespace Wpc_SutilBox
             catch { }
         }
 
-        private void ConfigureServices(IServiceCollection services)
+        internal void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<IMonitoringService, MonitoringService>();
             services.AddSingleton<IPerformanceProfileService, PerformanceProfileService>();
@@ -138,6 +138,11 @@ namespace Wpc_SutilBox
         protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+
+            if (_serviceProvider == null)
+            {
+                return;
+            }
 
             // Captura errores globales de UI vinculados a tu WriteLog
             DispatcherUnhandledException += (s, args) =>
@@ -331,7 +336,7 @@ namespace Wpc_SutilBox
                     Resources.MergedDictionaries.Add(dict);
 
                 var themeName = isDark ? "Theme.Dark.xaml" : "Theme.Light.xaml";
-                var uri = new Uri($"Resources/{themeName}", UriKind.Relative);
+                var uri = new Uri($"pack://application:,,,/SutilBox;component/Resources/{themeName}", UriKind.Absolute);
                 Resources.MergedDictionaries.Add(new ResourceDictionary { Source = uri });
 
                 if (isDark)

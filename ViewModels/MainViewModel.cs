@@ -24,12 +24,7 @@ namespace Wpc_SutilBox.ViewModels
         // ==========================================
         private readonly ITemperatureMonitorService? _temperatureMonitorService;
         private readonly IDiskHealthService? _diskHealthService;
-        private readonly ISystemMaintenanceService? _systemMaintenanceService;
         private readonly IDialogService? _dialogService;
-        private IReadOnlyList<CleanupCandidate> _cleanupCandidates = Array.Empty<CleanupCandidate>();
-        private bool _cleanSystemTemp = true;
-        private bool _cleanRecycleBin;
-        private bool _cleanBrowserCache;
         private readonly IMonitoringService? _monitoringService;
         private readonly IBatteryService? _batteryService;
         private readonly IProcessManagerService? _processManagerService;
@@ -147,7 +142,20 @@ namespace Wpc_SutilBox.ViewModels
 
         public double CpuUsage { get => _cpuUsage; set => SetProperty(ref _cpuUsage, value); }
         public double RamUsage { get => _ramUsage; set => SetProperty(ref _ramUsage, value); }
-        public double? CpuTempC { get => _cpuTempC; private set => SetProperty(ref _cpuTempC, value); }
+        public double? CpuTempC
+        {
+            get => _cpuTempC;
+            private set
+            {
+                if (SetProperty(ref _cpuTempC, value))
+                    OnPropertyChanged(nameof(ThermalAlert));
+            }
+        }
+        public string? ThermalAlert => CpuTempC >= 85 ? "⚠️ Temperatura crítica de CPU" : (CpuTempC >= 75 ? "⚠️ Temperatura alta de CPU" : null);
+        private string? _lastRestorePointName;
+        private string? _lastRestorePointDate;
+        public string? LastRestorePointName { get => _lastRestorePointName; set => SetProperty(ref _lastRestorePointName, value); }
+        public string? LastRestorePointDate { get => _lastRestorePointDate; set => SetProperty(ref _lastRestorePointDate, value); }
         public string CpuTemperatureStatus { get => _cpuTemperatureStatus; private set => SetProperty(ref _cpuTemperatureStatus, value); }
         public BatteryInfo BatteryInfo { get => _batteryInfo; private set => SetProperty(ref _batteryInfo, value); }
         public PerformanceMode CurrentMode { get => _currentMode; set => SetProperty(ref _currentMode, value); }
@@ -214,16 +222,6 @@ namespace Wpc_SutilBox.ViewModels
         public ObservableCollection<WingetApp> UpdatableApps { get; } = new();
         public ObservableCollection<string> RecentLogEntries { get; } = new();
         public ObservableCollection<CpuCoreMetric> CpuPerCore { get; } = new();
-        public bool CleanSystemTemp { get => _cleanSystemTemp; set => SetProperty(ref _cleanSystemTemp, value); }
-        public bool CleanRecycleBin { get => _cleanRecycleBin; set => SetProperty(ref _cleanRecycleBin, value); }
-        public bool CleanBrowserCache { get => _cleanBrowserCache; set => SetProperty(ref _cleanBrowserCache, value); }
-        public IReadOnlyList<CleanupCandidate> CleanupCandidates
-        {
-            get => _cleanupCandidates;
-            private set => SetProperty(ref _cleanupCandidates, value);
-        }
-        public int CleanupCandidateCount => CleanupCandidates.Count;
-        public long CleanupEstimatedBytes => CleanupCandidates.Sum(candidate => candidate.SizeBytes);
         public ObservableCollection<ProcessInfoDto> Processes { get; } = new();
         public ObservableCollection<WindowsService> WindowsServices { get; } = new();
         public string ProcessSearchText { get => _processSearchText; set => SetProperty(ref _processSearchText, value); }
@@ -384,7 +382,6 @@ namespace Wpc_SutilBox.ViewModels
         // Comandos requeridos por App.xaml.cs y MainWindow.xaml
         public ICommand? PcBoostCommand { get; set; }
         public ICommand? OptimizeRamCommand { get; set; }
-        public ICommand QuickOptimizeCommand { get; }
         public ICommand ApplyPerformanceModeCommand { get; }
         public ICommand CreateRestorePointCommand { get; }
         public ICommand RefreshStartupItemsCommand { get; }
@@ -462,7 +459,6 @@ namespace Wpc_SutilBox.ViewModels
         public MainViewModel(
             ITemperatureMonitorService? temperatureMonitorService = null,
             IDiskHealthService? diskHealthService = null,
-            ISystemMaintenanceService? systemMaintenanceService = null,
             IDialogService? dialogService = null,
             IMonitoringService? monitoringService = null,
             IBatteryService? batteryService = null,
@@ -519,10 +515,9 @@ namespace Wpc_SutilBox.ViewModels
             UsbStorageViewModel = usbStorageViewModel;
             BenchmarkViewModel = benchmarkViewModel;
             if (SpaceMapViewModel != null)
-                SpaceMapViewModel.BackCommand = new RelayCommand(_ => StartNavigation(AppSection.Limpieza.ToString()));
+                SpaceMapViewModel.BackCommand = new RelayCommand(_ => StartNavigation(AppSection.Almacenamiento.ToString()));
             _temperatureMonitorService = temperatureMonitorService;
             _diskHealthService = diskHealthService;
-            _systemMaintenanceService = systemMaintenanceService;
             _dialogService = dialogService;
             _monitoringService = monitoringService;
             _batteryService = batteryService;
@@ -550,9 +545,14 @@ namespace Wpc_SutilBox.ViewModels
             CurrentView = this;
             OpenDiscordCommand = new RelayCommand(ExecuteOpenDiscord);
             OpenCleanmgrCommand = new RelayCommand(ExecuteOpenCleanmgr);
-            CleanTempFilesCommand = new AsyncRelayCommand(PreviewCleanupAsync);
-            PreviewCleanupCommand = new AsyncRelayCommand(PreviewCleanupAsync);
-            OpenSpaceMapCommand = new RelayCommand(_ => StartNavigation(AppSection.MapaEspacio.ToString()));
+            CleanTempFilesCommand = new RelayCommand(_ => StartNavigation(AppSection.Limpieza.ToString()));
+            PreviewCleanupCommand = new RelayCommand(_ => StartNavigation(AppSection.Limpieza.ToString()));
+            OpenSpaceMapCommand = new RelayCommand(_ =>
+            {
+                if (StorageViewModel != null && SpaceMapViewModel != null && !string.IsNullOrWhiteSpace(StorageViewModel.SelectedPath))
+                    SpaceMapViewModel.SelectedFolder = StorageViewModel.SelectedPath;
+                StartNavigation(AppSection.MapaEspacio.ToString());
+            });
             OpenLogFolderCommand = new RelayCommand(ExecuteOpenLogFolder);
             RunToolCommand = new RelayCommand(ExecuteRunTool);
             RunSfcCommand = new AsyncRelayCommand(ExecuteRunSfcAsync);
@@ -562,7 +562,6 @@ namespace Wpc_SutilBox.ViewModels
             CreateRestorePointCommand = new AsyncRelayCommand(ExecuteCreateRestorePointAsync);
             ApplyPerformanceModeCommand = new AsyncRelayCommand(ExecuteApplyPerformanceModeAsync);
             PcBoostCommand = new AsyncRelayCommand(_ => ExecuteApplyPerformanceModeAsync(PerformanceMode.Gamer));
-            QuickOptimizeCommand = new AsyncRelayCommand(ExecuteQuickOptimizeAsync);
             RefreshStartupItemsCommand = new AsyncRelayCommand(RefreshStartupItemsAsync);
             EnableStartupItemCommand = new AsyncRelayCommand(async p => await ChangeStartupItemAsync(p, true));
             DisableStartupItemCommand = new AsyncRelayCommand(async p => await ChangeStartupItemAsync(p, false));
@@ -587,7 +586,7 @@ namespace Wpc_SutilBox.ViewModels
             AnalyzeDiskCommand = new RelayCommand(ExecuteAnalyzeDisk);
             RefreshDisksCommand = new AsyncRelayCommand(_ => LoadDisksAsync());
             AnalyzeCommand = new RelayCommand(ExecuteAnalyze);
-            OptimizeCommand = new AsyncRelayCommand(_ => ExecuteQuickOptimizeAsync());
+            OptimizeCommand = new RelayCommand(ExecuteAnalyzeDisk);
             RefreshDriversCommand = new AsyncRelayCommand(ExportDriversAsync);
             ReduceBackgroundProcessesCommand = new RelayCommand(ExecuteReduceBackgroundProcesses);
             ClearServiceSearchCommand = new RelayCommand(_ => ServiceSearchText = string.Empty);
@@ -1048,92 +1047,6 @@ namespace Wpc_SutilBox.ViewModels
             }
             catch (Exception ex) { GeneralStatusMessage = "No se pudo liberar la memoria."; WriteLog("Error limpiando RAM", ex); }
             finally { StatusMessage = string.Empty; IsBusy = false; }
-        }
-
-        private async Task ExecuteQuickOptimizeAsync()
-        {
-            if (IsBusy) return;
-            await PreviewCleanupAsync();
-        }
-
-        private async Task PreviewCleanupAsync()
-        {
-            if (IsBusy) return;
-            if (!CleanSystemTemp)
-            {
-                GeneralStatusMessage = "Activa Archivos Temporales para analizar la limpieza.";
-                return;
-            }
-            if (_systemMaintenanceService == null || _dialogService == null)
-            {
-                GeneralStatusMessage = "La limpieza controlada no está disponible.";
-                return;
-            }
-
-            IsBusy = true;
-            StatusMessage = "Analizando archivos temporales...";
-            try
-            {
-                var options = new CleaningOptions
-                {
-                    CleanSystemTemp = CleanSystemTemp,
-                    CleanRecycleBin = false,
-                    CleanBrowserCache = false,
-                    CleanWindowsUpdate = false,
-                    CleanThumbnails = false,
-                    CleanEventLogs = false
-                };
-                CleanupCandidates = await _systemMaintenanceService.PreviewTemporaryFilesAsync(options);
-                OnPropertyChanged(nameof(CleanupCandidateCount));
-                OnPropertyChanged(nameof(CleanupEstimatedBytes));
-
-                if (CleanupCandidates.Count == 0)
-                {
-                    GeneralStatusMessage = "No se encontraron archivos temporales compatibles para limpiar.";
-                    WriteLog("Previsualización de limpieza: no se encontraron candidatos.");
-                    return;
-                }
-
-                var candidateList = string.Join(
-                    Environment.NewLine,
-                    CleanupCandidates.Select(candidate => $"• {candidate.Path} ({FormatBytes(candidate.SizeBytes)})"));
-                var confirmation = await _dialogService.ShowConfirmation(
-                    $"Se encontraron {CleanupCandidateCount} archivos temporales (tamaño total estimado: {FormatBytes(CleanupEstimatedBytes)}).\n\nCandidatos que se intentarán eliminar:\n{candidateList}\n\nSolo se eliminarán estos archivos dentro de las carpetas temporales autorizadas. No se vaciará la Papelera ni se limpiarán cachés de navegador o Windows Update.\n\n¿Deseas continuar?",
-                    "Revisar limpieza temporal");
-                if (!confirmation)
-                {
-                    GeneralStatusMessage = "Limpieza cancelada; no se eliminaron archivos.";
-                    WriteLog("El usuario canceló la limpieza tras revisar la previsualización.");
-                    return;
-                }
-
-                StatusMessage = "Limpiando archivos temporales...";
-                var result = await _systemMaintenanceService.CleanTemporaryFilesAsync(CleanupCandidates);
-                GeneralStatusMessage = result.ToString();
-                WriteLog($"Limpieza controlada completada. {result}");
-                CleanupCandidates = Array.Empty<CleanupCandidate>();
-                OnPropertyChanged(nameof(CleanupCandidateCount));
-                OnPropertyChanged(nameof(CleanupEstimatedBytes));
-            }
-            catch (Exception ex)
-            {
-                GeneralStatusMessage = "No se pudo completar el análisis o limpieza temporal.";
-                WriteLog("Error en limpieza controlada", ex);
-            }
-            finally
-            {
-                StatusMessage = string.Empty;
-                IsBusy = false;
-            }
-        }
-
-        private static string FormatBytes(long bytes)
-        {
-            string[] sizes = { "B", "KB", "MB", "GB", "TB" };
-            double value = bytes;
-            int unit = 0;
-            while (value >= 1024 && unit < sizes.Length - 1) { value /= 1024; unit++; }
-            return $"{value:0.##} {sizes[unit]}";
         }
 
         private async Task ExecuteCreateRestorePointAsync()
@@ -1993,7 +1906,7 @@ namespace Wpc_SutilBox.ViewModels
                 }
 
                 logEntry += Environment.NewLine;
-                File.AppendAllText(logFilePath, logEntry);
+                File.AppendAllText(logFilePath, logEntry, System.Text.Encoding.UTF8);
             }
             catch (Exception writeEx)
             {

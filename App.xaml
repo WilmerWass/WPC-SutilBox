@@ -8,8 +8,8 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Resources/Strings.es.xaml"/>
-                <ResourceDictionary Source="Resources/Theme.Dark.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/SutilBox;component/Resources/Strings.es.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/SutilBox;component/Resources/Theme.Dark.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
             <!-- Recursos globales no dependientes del tema -->
@@ -263,17 +263,19 @@
                                     <Setter Property="Foreground" Value="White"/>
                                     <Setter Property="FontWeight" Value="SemiBold"/>
                                 </DataTrigger>
-                                <!-- Soporte para RadioButton/ToggleButton seleccionado -->
-                                <DataTrigger Binding="{Binding IsChecked, RelativeSource={RelativeSource Self}}" Value="True">
-                                    <Setter TargetName="NavButtonBorder" Property="Background" Value="{DynamicResource PrimaryBrush}"/>
-                                    <Setter TargetName="NavButtonAccent" Property="Background" Value="White"/>
-                                    <Setter Property="Foreground" Value="White"/>
-                                    <Setter Property="FontWeight" Value="SemiBold"/>
-                                </DataTrigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
+            </Style>
+
+            <Style x:Key="NavRadioButtonStyle" TargetType="RadioButton" BasedOn="{StaticResource NavButtonStyle}">
+                <Style.Triggers>
+                    <Trigger Property="IsChecked" Value="True">
+                        <Setter Property="Foreground" Value="White"/>
+                        <Setter Property="FontWeight" Value="SemiBold"/>
+                    </Trigger>
+                </Style.Triggers>
             </Style>
 
             <!-- Estilo de Tarjeta base -->

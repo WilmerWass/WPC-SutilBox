@@ -153,7 +153,7 @@
                                                  Margin="12,6,0,0"
                                                  Width="200"
                                                  Height="12"
-                                                 Value="{Binding HealthScore, Mode=OneWay}"
+                                                 Value="{Binding HealthScore, Mode=OneWay, TargetNullValue=0, FallbackValue=0}"
                                                  Maximum="100"
                                                  Foreground="{DynamicResource SuccessBrush}"
                                                  Background="{DynamicResource SurfaceBrush}"
@@ -230,10 +230,89 @@
                                        HorizontalAlignment="Center" Foreground="{DynamicResource TextMutedBrush}"/>
                         </StackPanel>
                     </Button>
-                    <!-- Inicio Windows -->
+                    <!-- Analizar almacenamiento -->
+                    <Button Command="{Binding DataContext.NavigateCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                            CommandParameter="Almacenamiento"
+                            Margin="0,0,8,8" Cursor="Hand"
+                            Background="{DynamicResource CardGradientBrush}"
+                            BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="12" Padding="16">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="{DynamicResource SurfaceHoverBrush}"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                        <StackPanel HorizontalAlignment="Center">
+                            <TextBlock Text="📊" FontSize="28" HorizontalAlignment="Center" Margin="0,0,0,6"/>
+                            <TextBlock Text="Analizar" FontSize="12" FontWeight="SemiBold"
+                                       HorizontalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBlock Text="almacenamiento" FontSize="10"
+                                       HorizontalAlignment="Center" Foreground="{DynamicResource TextMutedBrush}"/>
+                        </StackPanel>
+                    </Button>
+                    <!-- Mapa de almacenamiento -->
+                    <Button Command="{Binding DataContext.NavigateCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                            CommandParameter="MapaEspacio"
+                            Margin="0,0,8,8" Cursor="Hand"
+                            Background="{DynamicResource CardGradientBrush}"
+                            BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="12" Padding="16">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="{DynamicResource SurfaceHoverBrush}"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                        <StackPanel HorizontalAlignment="Center">
+                            <TextBlock Text="🗺️" FontSize="28" HorizontalAlignment="Center" Margin="0,0,0,6"/>
+                            <TextBlock Text="Mapa de espacio" FontSize="12" FontWeight="SemiBold"
+                                       HorizontalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        </StackPanel>
+                    </Button>
+                    <!-- Archivos duplicados -->
+                    <Button Command="{Binding DataContext.NavigateCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                            CommandParameter="ArchivosDuplicados"
+                            Margin="0,0,0,8" Cursor="Hand"
+                            Background="{DynamicResource CardGradientBrush}"
+                            BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="12" Padding="16">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="{DynamicResource SurfaceHoverBrush}"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                        <StackPanel HorizontalAlignment="Center">
+                            <TextBlock Text="📄" FontSize="28" HorizontalAlignment="Center" Margin="0,0,0,6"/>
+                            <TextBlock Text="Archivos" FontSize="12" FontWeight="SemiBold"
+                                       HorizontalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBlock Text="duplicados" FontSize="10"
+                                       HorizontalAlignment="Center" Foreground="{DynamicResource TextMutedBrush}"/>
+                        </StackPanel>
+                    </Button>
+                    <!-- Inicio de Windows -->
                     <Button Command="{Binding DataContext.NavigateCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                             CommandParameter="InicioWindows"
-                            Margin="0,0,8,8" Cursor="Hand"
+                            Margin="0,0,8,0" Cursor="Hand"
                             Background="{DynamicResource CardGradientBrush}"
                             BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1">
                         <Button.Template>
@@ -255,83 +334,6 @@
                                        HorizontalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}"/>
                             <TextBlock Text="Windows" FontSize="10"
                                        HorizontalAlignment="Center" Foreground="{DynamicResource TextMutedBrush}"/>
-                        </StackPanel>
-                    </Button>
-                    <!-- Seguridad -->
-                    <Button Command="{Binding DataContext.NavigateCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                            CommandParameter="RevisarPC"
-                            Margin="0,0,8,8" Cursor="Hand"
-                            Background="{DynamicResource CardGradientBrush}"
-                            BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
-                                        BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="12" Padding="16">
-                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Background" Value="{DynamicResource SurfaceHoverBrush}"/>
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Button.Template>
-                        <StackPanel HorizontalAlignment="Center">
-                            <TextBlock Text="🛡️" FontSize="28" HorizontalAlignment="Center" Margin="0,0,0,6"/>
-                            <TextBlock Text="Seguridad" FontSize="12" FontWeight="SemiBold"
-                                       HorizontalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                        </StackPanel>
-                    </Button>
-                    <!-- Backup Rápido -->
-                    <Button Command="{Binding DataContext.NavigateCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                            CommandParameter="BackupFormatear"
-                            Margin="0,0,0,8" Cursor="Hand"
-                            Background="{DynamicResource CardGradientBrush}"
-                            BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
-                                        BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="12" Padding="16">
-                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Background" Value="{DynamicResource SurfaceHoverBrush}"/>
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Button.Template>
-                        <StackPanel HorizontalAlignment="Center">
-                            <TextBlock Text="💾" FontSize="28" HorizontalAlignment="Center" Margin="0,0,0,6"/>
-                            <TextBlock Text="Backup" FontSize="12" FontWeight="SemiBold"
-                                       HorizontalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                            <TextBlock Text="Rápido" FontSize="10"
-                                       HorizontalAlignment="Center" Foreground="{DynamicResource TextMutedBrush}"/>
-                        </StackPanel>
-                    </Button>
-                    <!-- Rendimiento -->
-                    <Button Command="{Binding DataContext.NavigateCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                            CommandParameter="Rendimiento"
-                            Margin="0,0,8,0" Cursor="Hand"
-                            Background="{DynamicResource CardGradientBrush}"
-                            BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
-                                        BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="12" Padding="16">
-                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Background" Value="{DynamicResource SurfaceHoverBrush}"/>
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Button.Template>
-                        <StackPanel HorizontalAlignment="Center">
-                            <TextBlock Text="⚡" FontSize="28" HorizontalAlignment="Center" Margin="0,0,0,6"/>
-                            <TextBlock Text="Rendimiento" FontSize="12" FontWeight="SemiBold"
-                                       HorizontalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}"/>
                         </StackPanel>
                     </Button>
                     <!-- Desinstalador -->

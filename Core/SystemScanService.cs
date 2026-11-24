@@ -350,12 +350,7 @@ namespace Wpc_SutilBox.Core
             {
                 var options = new CleaningOptions
                 {
-                    CleanSystemTemp = true,
-                    CleanRecycleBin = false,
-                    CleanBrowserCache = false,
-                    CleanWindowsUpdate = false,
-                    CleanThumbnails = false,
-                    CleanEventLogs = false
+                    CleanSystemTemp = true
                 };
                 var candidates = await _systemMaintenanceService.PreviewTemporaryFilesAsync(options, ct);
                 var totalSize = candidates.Sum(c => c.SizeBytes);

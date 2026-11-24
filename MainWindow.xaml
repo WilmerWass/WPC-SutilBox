@@ -107,6 +107,48 @@
                                     CommandParameter="RevisarPC"
                                     Style="{StaticResource NavButtonStyle}"/>
 
+                            <!-- MANTENIMIENTO DIARIO -->
+                            <TextBlock Text="MANTENIMIENTO"
+                                       Margin="10,20,0,8"
+                                       FontSize="10"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextMutedBrush}"/>
+
+                            <Button Content="🧹   Liberar espacio"
+                                    Command="{Binding NavigateCommand}"
+                                    CommandParameter="Limpieza"
+                                    Style="{StaticResource NavButtonStyle}"/>
+
+                            <Button Content="📊   Analizar almacenamiento"
+                                    Command="{Binding NavigateCommand}"
+                                    CommandParameter="Almacenamiento"
+                                    Style="{StaticResource NavButtonStyle}"/>
+
+                            <Button Content="🗺️   Mapa de carpetas"
+                                    Command="{Binding NavigateCommand}"
+                                    CommandParameter="MapaEspacio"
+                                    Style="{StaticResource NavButtonStyle}"/>
+
+                            <Button Content="📄   Archivos duplicados"
+                                    Command="{Binding NavigateCommand}"
+                                    CommandParameter="ArchivosDuplicados"
+                                    Style="{StaticResource NavButtonStyle}"/>
+
+                            <Button Content="📦   Aplicaciones instaladas"
+                                    Command="{Binding NavigateCommand}"
+                                    CommandParameter="Desinstalador"
+                                    Style="{StaticResource NavButtonStyle}"/>
+
+                            <Button Content="📦   Programas y actualizaciones"
+                                    Command="{Binding NavigateCommand}"
+                                    CommandParameter="ProgramasActualizar"
+                                    Style="{StaticResource NavButtonStyle}"/>
+
+                            <Button Content="🚀   Inicio de Windows"
+                                    Command="{Binding NavigateCommand}"
+                                    CommandParameter="InicioWindows"
+                                    Style="{StaticResource NavButtonStyle}"/>
+
                             <!-- DIAGNÓSTICO -->
                             <TextBlock Text="DIAGNÓSTICO"
                                        Margin="10,20,0,8"
@@ -159,41 +201,9 @@
                                     CommandParameter="CompatibilidadWin11"
                                     Style="{StaticResource NavButtonStyle}"/>
 
-                            <!-- MANTENIMIENTO -->
-                            <TextBlock Text="MANTENIMIENTO"
-                                       Margin="10,20,0,8"
-                                       FontSize="10"
-                                       FontWeight="SemiBold"
-                                       Foreground="{DynamicResource TextMutedBrush}"/>
-
-                            <Button Content="📄   Archivos duplicados"
+                            <Button Content="🔬   Escáner inteligente"
                                     Command="{Binding NavigateCommand}"
-                                    CommandParameter="ArchivosDuplicados"
-                                    Style="{StaticResource NavButtonStyle}"/>
-
-                            <Button Content="🧹   Limpieza"
-                                    Command="{Binding NavigateCommand}"
-                                    CommandParameter="Limpieza"
-                                    Style="{StaticResource NavButtonStyle}"/>
-
-                            <Button Content="🗺️   Mapa del disco"
-                                    Command="{Binding NavigateCommand}"
-                                    CommandParameter="MapaEspacio"
-                                    Style="{StaticResource NavButtonStyle}"/>
-
-                            <Button Content="📦   Aplicaciones instaladas"
-                                    Command="{Binding NavigateCommand}"
-                                    CommandParameter="Desinstalador"
-                                    Style="{StaticResource NavButtonStyle}"/>
-
-                            <Button Content="📦   Programas y actualizaciones"
-                                    Command="{Binding NavigateCommand}"
-                                    CommandParameter="ProgramasActualizar"
-                                    Style="{StaticResource NavButtonStyle}"/>
-
-                            <Button Content="🚀   Inicio de Windows"
-                                    Command="{Binding NavigateCommand}"
-                                    CommandParameter="InicioWindows"
+                                    CommandParameter="Escaneo"
                                     Style="{StaticResource NavButtonStyle}"/>
 
                             <!-- OPTIMIZACIÓN -->
@@ -257,22 +267,9 @@
                                     CommandParameter="Historial"
                                     Style="{StaticResource NavButtonStyle}"/>
 
-                            <!-- ESCÁNER INTELIGENTE -->
-                            <TextBlock Text="DIAGNÓSTICO"
-                                       Margin="10,20,0,8"
-                                       FontSize="10"
-                                       FontWeight="SemiBold"
-                                       Foreground="{DynamicResource TextMutedBrush}"/>
-
-                            <Button Content="🔬   Escáner Inteligente"
-                                    Command="{Binding NavigateCommand}"
-                                    CommandParameter="Escaneo"
-                                    Style="{StaticResource NavButtonStyle}"/>
-
                             <Button Content="⚙️   Configuración"
                                     Command="{Binding NavigateCommand}"
                                     CommandParameter="Configuracion"
-                                    Style="{StaticResource NavButtonStyle}"/>
                                     Style="{StaticResource NavButtonStyle}"/>
 
                             <Button Content="ℹ️   Acerca de"
@@ -284,7 +281,6 @@
                                     Command="{Binding NavigateCommand}"
                                     CommandParameter="Escala"
                                     Style="{StaticResource NavButtonStyle}"/>
-
                         </StackPanel>
 
                     </ScrollViewer>
@@ -555,11 +551,11 @@
 
                     <views:SmartScannerView Grid.Row="0" Grid.Column="0"
                         DataContext="{Binding SmartScannerViewModel}"
-                        Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Escaneo}}"/>
+                        Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.Escaneo}}"/>
 
                     <views:GamesView Grid.Row="0" Grid.Column="0"
                         DataContext="{Binding GamesViewModel}"
-                        Visibility="{Binding CurrentSection, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.ZonaGamer}}"/>
+                        Visibility="{Binding DataContext.CurrentSection, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static enums:AppSection.ZonaGamer}}"/>
 
                 </Grid>
 

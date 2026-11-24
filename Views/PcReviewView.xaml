@@ -80,7 +80,7 @@
                                     <TextBlock Text="Temperatura CPU"
                                                Foreground="{DynamicResource TextSecondaryBrush}"
                                                FontSize="12"/>
-                                    <TextBlock Text="{Binding CpuTempC, Mode=OneWay, StringFormat={}{0:F0} °C}"
+                                    <TextBlock Text="{Binding CpuTempC, Mode=OneWay, TargetNullValue='No disponible', StringFormat={}{0:F0} °C}"
                                                FontSize="32" FontWeight="Bold"
                                                Foreground="{DynamicResource TextPrimaryBrush}"/>
                                 </StackPanel>
@@ -231,7 +231,7 @@
                                TextWrapping="Wrap"
                                MaxWidth="400"/>
                     <Button Content="Abrir Liberar espacio"
-                            Command="{Binding NavigateCommand}"
+                            Command="{Binding DataContext.NavigateCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                             CommandParameter="Almacenamiento"
                             Style="{StaticResource PrimaryButtonStyle}"
                             HorizontalAlignment="Center"/>

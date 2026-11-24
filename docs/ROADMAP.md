@@ -54,7 +54,7 @@ Objetivo: Refactor visual, rendimiento, asincronía y cero regresiones.
 * 🔴 Protección de procesos críticos del sistema contra cierre accidental.
 * 🟡 Flujo universal de acciones (*Detectar → Analizar → Explicar → Recomendar → Confirmar → Actuar → Verificar → Informar*).
 * 🟡 Diagnóstico de almacenamiento SMART con fallback adecuado cuando la lectura sea incompleta.
-* ⚪ Limpieza básica de temporales con vista previa y selección explícita por el usuario.
+* 🟢 Limpieza básica de temporales con vista previa, selección explícita por el usuario y confirmación antes de eliminar.
 * ⚪ Gestión de inicio, bloatware y winget con trazabilidad y presentación transparente de resultados.
 
 ---

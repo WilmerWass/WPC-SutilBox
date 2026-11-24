@@ -52,19 +52,19 @@
             <StackPanel>
                 <TextBlock Text="¿Para qué deseas preparar tu PC?" Foreground="{DynamicResource SecondaryTextBrush}" FontSize="12" FontWeight="Bold" Margin="0,0,0,15" Opacity="0.7"/>
                 <UniformGrid Columns="5">
-                    <RadioButton Style="{StaticResource NavButtonStyle}" Content="Equilibrado" 
+                    <RadioButton Style="{StaticResource NavRadioButtonStyle}" Content="Equilibrado"
                                  IsChecked="{Binding ProfileToEdit, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=General}"
                                  Tag="⚖️" Margin="4"/>
-                    <RadioButton Style="{StaticResource NavButtonStyle}" Content="Gaming" 
+                    <RadioButton Style="{StaticResource NavRadioButtonStyle}" Content="Gaming"
                                  IsChecked="{Binding ProfileToEdit, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Gamer}"
                                  Tag="🎮" Margin="4"/>
-                    <RadioButton Style="{StaticResource NavButtonStyle}" Content="Productividad" 
+                    <RadioButton Style="{StaticResource NavRadioButtonStyle}" Content="Productividad"
                                  IsChecked="{Binding ProfileToEdit, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Oficina}"
                                  Tag="📊" Margin="4"/>
-                    <RadioButton Style="{StaticResource NavButtonStyle}" Content="Desarrollo" 
+                    <RadioButton Style="{StaticResource NavRadioButtonStyle}" Content="Desarrollo"
                                  IsChecked="{Binding ProfileToEdit, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Dev}"
                                  Tag="👨‍💻" Margin="4"/>
-                    <RadioButton Style="{StaticResource NavButtonStyle}" Content="A tu medida" 
+                    <RadioButton Style="{StaticResource NavRadioButtonStyle}" Content="A tu medida"
                                  IsChecked="{Binding ProfileToEdit, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Personalizado}"
                                  Tag="⚙️" Margin="4"/>
                 </UniformGrid>

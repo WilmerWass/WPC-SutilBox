@@ -12,49 +12,93 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Margin="20,20,20,16">
-            <TextBlock Text="🧹 Limpieza de archivos" Style="{StaticResource HeaderTextStyle}"/>
-            <TextBlock Text="Revisa los candidatos antes de confirmar cualquier eliminación."
-                       Style="{StaticResource SubHeaderTextStyle}" Margin="0,6,0,0"/>
+        <StackPanel Grid.Row="0" Margin="20,20,20,14">
+            <TextBlock Text="🧹 Liberar espacio" Style="{StaticResource HeaderTextStyle}"/>
+            <TextBlock Text="Revisa archivos temporales en ubicaciones seguras; cada limpieza requiere confirmación."
+                       Style="{StaticResource SubHeaderTextStyle}" Margin="0,6,0,0" TextWrapping="Wrap"/>
         </StackPanel>
 
         <Border Grid.Row="1" Background="{DynamicResource SurfaceBrush}" CornerRadius="12"
                 Padding="16" Margin="20,0,20,14">
-            <StackPanel>
-                <WrapPanel Margin="0,0,0,12">
-                    <CheckBox Content="Archivos temporales" IsChecked="{Binding CleanSystemTemp}" Margin="0,0,18,8"/>
-                    <CheckBox Content="Papelera de reciclaje" IsChecked="{Binding CleanRecycleBin}" Margin="0,0,18,8"/>
-                    <CheckBox Content="Caché del navegador" IsChecked="{Binding CleanBrowserCache}" Margin="0,0,18,8"/>
-                    <CheckBox Content="Windows Update" IsChecked="{Binding CleanWindowsUpdate}" Margin="0,0,18,8"/>
-                    <CheckBox Content="Miniaturas" IsChecked="{Binding CleanThumbnails}" Margin="0,0,18,8"/>
-                    <CheckBox Content="Registros de eventos" IsChecked="{Binding CleanEventLogs}" Margin="0,0,18,8"/>
-                </WrapPanel>
-                <WrapPanel>
-                    <Button Content="Analizar candidatos" Command="{Binding PreviewCommand}"
-                            Style="{StaticResource PrimaryButtonStyle}" Margin="0,0,10,8"/>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Margin="0,0,16,10">
+                    <TextBlock Text="ARCHIVOS REVISABLES" FontSize="10" FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextMutedBrush}"/>
+                    <TextBlock Text="{Binding CleanupCandidateCount, StringFormat={}{0:N0}}"
+                               FontSize="24" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Margin="0,0,16,10">
+                    <TextBlock Text="ESPACIO ESTIMADO" FontSize="10" FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextMutedBrush}"/>
+                    <TextBlock Text="{Binding FormattedEstimatedBytes}"
+                               FontSize="24" FontWeight="Bold" Foreground="{DynamicResource PrimaryBrush}"/>
+                </StackPanel>
+                <WrapPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right">
+                    <Button Content="Analizar temporales" Command="{Binding PreviewCommand}"
+                            IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}"
+                            Style="{StaticResource PrimaryButtonStyle}" Margin="0,0,8,8"/>
+                    <Button Content="Limpiar seleccionados" Command="{Binding CleanCommand}"
+                            CommandParameter="{Binding SelectedItems, ElementName=CleanupCandidatesGrid}"
+                            IsEnabled="{Binding CanClean}"
+                            Style="{StaticResource DangerButtonStyle}" Margin="0,0,0,8"
+                            ToolTip="Selecciona una o varias filas antes de limpiar"/>
                     <Button Content="Cancelar" Command="{Binding CancelCommand}"
-                            IsEnabled="{Binding IsBusy}" Style="{StaticResource SecondaryButtonStyle}" Margin="0,0,10,8"/>
-                    <Button Content="Eliminar seleccionados" Command="{Binding CleanCommand}"
-                            IsEnabled="{Binding HasCleanupCandidates}"
-                            Style="{StaticResource DangerButtonStyle}" Margin="0,0,10,8"/>
-                    <TextBlock Text="{Binding StatusMessage}" Foreground="{DynamicResource TextSecondaryBrush}"
-                               VerticalAlignment="Center" TextWrapping="Wrap" Margin="0,0,0,8"/>
+                            IsEnabled="{Binding IsBusy}"
+                            Style="{StaticResource SecondaryButtonStyle}" Margin="0,0,0,8"/>
                 </WrapPanel>
-                <ProgressBar Height="3" IsIndeterminate="True"
+
+                <TextBlock Grid.Row="1" Grid.ColumnSpan="3" Text="{Binding StatusMessage}"
+                           Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" Margin="0,2,0,0"/>
+                <ProgressBar Grid.Row="2" Grid.ColumnSpan="3" Height="3" IsIndeterminate="True"
                              Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}"
-                             Margin="0,4,0,0"/>
-            </StackPanel>
+                             Margin="0,8,0,0"/>
+            </Grid>
         </Border>
 
-        <DataGrid Grid.Row="2" ItemsSource="{Binding CleanupCandidates}" AutoGenerateColumns="False"
-                  IsReadOnly="True" CanUserAddRows="False" Margin="20,0,20,20"
-                  HeadersVisibility="Column">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Ruta a revisar" Binding="{Binding Path}" Width="*"/>
-                <DataGridTextColumn Header="Tamaño estimado"
-                                    Binding="{Binding SizeBytes, Converter={StaticResource BytesToHumanReadableConverter}}"
-                                    Width="160"/>
-            </DataGrid.Columns>
-        </DataGrid>
+        <Grid Grid.Row="2" Margin="20,0,20,20">
+            <DataGrid x:Name="CleanupCandidatesGrid" ItemsSource="{Binding CleanupCandidates}" AutoGenerateColumns="False"
+                      IsReadOnly="True" CanUserAddRows="False" HeadersVisibility="Column"
+                      SelectionMode="Extended" SelectionUnit="FullRow"
+                      Visibility="{Binding HasCleanupCandidates, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Ruta revisada" Binding="{Binding Path}" Width="*"/>
+                    <DataGridTextColumn Header="Tamaño estimado"
+                                        Binding="{Binding SizeBytes, Converter={StaticResource BytesToHumanReadableConverter}}"
+                                        Width="180"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="12" Padding="24">
+                <Border.Style>
+                    <Style TargetType="Border" BasedOn="{StaticResource AnimatedCardStyle}">
+                        <Setter Property="Visibility" Value="Visible"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding HasCleanupCandidates}" Value="True">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="520">
+                    <TextBlock Text="🧹" FontSize="36" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                    <TextBlock Text="Aún no hay archivos revisados" FontSize="18" FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextPrimaryBrush}" TextAlignment="Center"/>
+                    <TextBlock Text="Analiza los temporales, selecciona una o varias filas y confirma la eliminación. No se vacía la Papelera ni se borran cachés de navegador o Windows Update."
+                               Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap"
+                               TextAlignment="Center" Margin="0,8,0,0"/>
+                </StackPanel>
+            </Border>
+        </Grid>
     </Grid>
 </UserControl>

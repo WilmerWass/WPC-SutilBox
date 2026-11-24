@@ -15,8 +15,11 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="Liberar espacio" Style="{StaticResource HeaderTextStyle}"
-                   Margin="20,16,20,12"/>
+        <StackPanel Grid.Row="0" Margin="20,16,20,12">
+            <TextBlock Text="Analizar almacenamiento" Style="{StaticResource HeaderTextStyle}"/>
+            <TextBlock Text="Explora archivos y carpetas por unidad, consulta tamaños y filtra resultados."
+                       Style="{StaticResource SubHeaderTextStyle}" Margin="0,6,0,0" TextWrapping="Wrap"/>
+        </StackPanel>
 
         <Grid Grid.Row="1" Margin="20,0,20,20">
             <Grid.ColumnDefinitions>

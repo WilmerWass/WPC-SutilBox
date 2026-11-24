@@ -17,29 +17,12 @@ namespace Wpc_SutilBox.Core
         [DllImport("psapi.dll")]
         private static extern int EmptyWorkingSet(IntPtr hwProc);
 
-        [DllImport("shell32.dll")]
-        static extern int SHEmptyRecycleBin(IntPtr hwnd, string? pszRootPath, RecycleFlags dwFlags);
-
-        [Flags]
-        enum RecycleFlags : int
-        {
-            SHERB_NOCONFIRMATION = 0x00000001,  // No pedir confirmación
-            SHERB_NOPROGRESSUI = 0x00000002,    // No mostrar cuadro de progreso
-            SHERB_NOSOUND = 0x00000004          // No reproducir sonido de papelera de reciclaje
-        }
-
         private static readonly string[] TempDirectories = new[]
         {
             Environment.GetFolderPath(Environment.SpecialFolder.InternetCache), // caché de IE obsoleto
             Path.GetTempPath(),
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Temp"),
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "Temp"),
-            // Cachés de navegador
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Google\\Chrome\\User Data\\Default\\Cache"),
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Mozilla\\Firefox\\Profiles"), // Necesita una búsqueda más profunda
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Microsoft\\Edge\\User Data\\Default\\Cache"),
-            // Archivos temporales de Windows Update
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "SoftwareDistribution\\Download"),
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "Temp")
         };
 
         private static readonly string[] TempFilePatterns = new[] { "*.tmp", "*.temp", "*.log", "*.bak", "*.old", "*.gid", "*.chk" };
@@ -165,7 +148,7 @@ namespace Wpc_SutilBox.Core
             if (!options.CleanSystemTemp)
                 yield break;
 
-            foreach (var directory in TempDirectories.Take(4))
+            foreach (var directory in TempDirectories)
                 yield return directory;
 
             var usersDir = Path.Combine(Path.GetPathRoot(Environment.SystemDirectory) ?? "C:\\", "Users");
@@ -256,25 +239,6 @@ namespace Wpc_SutilBox.Core
 
         private static bool IsReparsePoint(FileSystemInfo info) =>
             (info.Attributes & FileAttributes.ReparsePoint) != 0;
-
-        private CleanResult CleanRecycleBin()
-        {
-            var result = new CleanResult();
-            try
-            {
-                SHEmptyRecycleBin(IntPtr.Zero, null, RecycleFlags.SHERB_NOCONFIRMATION | RecycleFlags.SHERB_NOPROGRESSUI | RecycleFlags.SHERB_NOSOUND);
-                result.Notes += "Papelera de reciclaje vaciada.";
-                // No podemos obtener fácilmente los bytes liberados para la papelera de reciclaje, así que solo informaremos del éxito.
-            }
-            catch (Exception ex)
-            {
-                // Registrar y continuar, no fallar toda la limpieza
-                // _log?.Error($"Error limpiando Papelera de Reciclaje: {ex.Message}");
-                result.FilesFailed++;// Indicar un problema
-                result.Notes += $"Error al vaciar papelera: {ex.Message}";
-            }
-            return result;
-        }
 
         public async Task<CleanResult> OptimizeMemoryAsync()
         {

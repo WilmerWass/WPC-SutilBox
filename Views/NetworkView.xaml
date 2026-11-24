@@ -15,7 +15,7 @@
                     <StackPanel>
                         <TextBlock Text="Prueba de conexión" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}"/>
                         <TextBlock Text="La prueba de velocidad se conecta a Cloudflare; la medición de subida envía hasta 5 MB." FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" Margin="0,6,0,12"/>
-                        <ProgressBar Value="{Binding Progress}" Maximum="100" Height="7" Margin="0,0,0,10"/>
+                        <ProgressBar Value="{Binding Progress, Mode=OneWay}" Maximum="100" Height="7" Margin="0,0,0,10"/>
                         <TextBlock Text="{Binding StatusMessage}" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,12"/>
                         <UniformGrid Columns="2" Margin="0,0,0,12">
                             <TextBlock Text="Latencia" Foreground="{DynamicResource TextMutedBrush}"/>

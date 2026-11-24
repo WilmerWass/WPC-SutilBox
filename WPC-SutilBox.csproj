@@ -44,11 +44,14 @@
     <PackageReference Include="System.ServiceProcess.ServiceController" Version="10.0.0" />
   </ItemGroup>
 
-  <!-- Exclude CLI project from WPF compilation -->
+  <!-- Exclude CLI and Tests projects from WPF compilation -->
   <ItemGroup>
     <Compile Remove="SutilBox.CLI/**" />
     <EmbeddedResource Remove="SutilBox.CLI/**" />
     <None Include="SutilBox.CLI/**" />
+    <Compile Remove="WPC-SutilBox.Tests/**" />
+    <EmbeddedResource Remove="WPC-SutilBox.Tests/**" />
+    <None Include="WPC-SutilBox.Tests/**" />
   </ItemGroup>
 
   <ItemGroup>
